@@ -1,3 +1,9 @@
+import SignUpForm from '@/features/auth/SignUpForm';
+
 export default function Home() {
-  return <div></div>;
+  return (
+    <div>
+      <SignUpForm />
+    </div>
+  );
 }

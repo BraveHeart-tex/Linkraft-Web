@@ -27,7 +27,6 @@ const SignInForm = () => {
     },
   });
 
-  // TODO:
   const onSubmit = (values: SignInDto) => {
     console.log(values);
   };

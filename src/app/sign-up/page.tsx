@@ -1,6 +1,13 @@
+import { getCurrentUser } from '@/features/auth/auth.server';
 import SignUpForm from '@/features/auth/SignUpForm';
+import { redirect } from 'next/navigation';
 
-const SignUpPage = () => {
+const SignUpPage = async () => {
+  const result = await getCurrentUser();
+  if (result?.session && result?.user) {
+    redirect('/');
+  }
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
       <div className="w-full max-w-sm">

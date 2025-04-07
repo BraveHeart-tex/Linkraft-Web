@@ -1,5 +1,4 @@
 'use client';
-
 import { useForm } from 'react-hook-form';
 import { SignUpDto, SignUpSchema } from './auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,12 +12,28 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GalleryVerticalEnd } from 'lucide-react';
+import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import GoogleIcon from '@/components/GoogleIcon';
+import { useSignUp } from './auth.api';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { AxiosApiError } from '@/lib/api.types';
 
 const SignUpForm = () => {
+  const router = useRouter();
+  const { mutate, isPending } = useSignUp({
+    onError(error) {
+      const { response } = error as AxiosApiError;
+      toast.error(response?.data.message);
+    },
+    onSuccess(data) {
+      toast.success(data.message);
+      router.push('/');
+    },
+  });
+
   const form = useForm<SignUpDto>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -27,9 +42,8 @@ const SignUpForm = () => {
     },
   });
 
-  // TODO:
   const onSubmit = (values: SignUpDto) => {
-    console.log(values);
+    mutate(values);
   };
 
   return (
@@ -84,8 +98,9 @@ const SignUpForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Sign Up
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending && <Loader2Icon className="animate-spin" />}
+                {isPending ? 'Signing Up' : 'Sign Up'}
               </Button>
             </form>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -93,7 +108,7 @@ const SignUpForm = () => {
                 Or
               </span>
             </div>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled={isPending}>
               <GoogleIcon />
               Continue with Google
             </Button>

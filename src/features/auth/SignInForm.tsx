@@ -13,12 +13,27 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GalleryVerticalEnd } from 'lucide-react';
+import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import GoogleIcon from '@/components/GoogleIcon';
+import { useSignIn } from './auth.api';
+import { AxiosApiError } from '@/lib/api.types';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { useRouter } from 'next/navigation';
 
 const SignInForm = () => {
+  const router = useRouter();
+  const { mutate, isPending } = useSignIn({
+    onSuccess(data) {
+      showSuccessToast(data.message);
+      router.push('/');
+    },
+    onError(error) {
+      const { response } = error as AxiosApiError;
+      showErrorToast(response?.data.message);
+    },
+  });
   const form = useForm<SignInDto>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
@@ -28,7 +43,7 @@ const SignInForm = () => {
   });
 
   const onSubmit = (values: SignInDto) => {
-    console.log(values);
+    mutate(values);
   };
 
   return (
@@ -83,8 +98,9 @@ const SignInForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending && <Loader2Icon className="animate-spin" />}
+                {isPending ? 'Signing In' : 'Sign In'}
               </Button>
             </form>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -92,7 +108,7 @@ const SignInForm = () => {
                 Or
               </span>
             </div>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled={isPending}>
               <GoogleIcon />
               Continue with Google
             </Button>

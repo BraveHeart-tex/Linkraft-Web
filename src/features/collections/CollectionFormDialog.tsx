@@ -29,6 +29,7 @@ import { Loader2Icon } from 'lucide-react';
 import { AxiosApiError } from '@/lib/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
+import { CollectionWithBookmarkCount } from './collection.types';
 
 interface CollectionFormDialogProps {
   isOpen: boolean;
@@ -50,7 +51,12 @@ const CollectionFormDialog = ({
   });
 
   const { mutate: createCollection, isPending } = useCreateCollection({
-    onSuccess() {
+    onSuccess(data) {
+      if (!data?.data) return;
+      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        [QUERY_KEYS.collections.getCollections],
+        (old) => [...(old || []), { ...data.data, bookmarkCount: 0 }]
+      );
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.collections.getCollections],
       });

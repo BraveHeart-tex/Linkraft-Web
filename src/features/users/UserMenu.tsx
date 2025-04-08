@@ -4,17 +4,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useCurrentUser } from './users.api';
-import { Button } from '@/components/ui/button';
-import { LogOutIcon } from 'lucide-react';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { CogIcon, LogOutIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
 import { showErrorToast } from '@/lib/toast';
 import { AxiosApiError } from '@/lib/api.types';
 import UserAvatar from './UserAvatar';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 const UserMenu = () => {
   const router = useRouter();
@@ -48,11 +49,24 @@ const UserMenu = () => {
             {data?.data?.user?.email}
           </span>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link
+            href="/settings"
+            className={cn(
+              buttonVariants({
+                variant: 'ghost',
+                className: 'w-full justify-start',
+              })
+            )}
+          >
+            <CogIcon />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Button
             variant="ghost"
-            className="w-full"
+            className="w-full justify-start"
             onClick={handleSignOut}
             disabled={isPending}
           >

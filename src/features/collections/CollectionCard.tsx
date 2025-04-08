@@ -13,13 +13,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
 }
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
+  const showConfirmDialog = useConfirmDialogStore(
+    (state) => state.showConfirmDialog
+  );
   const router = useRouter();
+
+  const handleDeleteCollection = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    showConfirmDialog({
+      title: 'Delete Collection',
+      message: 'Are you sure you want to delete this collection?',
+      onConfirm() {},
+      primaryActionLabel: 'Delete',
+      primaryButtonVariant: 'destructive',
+      alertText:
+        'Deleting this collection will permanently remove all its contents and revoke access for everyone',
+    });
+  };
 
   return (
     <Card
@@ -52,7 +71,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
                 <Button variant="ghost">Edit Collection Info</Button>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={(event) => event.stopPropagation()}
+                onClick={handleDeleteCollection}
                 className="text-destructive justify-start"
                 asChild
               >

@@ -5,6 +5,7 @@ import QueryClientProviders from '@/providers/QueryClientProviders';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,6 +28,7 @@ export default function RootLayout({
         <QueryClientProviders>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <ConfirmDialog />
             <Toaster closeButton richColors />
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />

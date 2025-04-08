@@ -7,5 +7,6 @@ export const API_ROUTES = {
   },
   collection: {
     createCollection: '/collections',
+    getUserCollections: '/collections',
   },
 } as const;

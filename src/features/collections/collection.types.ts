@@ -3,7 +3,7 @@ export interface Collection {
   name: string;
   userId: number;
   description: string;
-  createdAt: Date;
+  createdAt: string;
   isDeleted: boolean;
   color: string;
 }

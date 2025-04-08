@@ -12,7 +12,7 @@ const layout = ({
       <AppSidebar />
       <SidebarInset>
         <AppSidebarHeader />
-        <main>{children}</main>
+        <main className="p-2 sm:p-4">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -14,8 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
 import { showErrorToast } from '@/lib/toast';
 import { AxiosApiError } from '@/lib/api.types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { generateAvatarFallback } from '@/lib/utils';
+import UserAvatar from './UserAvatar';
 
 const UserMenu = () => {
   const router = useRouter();
@@ -37,12 +36,10 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage src={data?.data?.user?.profilePicture} />
-          <AvatarFallback>
-            {generateAvatarFallback(data?.data?.user?.visibleName as string)}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          profilePicture={data?.data?.user?.profilePicture}
+          visibleName={data?.data?.user?.visibleName}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="flex flex-col gap-1">

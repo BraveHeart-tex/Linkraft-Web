@@ -3,11 +3,13 @@ import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
+  useQuery,
 } from '@tanstack/react-query';
 import { CreateCollectionDto } from './collection.schema';
 import api from '@/lib/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { Collection } from './collection.types';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 
 export const useCreateCollection = (
   options?: UseMutationOptions<
@@ -25,4 +27,16 @@ export const useCreateCollection = (
       return response.data;
     },
     ...options,
+  });
+
+export const useCollections = () =>
+  useQuery({
+    queryFn: async () => {
+      const response = await api.get<
+        ApiResponse<(Collection & { bookmarkCount: number })[]>
+      >(API_ROUTES.collection.getUserCollections);
+
+      return response.data;
+    },
+    queryKey: [QUERY_KEYS.collections.getCollections],
   });

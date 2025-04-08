@@ -21,7 +21,7 @@ const AddNewCollectionButton = ({
           onClick={() => setOpen(true)}
         >
           Add Collection
-          <PlusIcon />
+          <PlusIcon className="size-7" />
         </Button>
       ) : (
         <Button onClick={() => setOpen(true)}>

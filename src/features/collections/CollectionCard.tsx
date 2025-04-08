@@ -134,7 +134,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
             visibleName="Bora Karaca"
             avatarClassNames="shadow-sm"
           />
-          <div className="text-xs text-muted-foreground space-y-1">
+          <div className="text-sm text-muted-foreground space-y-1">
             <div className="flex items-center gap-1 justify-end">
               <LinkIcon className="h-4 w-4" />
               <span className="font-bold">{collection.bookmarkCount}</span>

@@ -14,12 +14,31 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
+import { useDeleteCollection } from './collection.api';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { AxiosApiError } from '@/lib/api.types';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
 }
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
+  const queryClient = useQueryClient();
+  const { mutateAsync: deleteCollection } = useDeleteCollection({
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.collections.getCollections],
+      });
+      showSuccessToast('Collection deleted successfully.');
+    },
+    onError(error) {
+      showErrorToast('An error occurred while deleting the collection', {
+        description: (error as AxiosApiError).message,
+      });
+    },
+  });
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
   );
@@ -32,7 +51,9 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     showConfirmDialog({
       title: 'Delete Collection',
       message: 'Are you sure you want to delete this collection?',
-      onConfirm() {},
+      async onConfirm() {
+        await deleteCollection({ collectionId: collection.id });
+      },
       primaryActionLabel: 'Delete',
       primaryButtonVariant: 'destructive',
       alertText:

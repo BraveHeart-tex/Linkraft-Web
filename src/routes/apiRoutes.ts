@@ -8,5 +8,6 @@ export const API_ROUTES = {
   collection: {
     createCollection: '/collections',
     getUserCollections: '/collections',
+    deleteCollection: (collectionId: number) => `/collections/${collectionId}`,
   },
 } as const;

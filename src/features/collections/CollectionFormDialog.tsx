@@ -27,6 +27,8 @@ import { useCreateCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { Loader2Icon } from 'lucide-react';
 import { AxiosApiError } from '@/lib/api.types';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 
 interface CollectionFormDialogProps {
   isOpen: boolean;
@@ -37,6 +39,7 @@ const CollectionFormDialog = ({
   isOpen,
   onOpenChange,
 }: CollectionFormDialogProps) => {
+  const queryClient = useQueryClient();
   const form = useForm<CreateCollectionDto>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: {
@@ -47,8 +50,10 @@ const CollectionFormDialog = ({
   });
 
   const { mutate: createCollection, isPending } = useCreateCollection({
-    onSuccess(data) {
-      console.log('data', data);
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.collections.getCollections],
+      });
       showSuccessToast('Collection created successfully');
       onOpenChange(false);
       form.reset();

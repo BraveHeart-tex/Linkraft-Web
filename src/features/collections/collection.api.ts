@@ -40,3 +40,21 @@ export const useCollections = () =>
     },
     queryKey: [QUERY_KEYS.collections.getCollections],
   });
+
+export const useDeleteCollection = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    { collectionId: number }
+  >
+): UseMutationResult<ApiResponse<null>, unknown, { collectionId: number }> =>
+  useMutation({
+    mutationFn: async ({ collectionId }) => {
+      const response = await api.delete<ApiResponse<null>>(
+        API_ROUTES.collection.deleteCollection(collectionId)
+      );
+
+      return response.data;
+    },
+    ...options,
+  });

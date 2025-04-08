@@ -63,7 +63,11 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
         </div>
         <div className="flex items-center w-full justify-between gap-8">
           {/* TODO: */}
-          <UserAvatar profilePicture="" visibleName="Bora Karaca" />
+          <UserAvatar
+            profilePicture=""
+            visibleName="Bora Karaca"
+            avatarClassNames="shadow-sm"
+          />
           <div className="text-xs text-muted-foreground space-y-1">
             <div className="flex items-center gap-1 justify-end">
               <LinkIcon className="h-4 w-4" />

@@ -4,11 +4,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface UserAvatarProps {
   profilePicture: string | undefined;
   visibleName: string | undefined;
+  avatarClassNames?: string;
 }
 
-const UserAvatar = ({ profilePicture, visibleName }: UserAvatarProps) => {
+const UserAvatar = ({
+  profilePicture,
+  visibleName,
+  avatarClassNames,
+}: UserAvatarProps) => {
   return (
-    <Avatar>
+    <Avatar className={avatarClassNames}>
       <AvatarImage src={profilePicture} />
       <AvatarFallback>
         {generateAvatarFallback(visibleName || '')}

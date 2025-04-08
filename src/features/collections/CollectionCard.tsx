@@ -1,6 +1,6 @@
 'use client';
 import { Card, CardContent } from '@/components/ui/card';
-import { Collection } from './collection.types';
+import { Collection, CollectionWithBookmarkCount } from './collection.types';
 import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
 import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
 import { formatIsoDate } from '@/lib/dateUtils';
@@ -26,16 +26,41 @@ interface CollectionCardProps {
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
   const queryClient = useQueryClient();
-  const { mutateAsync: deleteCollection } = useDeleteCollection({
-    onSuccess() {
-      queryClient.invalidateQueries({
+  const { mutate: deleteCollection } = useDeleteCollection({
+    async onMutate() {
+      showSuccessToast('Collection deleted successfully.');
+
+      await queryClient.cancelQueries({
         queryKey: [QUERY_KEYS.collections.getCollections],
       });
-      showSuccessToast('Collection deleted successfully.');
+
+      const previousCollections = queryClient.getQueryData<
+        CollectionWithBookmarkCount[]
+      >([QUERY_KEYS.collections.getCollections]);
+
+      if (!previousCollections) return;
+
+      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        [QUERY_KEYS.collections.getCollections],
+        (old) =>
+          old?.filter((oldCollection) => oldCollection.id !== collection.id)
+      );
+
+      return { previousCollections };
     },
-    onError(error) {
+    onError(error, _variables, context) {
+      queryClient.setQueryData(
+        [QUERY_KEYS.collections.getCollections],
+        (context as { previousCollections: CollectionWithBookmarkCount[] })
+          ?.previousCollections
+      );
       showErrorToast('An error occurred while deleting the collection', {
         description: (error as AxiosApiError).message,
+      });
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.collections.getCollections],
       });
     },
   });
@@ -52,7 +77,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       title: 'Delete Collection',
       message: 'Are you sure you want to delete this collection?',
       async onConfirm() {
-        await deleteCollection({ collectionId: collection.id });
+        deleteCollection({ collectionId: collection.id });
       },
       primaryActionLabel: 'Delete',
       primaryButtonVariant: 'destructive',

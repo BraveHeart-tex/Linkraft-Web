@@ -6,8 +6,7 @@ import CollectionCard from '@/features/collections/CollectionCard';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionsPage = () => {
-  const { data, isLoading, isError } = useCollections();
-  const collections = data?.data;
+  const { data: collections, isLoading, isError } = useCollections();
 
   return (
     <main className="space-y-8">

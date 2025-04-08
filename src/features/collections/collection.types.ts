@@ -7,3 +7,7 @@ export interface Collection {
   isDeleted: boolean;
   color: string;
 }
+
+export type CollectionWithBookmarkCount = Collection & {
+  bookmarkCount: number;
+};

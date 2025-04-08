@@ -19,6 +19,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { AxiosApiError } from '@/lib/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
+import { CUSTOM_EVENT_KEYS } from '@/lib/utils';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -26,6 +27,7 @@ interface CollectionCardProps {
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
   const queryClient = useQueryClient();
+
   const { mutate: deleteCollection } = useDeleteCollection({
     async onMutate() {
       showSuccessToast('Collection deleted successfully.');
@@ -51,8 +53,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     onError(error, _variables, context) {
       queryClient.setQueryData(
         [QUERY_KEYS.collections.getCollections],
-        (context as { previousCollections: CollectionWithBookmarkCount[] })
-          ?.previousCollections
+        context?.previousCollections
       );
       showErrorToast('An error occurred while deleting the collection', {
         description: (error as AxiosApiError).message,
@@ -112,7 +113,18 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
             >
               <DropdownMenuItem
                 className="justify-start"
-                onClick={(event) => event.stopPropagation()}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  const customEvent = new CustomEvent(
+                    CUSTOM_EVENT_KEYS.OPEN_EDIT_COLLECTION_DIALOG,
+                    {
+                      bubbles: true,
+                      cancelable: true,
+                      detail: collection,
+                    }
+                  );
+                  window.dispatchEvent(customEvent);
+                }}
                 asChild
               >
                 <Button variant="ghost">Edit Collection Info</Button>

@@ -5,7 +5,7 @@ import {
   UseMutationResult,
   useQuery,
 } from '@tanstack/react-query';
-import { CreateCollectionDto } from './collection.schema';
+import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
 import api from '@/lib/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { Collection, CollectionWithBookmarkCount } from './collection.types';
@@ -45,13 +45,49 @@ export const useDeleteCollection = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
-    { collectionId: number }
+    { collectionId: number },
+    { previousCollections: CollectionWithBookmarkCount[] }
   >
-): UseMutationResult<ApiResponse<null>, unknown, { collectionId: number }> =>
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  { collectionId: number },
+  { previousCollections: CollectionWithBookmarkCount[] }
+> =>
   useMutation({
     mutationFn: async ({ collectionId }) => {
       const response = await api.delete<ApiResponse<null>>(
         API_ROUTES.collection.deleteCollection(collectionId)
+      );
+
+      return response.data;
+    },
+    ...options,
+  });
+
+interface UpdateCollectionContext {
+  previousCollections: CollectionWithBookmarkCount[];
+  toastId: string | number;
+}
+
+export const useUpdateCollection = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    UpdateCollectionDto,
+    UpdateCollectionContext
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  UpdateCollectionDto,
+  UpdateCollectionContext
+> =>
+  useMutation({
+    mutationFn: async (data) => {
+      const response = await api.put(
+        API_ROUTES.collection.updateCollection(data.id),
+        data
       );
 
       return response.data;

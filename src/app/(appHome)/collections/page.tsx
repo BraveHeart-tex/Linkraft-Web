@@ -3,6 +3,7 @@ import CollectionCardSkeleton from '@/components/CollectionCardSkeleton';
 import AddNewCollectionButton from '@/features/collections/AddNewCollectionButton';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
+import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionsPage = () => {
@@ -47,6 +48,7 @@ const CollectionsPage = () => {
               <CollectionCard collection={collection} key={collection.id} />
             ))}
             <AddNewCollectionButton variant="complimentary" />
+            <CollectionFormDialog shouldRegisterCustomListeners />
           </div>
         ) : null}
         {!isLoading && !isError && collections?.length === 0 ? (

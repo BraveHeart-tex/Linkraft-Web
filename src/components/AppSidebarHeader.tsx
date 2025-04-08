@@ -3,6 +3,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Input } from './ui/input';
 import UserMenu from '@/features/users/UserMenu';
 import NewActionsDropdown from './NewActionsDropdown';
+import ColorModeToggle from './ColorModeToggle';
 
 const AppSidebarHeader = () => {
   return (
@@ -12,6 +13,7 @@ const AppSidebarHeader = () => {
       <div className="w-full flex items-center justify-between gap-8">
         <Input type="text" placeholder="Search for links" className="w-xs" />
         <div className="flex items-center gap-4">
+          <ColorModeToggle />
           <NewActionsDropdown />
           <UserMenu />
         </div>

@@ -4,6 +4,7 @@ import './globals.css';
 import QueryClientProviders from '@/providers/QueryClientProviders';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,11 +22,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <QueryClientProviders>
-          {children}
-          <Toaster closeButton richColors />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+            <Toaster closeButton richColors />
+          </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProviders>
       </body>

@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { Plus } from 'lucide-react';
+import { ChevronDown, Plus } from 'lucide-react';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { useState } from 'react';
@@ -17,8 +17,11 @@ const NewActionsDropdown = () => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="rounded-full">
-            <Plus className="h-4 w-4" />
+          <Button className="px-1">
+            <div className="flex items-center justify-between gap-1">
+              <Plus className="h-6! w-6!" />
+              <ChevronDown className="h-2 w-4 ml-auto" />
+            </div>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-max grid">

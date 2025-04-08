@@ -8,5 +8,5 @@ export default async function Home() {
     redirect('/sign-in');
   }
 
-  return <div>Home Page</div>;
+  return <div></div>;
 }

@@ -2,6 +2,7 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Input } from './ui/input';
 import UserMenu from '@/features/users/UserMenu';
+import NewActionsDropdown from './NewActionsDropdown';
 
 const AppSidebarHeader = () => {
   return (
@@ -10,7 +11,10 @@ const AppSidebarHeader = () => {
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="w-full flex items-center justify-between gap-8">
         <Input type="text" placeholder="Search for links" className="w-xs" />
-        <UserMenu />
+        <div className="flex items-center gap-8">
+          <NewActionsDropdown />
+          <UserMenu />
+        </div>
       </div>
     </header>
   );

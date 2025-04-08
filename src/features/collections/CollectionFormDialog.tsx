@@ -37,25 +37,26 @@ const CollectionFormDialog = ({
   isOpen,
   onOpenChange,
 }: CollectionFormDialogProps) => {
-  const { mutate: createCollection, isPending } = useCreateCollection({
-    onSuccess(data) {
-      console.log('data', data);
-      showSuccessToast('Collection created successfully');
-      onOpenChange(false);
-    },
-    onError(error) {
-      showErrorToast('Something went wrong while creating a collection', {
-        description: (error as AxiosApiError).message,
-      });
-    },
-  });
-
   const form = useForm<CreateCollectionDto>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: {
       color: '#ffc107',
       description: '',
       name: '',
+    },
+  });
+
+  const { mutate: createCollection, isPending } = useCreateCollection({
+    onSuccess(data) {
+      console.log('data', data);
+      showSuccessToast('Collection created successfully');
+      onOpenChange(false);
+      form.reset();
+    },
+    onError(error) {
+      showErrorToast('Something went wrong while creating a collection', {
+        description: (error as AxiosApiError).message,
+      });
     },
   });
 

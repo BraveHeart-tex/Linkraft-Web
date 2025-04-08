@@ -32,7 +32,10 @@ const SignInForm = () => {
     onSuccess(data) {
       showSuccessToast(data.message);
       router.push('/');
-      queryClient.setQueryData([QUERY_KEYS.getCurrentUser], data.data?.user);
+      queryClient.setQueryData(
+        [QUERY_KEYS.auth.getCurrentUser],
+        data.data?.user
+      );
     },
     onError(error) {
       const { response } = error as AxiosApiError;

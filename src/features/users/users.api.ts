@@ -14,5 +14,5 @@ export const useCurrentUser = () =>
 
       return response.data;
     },
-    queryKey: [QUERY_KEYS.getCurrentUser],
+    queryKey: [QUERY_KEYS.auth.getCurrentUser],
   });

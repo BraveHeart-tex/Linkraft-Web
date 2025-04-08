@@ -1,3 +1,8 @@
 export const QUERY_KEYS = {
-  getCurrentUser: 'getCurrentUser',
+  auth: {
+    getCurrentUser: 'getCurrentUser',
+  },
+  collections: {
+    getCollections: '',
+  },
 };

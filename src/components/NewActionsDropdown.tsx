@@ -17,7 +17,7 @@ const NewActionsDropdown = () => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="px-1">
+          <Button className="px-1" size="sm">
             <div className="flex items-center justify-between gap-1">
               <Plus className="h-6! w-6!" />
               <ChevronDown className="h-2 w-4 ml-auto" />

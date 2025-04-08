@@ -11,7 +11,7 @@ const AppSidebarHeader = () => {
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="w-full flex items-center justify-between gap-8">
         <Input type="text" placeholder="Search for links" className="w-xs" />
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4">
           <NewActionsDropdown />
           <UserMenu />
         </div>

@@ -5,4 +5,7 @@ export const API_ROUTES = {
     signOut: '/auth/sign-out',
     getCurrentUser: '/auth/me',
   },
+  collection: {
+    createCollection: '/collections',
+  },
 } as const;

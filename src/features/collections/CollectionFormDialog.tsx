@@ -23,6 +23,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import ColorPicker from '@/components/ui/color-picker';
+import { useCreateCollection } from './collection.api';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { Loader2Icon } from 'lucide-react';
+import { AxiosApiError } from '@/lib/api.types';
 
 interface CollectionFormDialogProps {
   isOpen: boolean;
@@ -33,6 +37,19 @@ const CollectionFormDialog = ({
   isOpen,
   onOpenChange,
 }: CollectionFormDialogProps) => {
+  const { mutate: createCollection, isPending } = useCreateCollection({
+    onSuccess(data) {
+      console.log('data', data);
+      showSuccessToast('Collection created successfully');
+      onOpenChange(false);
+    },
+    onError(error) {
+      showErrorToast('Something went wrong while creating a collection', {
+        description: (error as AxiosApiError).message,
+      });
+    },
+  });
+
   const form = useForm<CreateCollectionDto>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: {
@@ -43,7 +60,7 @@ const CollectionFormDialog = ({
   });
 
   const onSubmit = (values: CreateCollectionDto) => {
-    console.log(values);
+    createCollection(values);
   };
 
   return (
@@ -108,7 +125,17 @@ const CollectionFormDialog = ({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Add Collection</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader2Icon className="animate-spin" />
+                    Creating
+                  </>
+                ) : (
+                  'Create'
+                )}{' '}
+                Collection
+              </Button>
             </div>
           </form>
         </Form>

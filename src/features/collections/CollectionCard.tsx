@@ -90,7 +90,8 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     <Card
       className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-all"
       style={{
-        background: generateSubtleGradientFromHex(collection.color),
+        backgroundImage: generateSubtleGradientFromHex(collection.color),
+        backgroundRepeat: 'no-repeat',
       }}
       onClick={() => router.push(`/collections/${collection.id}`)}
     >

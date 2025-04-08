@@ -51,8 +51,7 @@ export const hexToHSL = (hex: string): { h: number; s: number; l: number } => {
 export const generateSubtleGradientFromHex = (hex: string): string => {
   const { h, s, l } = hexToHSL(hex);
 
-  const start = `hsla(${h}, ${s}%, ${l}%, 0.08)`; // Visible but soft
-  const end = `hsla(${h}, ${s}%, ${l}%, 0)`; // Fully transparent
+  const visibleAccent = `hsla(${h}, ${Math.max(40, s - 10)}%, ${Math.min(85, l + 10)}%, 0.15)`;
 
-  return `linear-gradient(10deg, ${start}, ${end})`;
+  return `linear-gradient(45deg, ${visibleAccent} 10%, var(--card) 50%, var(--card) 100%) !important`;
 };

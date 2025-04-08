@@ -21,13 +21,18 @@ import { useSignIn } from './auth.api';
 import { AxiosApiError } from '@/lib/api.types';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 
 const SignInForm = () => {
+  const queryClient = useQueryClient();
+
   const router = useRouter();
   const { mutate, isPending } = useSignIn({
     onSuccess(data) {
       showSuccessToast(data.message);
       router.push('/');
+      queryClient.setQueryData([QUERY_KEYS.getCurrentUser], data.data?.user);
     },
     onError(error) {
       const { response } = error as AxiosApiError;

@@ -4,12 +4,10 @@ import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
-  useQuery,
 } from '@tanstack/react-query';
 import { SignInDto, SignUpDto } from './auth.schema';
-import { SessionValidationResult, SignInResponse } from './auth.types';
+import { SignInResponse } from './auth.types';
 import { ApiResponse } from '@/lib/api.types';
-import { QUERY_KEYS } from '@/lib/queryKeys';
 
 export const useSignIn = (
   options?: UseMutationOptions<ApiResponse<SignInResponse>, unknown, SignInDto>
@@ -39,14 +37,15 @@ export const useSignUp = (
     ...options,
   });
 
-export const useCurrentUser = () =>
-  useQuery({
-    queryFn: async () => {
-      const response = await api.get<ApiResponse<SessionValidationResult>>(
-        API_ROUTES.auth.getCurrentUser
+export const useSignOut = (
+  options?: UseMutationOptions<ApiResponse<null>, unknown, void>
+): UseMutationResult<ApiResponse<null>, unknown, void> =>
+  useMutation({
+    mutationFn: async (): Promise<ApiResponse<null>> => {
+      const response = await api.post<ApiResponse<null>>(
+        API_ROUTES.auth.signOut
       );
-
       return response.data;
     },
-    queryKey: [QUERY_KEYS.getCurrentUser],
+    ...options,
   });

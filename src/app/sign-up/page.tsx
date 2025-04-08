@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 const SignUpPage = async () => {
   const result = await getCurrentUser();
-  if (result?.session && result?.user) {
+  if (result?.user) {
     redirect('/');
   }
 

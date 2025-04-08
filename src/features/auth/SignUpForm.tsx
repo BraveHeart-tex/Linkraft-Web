@@ -38,6 +38,7 @@ const SignUpForm = () => {
   const form = useForm<SignUpDto>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
+      visibleName: '',
       email: '',
       password: '',
     },
@@ -73,6 +74,19 @@ const SignUpForm = () => {
               </div>
             </div>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="visibleName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Visible Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} placeholder="John" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="email"

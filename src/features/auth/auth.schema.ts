@@ -16,6 +16,12 @@ export const SignInSchema = z.object({
 export type SignInDto = z.infer<typeof SignInSchema>;
 
 export const SignUpSchema = z.object({
+  visibleName: z
+    .string({
+      required_error: 'Please provide a visible name',
+    })
+    .min(1, 'Please provide a visible name')
+    .max(255, 'Visible name cannot be more than 255 characters'),
   email: z
     .string({
       required_error: 'Email is required',

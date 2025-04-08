@@ -19,13 +19,11 @@ export const getCurrentUser = async (): Promise<SessionValidationResult> => {
     const data = response.data.data;
 
     return {
-      session: data?.session!,
       user: data?.user!,
     };
   } catch (error) {
     console.error('getCurrentUser error', error);
     return {
-      session: null,
       user: null,
     };
   }

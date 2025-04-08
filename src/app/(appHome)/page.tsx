@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@/features/auth/auth.server';
-import SignUpForm from '@/features/auth/SignUpForm';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
@@ -9,9 +8,5 @@ export default async function Home() {
     redirect('/sign-in');
   }
 
-  return (
-    <div>
-      <SignUpForm />
-    </div>
-  );
+  return <div>Home Page</div>;
 }

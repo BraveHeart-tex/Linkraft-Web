@@ -1,4 +1,5 @@
-import { ChevronDown } from 'lucide-react';
+'use client';
+import { ChevronDown, PlusIcon } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +15,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { useCollections } from '@/features/collections/collection.api';
+import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
+import { useState } from 'react';
+import Link from 'next/link';
 
 const tags = [
   { name: 'advice', count: 2 },
@@ -31,44 +36,11 @@ const tags = [
   { name: 'work', count: 1 },
 ];
 
-const collections = [
-  { name: 'Documents', count: 5 },
-  { name: 'Images', count: 12 },
-  { name: 'Videos', count: 3 },
-];
-
 const AppSidebar = () => {
   return (
     <Sidebar>
       <SidebarContent>
-        {/* Collections section */}
-        <Collapsible defaultOpen className="w-full group/collapsible">
-          <SidebarGroup className="py-2">
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-sidebar-accent rounded-md">
-                <span className="text-sm font-medium">Collections</span>
-                <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {collections.map((item) => (
-                    <SidebarMenuItem key={item.name}>
-                      <SidebarMenuButton asChild>
-                        <a href="#">{item.name}</a>
-                      </SidebarMenuButton>
-                      {item.count !== null && (
-                        <SidebarMenuBadge>{item.count}</SidebarMenuBadge>
-                      )}
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-
+        <SidebarCollectionsList />
         {/* Tags section */}
         <Collapsible defaultOpen className="w-full group/collapsible">
           <SidebarGroup className="py-2">
@@ -98,6 +70,55 @@ const AppSidebar = () => {
         </Collapsible>
       </SidebarContent>
     </Sidebar>
+  );
+};
+
+const SidebarCollectionsList = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: collections } = useCollections();
+
+  if (!collections) return null;
+
+  return (
+    <>
+      <Collapsible defaultOpen className="w-full group/collapsible">
+        <SidebarGroup className="py-2">
+          <CollapsibleTrigger
+            className="w-full"
+            onClick={(event) => {
+              if (collections.length === 0) {
+                setIsOpen(true);
+                event.preventDefault();
+              }
+            }}
+          >
+            <div className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-sidebar-accent rounded-md">
+              <span className="text-sm font-medium">Collections</span>
+              {collections.length > 0 ? (
+                <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+              ) : (
+                <PlusIcon className="w-4 h-4" />
+              )}
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="animate-collapsible-down data-[state=closed]:animate-collapsible-up">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {collections.map((item) => (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton asChild>
+                      <Link href={`/collections/${item.id}`}>{item.name}</Link>
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge>{item.bookmarkCount}</SidebarMenuBadge>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
+      <CollectionFormDialog isOpen={isOpen} onOpenChange={setIsOpen} />
+    </>
   );
 };
 

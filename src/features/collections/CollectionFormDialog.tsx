@@ -30,6 +30,7 @@ import { AxiosApiError } from '@/lib/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CollectionWithBookmarkCount } from './collection.types';
+import { Textarea } from '@/components/ui/textarea';
 
 interface CollectionFormDialogProps {
   isOpen: boolean;
@@ -96,7 +97,7 @@ const CollectionFormDialog = ({
                 <FormItem>
                   <FormLabel>Collection Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder="E.g. Watch Later" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,7 +110,10 @@ const CollectionFormDialog = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea
+                      {...field}
+                      placeholder="The purpose of this collection"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,3 +1,4 @@
+'use client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collection } from './collection.types';
 import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
@@ -39,15 +40,23 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
                 <EllipsisIcon />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="space-y-2 py-2">
-              <DropdownMenuItem onClick={(event) => event.stopPropagation()}>
-                Edit Collection Info
+            <DropdownMenuContent
+              className="grid w-max space-y-2 py-2"
+              align="end"
+            >
+              <DropdownMenuItem
+                className="justify-start"
+                onClick={(event) => event.stopPropagation()}
+                asChild
+              >
+                <Button variant="ghost">Edit Collection Info</Button>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(event) => event.stopPropagation()}
-                className="text-destructive"
+                className="text-destructive justify-start"
+                asChild
               >
-                Delete Collection
+                <Button variant="ghost">Delete Collection</Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

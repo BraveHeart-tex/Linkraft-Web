@@ -1,5 +1,12 @@
 'use client';
-import { ChevronDown, PlusIcon } from 'lucide-react';
+import {
+  ChevronDown,
+  FolderIcon,
+  HomeIcon,
+  LinkIcon,
+  PinIcon,
+  PlusIcon,
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -9,6 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuBadge,
+  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -36,17 +44,57 @@ const tags = [
   { name: 'work', count: 1 },
 ];
 
+const sidebarLinks = [
+  {
+    label: 'Dashboard',
+    href: '/',
+    icon: HomeIcon,
+  },
+  {
+    label: 'Pinned Links',
+    href: '/links/pinned',
+    icon: PinIcon,
+  },
+  {
+    label: 'Links',
+    href: '/links',
+    icon: LinkIcon,
+  },
+  {
+    label: 'Collections',
+    href: '/collections',
+    icon: FolderIcon,
+  },
+];
+
 const AppSidebar = () => {
   return (
     <Sidebar>
       <SidebarContent>
+        <SidebarGroup className="py-2">
+          <SidebarGroupLabel>App</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sidebarLinks.map((link) => (
+                <SidebarMenuItem key={link.href}>
+                  <SidebarMenuButton asChild>
+                    <Link href={link.href} className="flex items-center gap-1">
+                      <link.icon className="w-4 h-4" />
+                      <span>{link.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarCollectionsList />
         {/* Tags section */}
         <Collapsible defaultOpen className="w-full group/collapsible">
           <SidebarGroup className="py-2">
             <CollapsibleTrigger className="w-full">
               <div className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-sidebar-accent rounded-md">
-                <span className="text-sm font-medium">Tags</span>
+                <SidebarGroupLabel className="px-0">Tags</SidebarGroupLabel>
                 <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
               </div>
             </CollapsibleTrigger>
@@ -93,7 +141,9 @@ const SidebarCollectionsList = () => {
             }}
           >
             <div className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-sidebar-accent rounded-md">
-              <span className="text-sm font-medium">Collections</span>
+              <SidebarGroupLabel className="px-0">
+                Collections
+              </SidebarGroupLabel>
               {collections.length > 0 ? (
                 <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
               ) : (

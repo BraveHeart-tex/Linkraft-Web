@@ -11,4 +11,7 @@ export const API_ROUTES = {
     deleteCollection: (collectionId: number) => `/collections/${collectionId}`,
     updateCollection: (collectionId: number) => `/collections/${collectionId}`,
   },
+  bookmark: {
+    createBookmark: '/bookmarks',
+  },
 } as const;

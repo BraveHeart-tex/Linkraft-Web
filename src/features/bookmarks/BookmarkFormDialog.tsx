@@ -84,37 +84,41 @@ const BookmarkFormDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Link</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. http://example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="collectionId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Collection</FormLabel>
-                  <FormControl>
-                    <ComboBox
-                      options={collectionOptions}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      ref={field.ref}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="w-full grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. http://example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="collectionId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Collection</FormLabel>
+                    <FormControl>
+                      <ComboBox
+                        options={collectionOptions}
+                        onValueChange={(value) => {
+                          field.onChange(value === null ? null : +value);
+                        }}
+                        value={field.value}
+                        ref={field.ref}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="title"

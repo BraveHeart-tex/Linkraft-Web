@@ -24,7 +24,7 @@ interface ComboBoxProps {
   options: ComboboxOption[];
 
   value: FieldValue;
-  onValueChange: (newValue: string) => void;
+  onValueChange: (newValue: string | null) => void;
   ref?: React.Ref<HTMLButtonElement | null>;
 }
 
@@ -103,7 +103,9 @@ const OptionsList = ({ options, setOpen, onValueChange }: OptionsListProps) => {
               key={option.value ?? option.label}
               value={option.value?.toString() ?? ''}
               onSelect={() => {
-                onValueChange(option.value?.toString() || '');
+                onValueChange(
+                  option.value === null ? null : option.value.toString()
+                );
                 setOpen(false);
               }}
             >

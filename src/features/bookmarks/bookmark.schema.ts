@@ -1,13 +1,11 @@
 import { z } from 'zod';
 
 export const createBookmarkSchema = z.object({
+  id: z.number().optional(),
   url: z
     .string({ required_error: 'URL is required' })
     .url('Please enter a valid URL'),
-  title: z
-    .string({ required_error: 'Title is required' })
-    .min(1, 'Title cannot be empty')
-    .max(255, 'Title must be under 255 characters'),
+  title: z.string().max(255, 'Title must be under 255 characters').optional(),
   description: z.string().max(10_000, 'Description is too long').optional(),
   thumbnail: z
     .string()
@@ -15,4 +13,5 @@ export const createBookmarkSchema = z.object({
     .max(255, 'Thumbnail URL is too long')
     .optional()
     .nullable(),
+  collectionId: z.number().nullable(),
 });

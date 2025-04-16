@@ -133,7 +133,7 @@ const CollectionFormDialog = ({
     });
 
   const isLoading = isCreatingCollection || isUpdatingCollection;
-  const isEditMode = form.watch('id');
+  const isUpdateMode = form.watch('id');
 
   useEffect(() => {
     setInternalOpen(isOpen);
@@ -160,7 +160,7 @@ const CollectionFormDialog = ({
   };
 
   const onSubmit = (values: CreateCollectionDto) => {
-    if (isEditMode) {
+    if (isUpdateMode) {
       updateCollection({
         ...values,
         id: values.id!,
@@ -174,7 +174,9 @@ const CollectionFormDialog = ({
     <Dialog open={internalOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Collection</DialogTitle>
+          <DialogTitle>
+            {isUpdateMode ? 'Update' : 'Add'} Collection
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -233,10 +235,10 @@ const CollectionFormDialog = ({
                 {isLoading ? (
                   <>
                     <Loader2Icon className="animate-spin" />
-                    {isEditMode ? 'Editing' : 'Creating'}
+                    {isUpdateMode ? 'Updating' : 'Creating'}
                   </>
-                ) : isEditMode ? (
-                  'Edit'
+                ) : isUpdateMode ? (
+                  'Update'
                 ) : (
                   'Create'
                 )}{' '}

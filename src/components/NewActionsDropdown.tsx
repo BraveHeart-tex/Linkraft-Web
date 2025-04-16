@@ -9,9 +9,12 @@ import { ChevronDown, Plus } from 'lucide-react';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { useState } from 'react';
+import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 
 const NewActionsDropdown = () => {
   const [isCollectionDialogOpen, setIsCollectionDialogOpen] = useState(false);
+  const [isBookmarkFormDialogOpen, setIsBookmarkFormDialogOpen] =
+    useState(false);
 
   return (
     <>
@@ -25,7 +28,11 @@ const NewActionsDropdown = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-max grid">
-          <DropdownMenuItem className="justify-start" asChild>
+          <DropdownMenuItem
+            className="justify-start"
+            asChild
+            onClick={() => setIsBookmarkFormDialogOpen(true)}
+          >
             <Button variant="ghost">New Link</Button>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -41,6 +48,10 @@ const NewActionsDropdown = () => {
       <CollectionFormDialog
         isOpen={isCollectionDialogOpen}
         onOpenChange={setIsCollectionDialogOpen}
+      />
+      <BookmarkFormDialog
+        isOpen={isBookmarkFormDialogOpen}
+        onOpenChange={setIsBookmarkFormDialogOpen}
       />
     </>
   );

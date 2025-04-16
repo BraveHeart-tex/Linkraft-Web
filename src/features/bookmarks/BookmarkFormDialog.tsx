@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -82,7 +83,7 @@ const BookmarkFormDialog = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="url"
@@ -143,7 +144,14 @@ const BookmarkFormDialog = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Create Bookmark</Button>
+            <div className="w-full flex items-center justify-end gap-2">
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit">Create Bookmark</Button>
+            </div>
           </form>
         </Form>
       </DialogContent>

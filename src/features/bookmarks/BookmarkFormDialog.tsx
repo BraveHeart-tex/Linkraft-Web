@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useForm } from 'react-hook-form';
-import { CreateBookmarkDto } from './bookmark.types';
+import { Bookmark, CreateBookmarkDto } from './bookmark.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createBookmarkSchema } from './bookmark.schema';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { Collection } from '../collections/collection.types';
 import { useMemo } from 'react';
+import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { AxiosApiError } from '@/lib/api.types';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -36,11 +39,46 @@ const BookmarkFormDialog = ({
   isOpen,
   onOpenChange,
 }: BookmarkFormDialogProps) => {
+  const form = useForm<CreateBookmarkDto>({
+    resolver: zodResolver(createBookmarkSchema),
+    defaultValues: {
+      description: '',
+      title: '',
+      url: '',
+      thumbnail: null,
+      collectionId: null,
+    },
+  });
+
   const queryClient = useQueryClient();
   const collections =
     queryClient.getQueryData<Collection[]>([
       QUERY_KEYS.collections.getCollections,
     ]) || [];
+
+  const { mutate: createBookmark, isPending: isCreatingBookmark } =
+    useCreateBookmark({
+      onSuccess(data) {
+        if (!data?.data) return;
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          (old) => [...(old || []), { ...data.data }]
+        );
+        showSuccessToast('Bookmark created successfully');
+        onOpenChange(false);
+        form.reset();
+      },
+      onError(error) {
+        showErrorToast('Something went wrong while creating a bookmark', {
+          description: (error as AxiosApiError).message,
+        });
+      },
+      onSettled() {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+        });
+      },
+    });
 
   const collectionOptions: ComboboxOption[] = useMemo(() => {
     return [
@@ -52,29 +90,34 @@ const BookmarkFormDialog = ({
     ];
   }, [collections]);
 
-  const form = useForm<CreateBookmarkDto>({
-    resolver: zodResolver(createBookmarkSchema),
-    defaultValues: {
-      description: '',
-      thumbnail: '',
-      title: '',
-      url: '',
-      collectionId: null,
-    },
-  });
-
   const onSubmit = (values: CreateBookmarkDto) => {
-    console.log(values);
+    const hasDuplicate = queryClient
+      .getQueryData<Bookmark[]>([QUERY_KEYS.bookmarks.getBookmarks])
+      ?.some((bookmark) => bookmark.url === values.url);
+
+    if (hasDuplicate) {
+      form.setError(
+        'url',
+        {
+          message: 'You already have a bookmark with this link',
+        },
+        {
+          shouldFocus: true,
+        }
+      );
+      return;
+    }
+
+    createBookmark(values);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange(open);
+    if (!open) form.reset();
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        onOpenChange(open);
-        if (!open) form.reset();
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>New Bookmark</DialogTitle>
@@ -154,7 +197,9 @@ const BookmarkFormDialog = ({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Create Bookmark</Button>
+              <Button type="submit" disabled={isCreatingBookmark}>
+                {isCreatingBookmark ? 'Creating' : 'Create'} Bookmark
+              </Button>
             </div>
           </form>
         </Form>

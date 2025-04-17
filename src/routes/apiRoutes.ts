@@ -13,5 +13,6 @@ export const API_ROUTES = {
   },
   bookmark: {
     createBookmark: '/bookmarks',
+    getBookmarks: '/bookmarks',
   },
 } as const;

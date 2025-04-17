@@ -10,6 +10,7 @@ export interface Bookmark {
   description: string | null;
   thumbnail: string | null;
   deletedAt: Date | null;
+  isMetadataPending: boolean;
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;

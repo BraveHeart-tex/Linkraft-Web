@@ -3,6 +3,9 @@ export const QUERY_KEYS = {
     getCurrentUser: 'getCurrentUser',
   },
   collections: {
-    getCollections: '',
+    getCollections: 'getCollections',
+  },
+  bookmarks: {
+    getBookmarks: 'getBookmarks',
   },
 };

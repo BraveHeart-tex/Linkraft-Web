@@ -8,7 +8,13 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 import {
   Popover,
   PopoverContent,
@@ -72,6 +78,10 @@ export const ComboBox = ({
           {selectedOption?.label}
         </Button>
       </DrawerTrigger>
+      <DrawerTitle className="sr-only">Select an option</DrawerTitle>
+      <DrawerDescription className="sr-only">
+        Use the list of option below
+      </DrawerDescription>
       <DrawerContent>
         <div className="mt-4 border-t">
           <OptionsList

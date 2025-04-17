@@ -65,9 +65,6 @@ const CollectionFormDialog = ({
           [QUERY_KEYS.collections.getCollections],
           (old) => [...(old || []), { ...data.data, bookmarkCount: 0 }]
         );
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.collections.getCollections],
-        });
         showSuccessToast('Collection created successfully');
         onOpenChange?.(false);
         form.reset();
@@ -75,6 +72,11 @@ const CollectionFormDialog = ({
       onError(error) {
         showErrorToast('Something went wrong while creating a collection', {
           description: (error as AxiosApiError).message,
+        });
+      },
+      onSettled() {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.collections.getCollections],
         });
       },
     });
@@ -179,7 +181,7 @@ const CollectionFormDialog = ({
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"

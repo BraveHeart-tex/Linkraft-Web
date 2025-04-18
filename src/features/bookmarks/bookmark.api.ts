@@ -22,7 +22,7 @@ export const useCreateBookmark = (
 ): UseMutationResult<ApiResponse<Bookmark>, unknown, CreateBookmarkDto> => {
   return useMutation({
     mutationFn: async (data) => {
-      return safeApiCall<ApiResponse<Bookmark>>(() =>
+      return safeApiCall(() =>
         api.post<ApiResponse<Bookmark>>(
           API_ROUTES.bookmark.createBookmark,
           data
@@ -37,7 +37,7 @@ export const useBookmarks = () =>
   useQuery({
     queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
     queryFn: async () => {
-      const response = await safeApiCall<ApiResponse<Bookmark[]>>(() =>
+      const response = await safeApiCall(() =>
         api.get<ApiResponse<Bookmark[]>>(
           // TODO: Make this dynamic later
           `${API_ROUTES.bookmark.getBookmarks}?page=1&pageSize=10`

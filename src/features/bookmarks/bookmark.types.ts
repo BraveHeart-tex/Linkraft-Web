@@ -3,7 +3,7 @@ import { createBookmarkSchema } from './bookmark.schema';
 
 export interface Bookmark {
   id: number;
-  createdAt: Date | null;
+  createdAt: Date;
   userId: number;
   url: string;
   title: string;
@@ -11,6 +11,7 @@ export interface Bookmark {
   thumbnail: string | null;
   deletedAt: Date | null;
   isMetadataPending: boolean;
+  faviconUrl: string | null;
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;

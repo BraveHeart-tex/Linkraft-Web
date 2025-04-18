@@ -6,6 +6,7 @@ import {
   LinkIcon,
   PinIcon,
   PlusIcon,
+  TrashIcon,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -64,6 +65,11 @@ const sidebarLinks = [
     label: 'Collections',
     href: '/collections',
     icon: FolderIcon,
+  },
+  {
+    label: 'Trash',
+    href: '/trash',
+    icon: TrashIcon,
   },
 ];
 

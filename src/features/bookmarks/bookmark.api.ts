@@ -48,9 +48,10 @@ export const useBookmarks = () =>
     },
   });
 
+// TODO: Have enabled pattern here
 export const useBookmarkUpdate = (
   bookmarkId: number,
-  onUpdate: (metadata: { title: string }) => void
+  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void
 ) => {
   const socket = useSocket();
 

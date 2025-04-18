@@ -28,7 +28,7 @@ import { Collection } from '../collections/collection.types';
 import { useMemo } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api.types';
+import { ErrorApiResponse } from '@/lib/api.types';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -69,9 +69,34 @@ const BookmarkFormDialog = ({
         form.reset();
       },
       onError(error) {
-        showErrorToast('Something went wrong while creating a bookmark', {
-          description: (error as AxiosApiError).message,
-        });
+        const apiError = error as ErrorApiResponse;
+        console.log(apiError);
+
+        switch (apiError.error.code) {
+          case 'CONFLICT': {
+            const existing = (
+              apiError.error.details as { bookmarkWithSameUrl: Bookmark }
+            )?.bookmarkWithSameUrl;
+            if (existing && typeof existing === 'object') {
+              form.setError(
+                'url',
+                {
+                  message: 'There is already a bookmark with this URL',
+                },
+                {
+                  shouldFocus: true,
+                }
+              );
+            }
+            break;
+          }
+
+          default:
+            showErrorToast('Something went wrong while creating a bookmark', {
+              description: apiError.message,
+            });
+            break;
+        }
       },
       onSettled() {
         queryClient.invalidateQueries({

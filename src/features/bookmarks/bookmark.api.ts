@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import { ApiResponse } from '@/lib/api.types';
+import { ErrorApiResponse, ApiResponse } from '@/lib/api.types';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useMutation,
@@ -11,6 +11,7 @@ import { Bookmark, CreateBookmarkDto } from './bookmark.types';
 import { useEffect } from 'react';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useSocket } from '@/context/SocketProvider';
+import axios from 'axios';
 
 export const useCreateBookmark = (
   options?: UseMutationOptions<
@@ -21,12 +22,21 @@ export const useCreateBookmark = (
 ): UseMutationResult<ApiResponse<Bookmark>, unknown, CreateBookmarkDto> => {
   return useMutation({
     mutationFn: async (data) => {
-      const response = await api.post<ApiResponse<Bookmark>>(
-        API_ROUTES.bookmark.createBookmark,
-        data
-      );
+      try {
+        const response = await api.post<ApiResponse<Bookmark>>(
+          API_ROUTES.bookmark.createBookmark,
+          data
+        );
 
-      return response.data;
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          const apiError = error.response?.data as ErrorApiResponse;
+          throw apiError;
+        }
+
+        throw error;
+      }
     },
     ...options,
   });

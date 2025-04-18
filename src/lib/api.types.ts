@@ -1,14 +1,14 @@
 import { SignInResponse } from '@/features/auth/auth.types';
 import { AxiosError } from 'axios';
 
-export interface ApiSuccess<T> {
+export interface SuccessApiResponse<T> {
   success: true;
   data: T;
   message: string;
   error: null;
 }
 
-export interface ApiError {
+export interface ErrorApiResponse {
   success: false;
   data: null;
   message: string;
@@ -18,6 +18,6 @@ export interface ApiError {
   };
 }
 
-export type ApiResponse<T> = ApiSuccess<T> | ApiError;
+export type ApiResponse<T> = SuccessApiResponse<T> | ErrorApiResponse;
 
 export type AxiosApiError = AxiosError<ApiResponse<SignInResponse>>;

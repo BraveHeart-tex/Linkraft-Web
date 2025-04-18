@@ -3,7 +3,7 @@ import { createBookmarkSchema } from './bookmark.schema';
 
 export interface Bookmark {
   id: number;
-  createdAt: Date;
+  createdAt: string;
   userId: number;
   url: string;
   title: string;

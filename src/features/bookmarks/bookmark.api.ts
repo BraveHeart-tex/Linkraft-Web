@@ -33,6 +33,29 @@ export const useCreateBookmark = (
   });
 };
 
+export const useDeleteBookmark = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    { bookmarkId: number },
+    { previousBookmarks: Bookmark[] }
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  { bookmarkId: number },
+  { previousBookmarks: Bookmark[] }
+> => {
+  return useMutation({
+    mutationFn: async (data) => {
+      return safeApiCall(() =>
+        api.delete(API_ROUTES.bookmark.deleteBookmark(data.bookmarkId))
+      );
+    },
+    ...options,
+  });
+};
+
 export const useBookmarks = () =>
   useQuery({
     queryKey: [QUERY_KEYS.bookmarks.getBookmarks],

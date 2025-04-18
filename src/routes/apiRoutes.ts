@@ -14,5 +14,6 @@ export const API_ROUTES = {
   bookmark: {
     createBookmark: '/bookmarks',
     getBookmarks: '/bookmarks',
+    deleteBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}`,
   },
 } as const;

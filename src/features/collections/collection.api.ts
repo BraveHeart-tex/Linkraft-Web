@@ -1,4 +1,4 @@
-import { ApiResponse } from '@/lib/api.types';
+import { ApiResponse } from '@/lib/api/api.types';
 import {
   useMutation,
   UseMutationOptions,
@@ -6,10 +6,11 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
-import api from '@/lib/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { Collection, CollectionWithBookmarkCount } from './collection.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
+import api from '@/lib/api/api';
+import { safeApiCall } from '@/lib/api/safeApiCall';
 
 export const useCreateCollection = (
   options?: UseMutationOptions<
@@ -20,11 +21,12 @@ export const useCreateCollection = (
 ): UseMutationResult<ApiResponse<Collection>, unknown, CreateCollectionDto> =>
   useMutation({
     mutationFn: async (data: CreateCollectionDto) => {
-      const response = await api.post<ApiResponse<Collection>>(
-        API_ROUTES.collection.createCollection,
-        data
+      return safeApiCall<ApiResponse<Collection>>(() =>
+        api.post<ApiResponse<Collection>>(
+          API_ROUTES.collection.createCollection,
+          data
+        )
       );
-      return response.data;
     },
     ...options,
   });
@@ -32,11 +34,13 @@ export const useCreateCollection = (
 export const useCollections = () =>
   useQuery({
     queryFn: async () => {
-      const response = await api.get<
-        ApiResponse<CollectionWithBookmarkCount[]>
-      >(API_ROUTES.collection.getUserCollections);
+      const response = await safeApiCall(() =>
+        api.get<ApiResponse<CollectionWithBookmarkCount[]>>(
+          API_ROUTES.collection.getUserCollections
+        )
+      );
 
-      return response.data.data;
+      return response.data;
     },
     queryKey: [QUERY_KEYS.collections.getCollections],
   });
@@ -56,11 +60,11 @@ export const useDeleteCollection = (
 > =>
   useMutation({
     mutationFn: async ({ collectionId }) => {
-      const response = await api.delete<ApiResponse<null>>(
-        API_ROUTES.collection.deleteCollection(collectionId)
+      return safeApiCall<ApiResponse<null>>(() =>
+        api.delete<ApiResponse<null>>(
+          API_ROUTES.collection.deleteCollection(collectionId)
+        )
       );
-
-      return response.data;
     },
     ...options,
   });
@@ -85,12 +89,9 @@ export const useUpdateCollection = (
 > =>
   useMutation({
     mutationFn: async (data) => {
-      const response = await api.put(
-        API_ROUTES.collection.updateCollection(data.id),
-        data
+      return await safeApiCall(() =>
+        api.put(API_ROUTES.collection.updateCollection(data.id), data)
       );
-
-      return response.data;
     },
     ...options,
   });

@@ -1,4 +1,4 @@
-import api from '@/lib/api';
+import api from '@/lib/api/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useMutation,
@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { SignInDto, SignUpDto } from './auth.schema';
 import { SignInResponse } from './auth.types';
-import { ApiResponse } from '@/lib/api.types';
+import { ApiResponse } from '@/lib/api/api.types';
 
 export const useSignIn = (
   options?: UseMutationOptions<ApiResponse<SignInResponse>, unknown, SignInDto>

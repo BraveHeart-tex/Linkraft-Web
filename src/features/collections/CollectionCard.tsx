@@ -16,7 +16,7 @@ import {
 import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 import { useDeleteCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api.types';
+import { AxiosApiError } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CUSTOM_EVENT_KEYS } from '@/lib/utils';

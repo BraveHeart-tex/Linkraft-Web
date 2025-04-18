@@ -28,7 +28,7 @@ import { Collection } from '../collections/collection.types';
 import { useMemo } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { ErrorApiResponse } from '@/lib/api.types';
+import { ErrorApiResponse } from '@/lib/api/api.types';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -70,7 +70,6 @@ const BookmarkFormDialog = ({
       },
       onError(error) {
         const apiError = error as ErrorApiResponse;
-        console.log(apiError);
 
         switch (apiError.error.code) {
           case 'CONFLICT': {

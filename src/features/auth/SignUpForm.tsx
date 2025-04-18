@@ -19,8 +19,8 @@ import GoogleIcon from '@/components/GoogleIcon';
 import { useSignUp } from './auth.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { AxiosApiError } from '@/lib/api.types';
 import { showErrorToast } from '@/lib/toast';
+import { AxiosApiError } from '@/lib/api/api.types';
 
 const SignUpForm = () => {
   const router = useRouter();

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import api from '@/lib/api';
+import api from '@/lib/api/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { SessionValidationResult } from './auth.types';
-import { ApiResponse } from '@/lib/api.types';
+import { ApiResponse } from '@/lib/api/api.types';
 import { cookies } from 'next/headers';
 
 export const getCurrentUser = async (): Promise<SessionValidationResult> => {

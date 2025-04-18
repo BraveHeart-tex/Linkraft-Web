@@ -1,7 +1,7 @@
-import api from '@/lib/api';
+import api from '@/lib/api/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { useQuery } from '@tanstack/react-query';
-import { ApiResponse } from '@/lib/api.types';
+import { ApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { SessionValidationResult } from '../auth/auth.types';
 

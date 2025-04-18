@@ -26,7 +26,7 @@ import ColorPicker from '@/components/ui/color-picker';
 import { useCreateCollection, useUpdateCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { Loader2Icon } from 'lucide-react';
-import { AxiosApiError } from '@/lib/api.types';
+import { AxiosApiError } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { Collection, CollectionWithBookmarkCount } from './collection.types';

@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import GoogleIcon from '@/components/GoogleIcon';
 import { useSignIn } from './auth.api';
-import { AxiosApiError } from '@/lib/api.types';
+import { AxiosApiError } from '@/lib/api/api.types';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';

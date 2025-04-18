@@ -12,7 +12,7 @@ import { CogIcon, LogOutIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
 import { showErrorToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api.types';
+import { AxiosApiError } from '@/lib/api/api.types';
 import UserAvatar from './UserAvatar';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';

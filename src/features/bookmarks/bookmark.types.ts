@@ -8,7 +8,6 @@ export interface Bookmark {
   url: string;
   title: string;
   description: string | null;
-  thumbnail: string | null;
   deletedAt: Date | null;
   isMetadataPending: boolean;
   faviconUrl: string | null;

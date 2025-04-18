@@ -45,7 +45,6 @@ const BookmarkFormDialog = ({
       description: '',
       title: '',
       url: '',
-      thumbnail: null,
       collectionId: null,
     },
   });

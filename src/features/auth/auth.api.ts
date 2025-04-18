@@ -8,17 +8,16 @@ import {
 import { SignInDto, SignUpDto } from './auth.schema';
 import { SignInResponse } from './auth.types';
 import { ApiResponse } from '@/lib/api/api.types';
+import { safeApiCall } from '@/lib/api/safeApiCall';
 
 export const useSignIn = (
   options?: UseMutationOptions<ApiResponse<SignInResponse>, unknown, SignInDto>
 ): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignInDto> =>
   useMutation({
     mutationFn: async (data: SignInDto) => {
-      const response = await api.post<ApiResponse<SignInResponse>>(
-        API_ROUTES.auth.signIn,
-        data
+      return safeApiCall(() =>
+        api.post<ApiResponse<SignInResponse>>(API_ROUTES.auth.signIn, data)
       );
-      return response.data;
     },
     ...options,
   });
@@ -28,11 +27,9 @@ export const useSignUp = (
 ): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignUpDto> =>
   useMutation({
     mutationFn: async (data: SignUpDto) => {
-      const response = await api.post<ApiResponse<SignInResponse>>(
-        API_ROUTES.auth.signUp,
-        data
+      return safeApiCall(() =>
+        api.post<ApiResponse<SignInResponse>>(API_ROUTES.auth.signUp, data)
       );
-      return response.data;
     },
     ...options,
   });
@@ -42,10 +39,9 @@ export const useSignOut = (
 ): UseMutationResult<ApiResponse<null>, unknown, void> =>
   useMutation({
     mutationFn: async (): Promise<ApiResponse<null>> => {
-      const response = await api.post<ApiResponse<null>>(
-        API_ROUTES.auth.signOut
+      return safeApiCall(() =>
+        api.post<ApiResponse<null>>(API_ROUTES.auth.signOut)
       );
-      return response.data;
     },
     ...options,
   });

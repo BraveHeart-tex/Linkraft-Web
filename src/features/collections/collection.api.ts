@@ -4,6 +4,7 @@ import {
   UseMutationOptions,
   UseMutationResult,
   useQuery,
+  UseQueryOptions,
 } from '@tanstack/react-query';
 import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
 import { API_ROUTES } from '@/routes/apiRoutes';
@@ -31,7 +32,12 @@ export const useCreateCollection = (
     ...options,
   });
 
-export const useCollections = () =>
+export const useCollections = (
+  options?: Omit<
+    UseQueryOptions<CollectionWithBookmarkCount[], Error>,
+    'queryKey'
+  >
+) =>
   useQuery({
     queryFn: async () => {
       const response = await safeApiCall(() =>
@@ -40,9 +46,10 @@ export const useCollections = () =>
         )
       );
 
-      return response.data;
+      return response.data || [];
     },
     queryKey: [QUERY_KEYS.collections.getCollections],
+    ...options,
   });
 
 export const useDeleteCollection = (

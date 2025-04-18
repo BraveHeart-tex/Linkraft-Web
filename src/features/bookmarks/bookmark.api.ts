@@ -5,6 +5,7 @@ import {
   UseMutationOptions,
   UseMutationResult,
   useQuery,
+  UseQueryOptions,
 } from '@tanstack/react-query';
 import { Bookmark, CreateBookmarkDto } from './bookmark.types';
 import { useEffect } from 'react';
@@ -56,7 +57,9 @@ export const useDeleteBookmark = (
   });
 };
 
-export const useBookmarks = () =>
+export const useBookmarks = (
+  options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>
+) =>
   useQuery({
     queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
     queryFn: async () => {
@@ -69,10 +72,11 @@ export const useBookmarks = () =>
 
       return response.data || [];
     },
+    ...options,
   });
 
 // TODO: Have enabled pattern here
-export const useBookmarkUpdate = (
+export const useBookmarkMetadataUpdate = (
   bookmarkId: number,
   onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void
 ) => {

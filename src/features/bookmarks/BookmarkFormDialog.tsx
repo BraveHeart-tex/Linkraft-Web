@@ -80,7 +80,7 @@ const BookmarkFormDialog = ({
               form.setError(
                 'url',
                 {
-                  message: 'There is already a bookmark with this URL',
+                  message: `There is already a bookmark with this URL ${existing.deletedAt ? 'in Trash' : ''}`,
                 },
                 {
                   shouldFocus: true,

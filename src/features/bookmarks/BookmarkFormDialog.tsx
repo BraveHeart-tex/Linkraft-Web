@@ -91,23 +91,6 @@ const BookmarkFormDialog = ({
   }, [collections]);
 
   const onSubmit = (values: CreateBookmarkDto) => {
-    const hasDuplicate = queryClient
-      .getQueryData<Bookmark[]>([QUERY_KEYS.bookmarks.getBookmarks])
-      ?.some((bookmark) => bookmark.url === values.url);
-
-    if (hasDuplicate) {
-      form.setError(
-        'url',
-        {
-          message: 'You already have a bookmark with this link',
-        },
-        {
-          shouldFocus: true,
-        }
-      );
-      return;
-    }
-
     createBookmark(values);
   };
 

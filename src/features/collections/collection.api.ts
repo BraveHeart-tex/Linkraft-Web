@@ -21,7 +21,7 @@ export const useCreateCollection = (
 ): UseMutationResult<ApiResponse<Collection>, unknown, CreateCollectionDto> =>
   useMutation({
     mutationFn: async (data: CreateCollectionDto) => {
-      return safeApiCall<ApiResponse<Collection>>(() =>
+      return safeApiCall(() =>
         api.post<ApiResponse<Collection>>(
           API_ROUTES.collection.createCollection,
           data
@@ -60,7 +60,7 @@ export const useDeleteCollection = (
 > =>
   useMutation({
     mutationFn: async ({ collectionId }) => {
-      return safeApiCall<ApiResponse<null>>(() =>
+      return safeApiCall(() =>
         api.delete<ApiResponse<null>>(
           API_ROUTES.collection.deleteCollection(collectionId)
         )
@@ -90,7 +90,10 @@ export const useUpdateCollection = (
   useMutation({
     mutationFn: async (data) => {
       return await safeApiCall(() =>
-        api.put(API_ROUTES.collection.updateCollection(data.id), data)
+        api.put<ApiResponse<null>>(
+          API_ROUTES.collection.updateCollection(data.id),
+          data
+        )
       );
     },
     ...options,

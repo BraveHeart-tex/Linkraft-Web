@@ -71,6 +71,7 @@ const BookmarkFormDialog = ({
       onError(error) {
         const apiError = error as ErrorApiResponse;
 
+        // TODO: Use status codes instead of hard-coded strings
         switch (apiError.error.code) {
           case 'CONFLICT': {
             const existing = (

@@ -26,7 +26,7 @@ import ColorPicker from '@/components/ui/color-picker';
 import { useCreateCollection, useUpdateCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { Loader2Icon } from 'lucide-react';
-import { AxiosApiError } from '@/lib/api/api.types';
+import { ErrorApiResponse } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { Collection, CollectionWithBookmarkCount } from './collection.types';
@@ -70,8 +70,11 @@ const CollectionFormDialog = ({
         form.reset();
       },
       onError(error) {
+        // TODO: Handle validation errors as well
+        const apiError = error as ErrorApiResponse;
+
         showErrorToast('Something went wrong while creating a collection', {
-          description: (error as AxiosApiError).message,
+          description: apiError.message,
         });
       },
       onSettled() {
@@ -118,12 +121,14 @@ const CollectionFormDialog = ({
         return { previousCollections, toastId };
       },
       onError(error, _variables, context) {
+        const apiError = error as ErrorApiResponse;
+
         queryClient.setQueryData(
           [QUERY_KEYS.collections.getCollections],
           context?.previousCollections
         );
         showErrorToast('Something went wrong while editing the collection', {
-          description: (error as AxiosApiError).message,
+          description: apiError.message,
           id: context?.toastId,
         });
       },

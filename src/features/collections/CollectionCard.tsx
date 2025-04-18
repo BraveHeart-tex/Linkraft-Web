@@ -16,7 +16,7 @@ import {
 import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 import { useDeleteCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api/api.types';
+import { ErrorApiResponse } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CUSTOM_EVENT_KEYS } from '@/lib/utils';
@@ -51,12 +51,13 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       return { previousCollections };
     },
     onError(error, _variables, context) {
+      const apiError = error as ErrorApiResponse;
       queryClient.setQueryData(
         [QUERY_KEYS.collections.getCollections],
         context?.previousCollections
       );
       showErrorToast('An error occurred while deleting the collection', {
-        description: (error as AxiosApiError).message,
+        description: apiError.message,
       });
     },
     onSettled() {

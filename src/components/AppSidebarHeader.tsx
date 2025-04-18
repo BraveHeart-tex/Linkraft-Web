@@ -11,7 +11,11 @@ const AppSidebarHeader = () => {
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="w-full flex items-center justify-between gap-8">
-        <Input type="text" placeholder="Search for links" className="w-xs" />
+        <Input
+          type="text"
+          placeholder="Search for bookmarks"
+          className="w-xs"
+        />
         <div className="flex items-center gap-4">
           <ColorModeToggle />
           <NewActionsDropdown />

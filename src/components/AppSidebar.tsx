@@ -51,13 +51,13 @@ const sidebarLinks = [
     icon: HomeIcon,
   },
   {
-    label: 'Pinned Links',
-    href: '/links/pinned',
+    label: 'Pinned Bookmarks',
+    href: '/bookmarks/pinned',
     icon: PinIcon,
   },
   {
-    label: 'Links',
-    href: '/links',
+    label: 'Bookmarks',
+    href: '/bookmarks',
     icon: LinkIcon,
   },
   {

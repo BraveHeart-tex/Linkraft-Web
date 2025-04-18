@@ -4,7 +4,7 @@ import { useBookmarks } from '@/features/bookmarks/bookmark.api';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import { LinkIcon } from 'lucide-react';
 
-const LinksPage = () => {
+const BookmarksPage = () => {
   const { data: bookmarks, isLoading, isError } = useBookmarks();
 
   return (
@@ -62,4 +62,4 @@ const LinksPage = () => {
   );
 };
 
-export default LinksPage;
+export default BookmarksPage;

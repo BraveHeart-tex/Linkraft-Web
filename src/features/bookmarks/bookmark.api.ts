@@ -130,6 +130,37 @@ export const useTrashedBookmarks = (
   });
 };
 
+export const useRestoreBookmark = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    { bookmarkId: number },
+    {
+      previousBookmarks: Bookmark[];
+      previousTrashedBookmarks: Bookmark[];
+      toastId: number | string;
+    }
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  { bookmarkId: number },
+  {
+    previousBookmarks: Bookmark[];
+    previousTrashedBookmarks: Bookmark[];
+    toastId: number | string;
+  }
+> =>
+  useMutation({
+    mutationFn: async (data) =>
+      safeApiCall(() =>
+        api.put<ApiResponse<null>>(
+          API_ROUTES.bookmark.restoreBookmark(data.bookmarkId)
+        )
+      ),
+    ...options,
+  });
+
 // TODO: Have enabled pattern here
 export const useBookmarkMetadataUpdate = (
   bookmarkId: number,

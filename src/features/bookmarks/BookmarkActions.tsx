@@ -1,6 +1,7 @@
 'use client';
 import {
   usePermanentlyDeleteBookmark,
+  useRestoreBookmark,
   useTrashBookmark,
 } from '@/features/bookmarks/bookmark.api';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
@@ -70,6 +71,60 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
       });
     },
   });
+
+  const { mutate: restoreBookmark, isPending: isRestoringBookmark } =
+    useRestoreBookmark({
+      async onMutate() {
+        const toastId = showSuccessToast('Bookmark restored successfully.');
+
+        await queryClient.cancelQueries({
+          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+        });
+
+        const previousBookmarks = queryClient.getQueryData<Bookmark[]>([
+          QUERY_KEYS.bookmarks.getBookmarks,
+        ]);
+
+        const previousTrashedBookmarks = queryClient.getQueryData<Bookmark[]>([
+          QUERY_KEYS.bookmarks.getTrashedBookmarks,
+        ]);
+
+        if (!previousBookmarks || !previousTrashedBookmarks) return;
+
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          (old) => [...(old || []), { ...bookmark, deletedAt: null }]
+        );
+
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+          (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
+        );
+
+        return { previousBookmarks, previousTrashedBookmarks, toastId };
+      },
+      onError(error, _variables, context) {
+        const apiError = error as ErrorApiResponse;
+
+        queryClient.setQueryData(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          context?.previousBookmarks
+        );
+
+        queryClient.setQueryData(
+          [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+          context?.previousTrashedBookmarks
+        );
+
+        showErrorToast(
+          'An error occurred while restoring the bookmark from trash',
+          {
+            description: apiError.message,
+            id: context?.toastId,
+          }
+        );
+      },
+    });
 
   const { mutate: trashBookmark } = useTrashBookmark({
     async onMutate() {
@@ -150,7 +205,6 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
 
   const handleRestoreBookmark = () => {
     if (!bookmark.deletedAt) return;
-    console.log('bookmark.deletedAt', bookmark.deletedAt);
 
     const elapsedDurationMinutes = DateTime.now().diff(
       DateTime.fromISO(bookmark.deletedAt),
@@ -158,14 +212,21 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     ).minutes;
 
     if (elapsedDurationMinutes < BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES) {
-      // TODO: restore without confirmation
+      restoreBookmark({
+        bookmarkId: bookmark.id,
+      });
+      return;
     }
 
     showConfirmDialog({
       title: 'Restore this bookmark?',
       message: 'This bookmark will be moved back to your active list.',
       alertText: 'It will no longer be in the trash.',
-      onConfirm: () => {},
+      onConfirm: () => {
+        restoreBookmark({
+          bookmarkId: bookmark.id,
+        });
+      },
       primaryActionLabel: 'Restore Bookmark',
     });
   };
@@ -198,7 +259,10 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
           </>
         ) : (
           <>
-            <DropdownMenuItem onClick={handleRestoreBookmark}>
+            <DropdownMenuItem
+              onClick={handleRestoreBookmark}
+              disabled={isRestoringBookmark}
+            >
               <ArchiveRestoreIcon className="mr-2 h-4 w-4" />
               Restore
             </DropdownMenuItem>

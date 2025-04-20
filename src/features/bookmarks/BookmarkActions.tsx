@@ -21,13 +21,16 @@ import {
 import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
+import { DateTime } from 'luxon';
 
 interface BookmarkActionsProps {
   bookmark: Bookmark;
-  isTrashed: boolean;
 }
 
-const BookmarkActions = ({ bookmark, isTrashed }: BookmarkActionsProps) => {
+const BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES = 60;
+
+const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
+  const isTrashed = !!bookmark.deletedAt;
   const queryClient = useQueryClient();
   const { mutate: deleteBookmark } = useDeleteBookmark({
     async onMutate() {
@@ -89,6 +92,7 @@ const BookmarkActions = ({ bookmark, isTrashed }: BookmarkActionsProps) => {
 
   const handlePermanentBookmarkDeletion = () => {
     if (!isTrashed) return;
+
     showConfirmDialog({
       title: 'Are you sure you want to delete this bookmark?',
       message:
@@ -101,7 +105,17 @@ const BookmarkActions = ({ bookmark, isTrashed }: BookmarkActionsProps) => {
   };
 
   const handleRestoreBookmark = () => {
-    if (!isTrashed) return;
+    if (!bookmark.deletedAt) return;
+    console.log('bookmark.deletedAt', bookmark.deletedAt);
+
+    const elapsedDurationMinutes = DateTime.now().diff(
+      DateTime.fromISO(bookmark.deletedAt),
+      'minutes'
+    ).minutes;
+
+    if (elapsedDurationMinutes < BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES) {
+      // TODO: restore without confirmation
+    }
 
     showConfirmDialog({
       title: 'Restore this bookmark?',

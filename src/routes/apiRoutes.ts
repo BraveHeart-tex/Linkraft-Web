@@ -17,6 +17,7 @@ export const API_ROUTES = {
     trashBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}`,
     permanentlyDeleteBookmark: (bookmarkId: number) =>
       `/bookmarks/${bookmarkId}/permanent`,
+    restoreBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}/restore`,
     getTrashedBookmarks: '/bookmarks/trash',
   },
 } as const;

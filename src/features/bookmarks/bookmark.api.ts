@@ -40,13 +40,13 @@ export const useTrashBookmark = (
     ApiResponse<null>,
     unknown,
     { bookmarkId: number },
-    { previousBookmarks: Bookmark[] }
+    { previousBookmarks: Bookmark[]; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
   { bookmarkId: number },
-  { previousBookmarks: Bookmark[] }
+  { previousBookmarks: Bookmark[]; toastId: number | string }
 > => {
   return useMutation({
     mutationFn: async (data) => {
@@ -63,13 +63,13 @@ export const usePermanentlyDeleteBookmark = (
     ApiResponse<null>,
     unknown,
     { bookmarkId: number },
-    { previousBookmarks: Bookmark[] }
+    { previousBookmarks: Bookmark[]; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
   { bookmarkId: number },
-  { previousBookmarks: Bookmark[] }
+  { previousBookmarks: Bookmark[]; toastId: number | string }
 > =>
   useMutation({
     mutationFn: async (data) =>

@@ -35,10 +35,45 @@ const BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES = 60;
 const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
   const isTrashed = !!bookmark.deletedAt;
   const queryClient = useQueryClient();
-  const { mutate: deleteBookmark } = usePermanentlyDeleteBookmark();
+  const { mutate: permanentlyDeleteBookmark } = usePermanentlyDeleteBookmark({
+    async onMutate() {
+      const toastId = showSuccessToast('Bookmark deleted successfully.');
+
+      await queryClient.cancelQueries({
+        queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+      });
+
+      const previousBookmarks = queryClient.getQueryData<Bookmark[]>([
+        QUERY_KEYS.bookmarks.getTrashedBookmarks,
+      ]);
+
+      if (!previousBookmarks) return;
+
+      queryClient.setQueryData<Bookmark[]>(
+        [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+        (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
+      );
+
+      return { previousBookmarks, toastId };
+    },
+    onError(error, _variables, context) {
+      const apiError = error as ErrorApiResponse;
+
+      queryClient.setQueryData(
+        [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+        context?.previousBookmarks
+      );
+
+      showErrorToast('An error occurred while deleting the bookmark', {
+        description: apiError.message,
+        id: context?.toastId,
+      });
+    },
+  });
+
   const { mutate: trashBookmark } = useTrashBookmark({
     async onMutate() {
-      showSuccessToast('Bookmark deleted successfully.');
+      const toastId = showSuccessToast('Bookmark moved to trash successfully.');
 
       await queryClient.cancelQueries({
         queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
@@ -55,7 +90,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
       );
 
-      return { previousBookmarks };
+      return { previousBookmarks, toastId };
     },
     onError(error, _variables, context) {
       const apiError = error as ErrorApiResponse;
@@ -65,8 +100,9 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         context?.previousBookmarks
       );
 
-      showErrorToast('An error occurred while deleting the bookmark', {
+      showErrorToast('An error occurred while moving the bookmark to trash', {
         description: apiError.message,
+        id: context?.toastId,
       });
     },
   });
@@ -104,7 +140,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
       alertText:
         'This bookmark will be lost forever. Are you sure you want to continue?',
       onConfirm: () => {
-        deleteBookmark({
+        permanentlyDeleteBookmark({
           bookmarkId: bookmark.id,
         });
       },

@@ -1,11 +1,31 @@
 'use client';
 
 import React from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
-export type ResourceListProps<T> = {
+type EmptyAction =
+  | {
+      element: React.ReactNode;
+      label?: never;
+      onClick?: never;
+      disabled?: never;
+    }
+  | {
+      label: string;
+      onClick: () => void;
+      disabled?: boolean;
+    };
+
+function isCustomAction(
+  action?: EmptyAction
+): action is { element: React.ReactNode } {
+  if (!action) return false;
+  return 'element' in action;
+}
+
+export interface ResourceListProps<T> {
   data?: T[];
   isLoading?: boolean;
   error?: Error | string | null;
@@ -15,18 +35,13 @@ export type ResourceListProps<T> = {
   keyExtractor?: (item: T, index: number) => string;
   emptyMessage?: string;
   emptyIcon?: React.ReactNode;
-  emptyAction?: {
-    label: string;
-    onClick: () => void;
-    isDisabled?: boolean;
-  };
+  emptyAction?: EmptyAction;
   errorTitle?: string;
   containerClasses?: string;
   className?: string;
   children?: React.ReactNode;
-};
+}
 
-// Main component
 const ResourceList = <T,>({
   data,
   isLoading = false,
@@ -46,7 +61,6 @@ const ResourceList = <T,>({
     return (
       <div className={containerClasses}>
         {renderSkeleton ? (
-          // Custom skeleton
           Array.from({ length: 3 }).map((_, index) => (
             <React.Fragment key={`skeleton-${index}`}>
               {renderSkeleton()}
@@ -101,19 +115,25 @@ const ResourceList = <T,>({
   if (!data || data.length === 0) {
     return (
       <div className="w-full p-8 text-center border rounded-lg bg-muted/10 max-w-xl mx-auto">
-        {emptyIcon && (
-          <div className="mb-3 flex justify-center">{emptyIcon}</div>
-        )}
+        <div className="mb-3 flex justify-center">
+          {emptyIcon ? (
+            emptyIcon
+          ) : (
+            <BoxIcon className="h-10 w-10 stroke-muted-foreground" />
+          )}
+        </div>
         <p className="text-muted-foreground">{emptyMessage}</p>
-        {emptyAction && (
+        {isCustomAction(emptyAction) ? (
+          emptyAction.element
+        ) : (
           <Button
             variant="outline"
             size="sm"
             className="mt-4"
-            onClick={emptyAction.onClick}
-            disabled={emptyAction?.isDisabled}
+            onClick={emptyAction?.onClick}
+            disabled={emptyAction?.disabled}
           >
-            {emptyAction.label}
+            {emptyAction?.label}
           </Button>
         )}
       </div>

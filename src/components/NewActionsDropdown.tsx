@@ -33,7 +33,7 @@ const NewActionsDropdown = () => {
             asChild
             onClick={() => setIsBookmarkFormDialogOpen(true)}
           >
-            <Button variant="ghost">New Link</Button>
+            <Button variant="ghost">New Bookmark</Button>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="justify-start"

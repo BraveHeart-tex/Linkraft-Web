@@ -35,7 +35,7 @@ export const useCreateBookmark = (
   });
 };
 
-export const useDeleteBookmark = (
+export const useTrashBookmark = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
@@ -51,12 +51,35 @@ export const useDeleteBookmark = (
   return useMutation({
     mutationFn: async (data) => {
       return safeApiCall(() =>
-        api.delete(API_ROUTES.bookmark.deleteBookmark(data.bookmarkId))
+        api.delete(API_ROUTES.bookmark.trashBookmark(data.bookmarkId))
       );
     },
     ...options,
   });
 };
+
+export const usePermanentlyDeleteBookmark = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    { bookmarkId: number },
+    { previousBookmarks: Bookmark[] }
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  { bookmarkId: number },
+  { previousBookmarks: Bookmark[] }
+> =>
+  useMutation({
+    mutationFn: async (data) =>
+      safeApiCall(() =>
+        api.delete(
+          API_ROUTES.bookmark.permanentlyDeleteBookmark(data.bookmarkId)
+        )
+      ),
+    ...options,
+  });
 
 export const useBookmarks = (
   options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>

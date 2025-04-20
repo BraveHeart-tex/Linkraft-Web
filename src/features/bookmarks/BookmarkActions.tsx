@@ -1,5 +1,8 @@
 'use client';
-import { useDeleteBookmark } from '@/features/bookmarks/bookmark.api';
+import {
+  usePermanentlyDeleteBookmark,
+  useTrashBookmark,
+} from '@/features/bookmarks/bookmark.api';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
@@ -32,7 +35,8 @@ const BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES = 60;
 const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
   const isTrashed = !!bookmark.deletedAt;
   const queryClient = useQueryClient();
-  const { mutate: deleteBookmark } = useDeleteBookmark({
+  const { mutate: deleteBookmark } = usePermanentlyDeleteBookmark();
+  const { mutate: trashBookmark } = useTrashBookmark({
     async onMutate() {
       showSuccessToast('Bookmark deleted successfully.');
 
@@ -75,14 +79,14 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     await navigator.clipboard.writeText(bookmark.url);
   };
 
-  const handleDeleteBookmark = () => {
+  const handleTrashBookmark = () => {
     showConfirmDialog({
       title: 'Move this bookmark to trash?',
       message: 'You can restore it from the trash at any time if needed.',
       alertText:
         'Bookmarks in the trash for more than 30 days will be permanently deleted.',
       onConfirm: () => {
-        deleteBookmark({
+        trashBookmark({
           bookmarkId: bookmark.id,
         });
       },
@@ -99,7 +103,11 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         'This action cannot be undone, and the bookmark will be permanently deleted.',
       alertText:
         'This bookmark will be lost forever. Are you sure you want to continue?',
-      onConfirm: () => {},
+      onConfirm: () => {
+        deleteBookmark({
+          bookmarkId: bookmark.id,
+        });
+      },
       primaryActionLabel: 'Yes, Delete Forever',
     });
   };
@@ -164,7 +172,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={
-            isTrashed ? handlePermanentBookmarkDeletion : handleDeleteBookmark
+            isTrashed ? handlePermanentBookmarkDeletion : handleTrashBookmark
           }
         >
           <Trash className="mr-2 h-4 w-4" />

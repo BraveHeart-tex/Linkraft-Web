@@ -78,7 +78,10 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
-              <BookmarkActions bookmark={bookmark} />
+              <BookmarkActions
+                bookmark={bookmark}
+                isTrashed={!!bookmark.deletedAt}
+              />
             </div>
           </div>
           <div className="flex items-center text-xs text-muted-foreground">

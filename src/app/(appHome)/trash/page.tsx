@@ -1,3 +1,4 @@
+import TrashedBookmarkList from '@/features/bookmarks/trash/TrashedBookmarkList';
 import { TrashIcon } from 'lucide-react';
 
 const TrashPage = () => {
@@ -7,7 +8,7 @@ const TrashPage = () => {
         <div>
           <div className="flex items-center gap-2">
             <TrashIcon className="size-7" />
-            <div className="">
+            <div>
               <h1 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
                 Trash
               </h1>
@@ -17,6 +18,7 @@ const TrashPage = () => {
             </div>
           </div>
         </div>
+        <TrashedBookmarkList />
       </div>
     </main>
   );

@@ -7,5 +7,6 @@ export const QUERY_KEYS = {
   },
   bookmarks: {
     getBookmarks: 'getBookmarks',
+    getTrashedBookmarks: 'getTrashedBookmarks',
   },
 };

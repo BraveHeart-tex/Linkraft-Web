@@ -1,3 +1,4 @@
+'use client';
 import { ApiResponse } from '@/lib/api/api.types';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
@@ -59,21 +60,52 @@ export const useDeleteBookmark = (
 
 export const useBookmarks = (
   options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>
-) =>
-  useQuery({
+  // queryParams?: {
+  //   page: number;
+  //   pageSize: number;
+  //   search?: string;
+  // }
+) => {
+  // const page = queryParams?.page ?? 1;
+  // const pageSize = queryParams?.pageSize ?? 10;
+  // const search = queryParams?.search ?? '';
+
+  // const queryString = new URLSearchParams({
+  //   page: page.toString(),
+  //   pageSize: pageSize.toString(),
+  //   ...(search ? { search } : {}),
+  // }).toString();
+
+  return useQuery({
     queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
     queryFn: async () => {
       const response = await safeApiCall(() =>
-        api.get<ApiResponse<Bookmark[]>>(
-          // TODO: Make this dynamic later
-          `${API_ROUTES.bookmark.getBookmarks}?page=1&pageSize=10`
-        )
+        api.get<ApiResponse<Bookmark[]>>(`${API_ROUTES.bookmark.getBookmarks}`)
       );
 
       return response.data || [];
     },
     ...options,
   });
+};
+
+export const useTrashedBookmarks = (
+  options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>
+) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+    queryFn: async () => {
+      const response = await safeApiCall(() =>
+        api.get<ApiResponse<Bookmark[]>>(
+          `${API_ROUTES.bookmark.getTrashedBookmarks}`
+        )
+      );
+
+      return response.data ?? [];
+    },
+    ...options,
+  });
+};
 
 // TODO: Have enabled pattern here
 export const useBookmarkMetadataUpdate = (

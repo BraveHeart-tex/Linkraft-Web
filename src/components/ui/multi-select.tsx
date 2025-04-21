@@ -133,6 +133,7 @@ export function MultiSelect({
     isClearable,
     noOptionsMessage: () => noOptionsMessage,
     ref,
+    closeMenuOnSelect: false,
     ...restProps,
   };
 

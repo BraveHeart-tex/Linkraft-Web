@@ -1,3 +1,6 @@
+import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import { Collection } from '@/features/collections/collection.types';
+
 export const API_ROUTES = {
   auth: {
     signIn: '/auth/sign-in',
@@ -8,17 +11,21 @@ export const API_ROUTES = {
   collection: {
     createCollection: '/collections',
     getUserCollections: '/collections',
-    deleteCollection: (collectionId: number) => `/collections/${collectionId}`,
-    updateCollection: (collectionId: number) => `/collections/${collectionId}`,
+    deleteCollection: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}`,
+    updateCollection: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}`,
   },
   bookmark: {
-    createBookmark: '/bookmarks',
     getBookmarks: '/bookmarks',
-    trashBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}`,
-    permanentlyDeleteBookmark: (bookmarkId: number) =>
-      `/bookmarks/${bookmarkId}/permanent`,
-    restoreBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}/restore`,
+    createBookmark: '/bookmarks',
+    updateBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
+    trashBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
     getTrashedBookmarks: '/bookmarks/trash',
+    permanentlyDeleteBookmark: (bookmarkId: Bookmark['id']) =>
+      `/bookmarks/${bookmarkId}/permanent`,
+    restoreBookmark: (bookmarkId: Bookmark['id']) =>
+      `/bookmarks/${bookmarkId}/restore`,
   },
   tags: {
     getUserTags: '/tags',

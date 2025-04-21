@@ -23,3 +23,7 @@ export interface Bookmark {
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;
+
+export type UpdateBookmarkDto = Partial<CreateBookmarkDto> & {
+  id: Bookmark['id'];
+};

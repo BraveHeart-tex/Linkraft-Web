@@ -8,12 +8,29 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { Bookmark, CreateBookmarkDto } from './bookmark.types';
+import {
+  Bookmark,
+  CreateBookmarkDto,
+  UpdateBookmarkDto,
+} from './bookmark.types';
 import { useEffect } from 'react';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useSocket } from '@/context/SocketProvider';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import api from '@/lib/api/api';
+
+export const useUpdateBookmark = (
+  options?: UseMutationOptions<
+    ApiResponse<Bookmark>,
+    unknown,
+    UpdateBookmarkDto
+  >
+): UseMutationResult<ApiResponse<Bookmark>, unknown, UpdateBookmarkDto> =>
+  useMutation({
+    mutationFn: async (data) =>
+      safeApiCall(() => api.put(API_ROUTES.bookmark.updateBookmark(data.id))),
+    ...options,
+  });
 
 export const useCreateBookmark = (
   options?: UseMutationOptions<

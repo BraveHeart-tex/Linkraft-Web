@@ -29,6 +29,12 @@ interface BaseMultiSelectProps {
   noOptionsMessage?: string;
 
   ref?: React.Ref<any>;
+
+  loadOptions?: AsyncProps<
+    SelectOption,
+    true,
+    GroupBase<SelectOption>
+  >['loadOptions'];
 }
 
 interface AsyncMultiSelectProps extends BaseMultiSelectProps {

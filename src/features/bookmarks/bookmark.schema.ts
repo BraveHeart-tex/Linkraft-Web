@@ -8,5 +8,12 @@ export const createBookmarkSchema = z.object({
   title: z.string().max(255, 'Title must be under 255 characters').optional(),
   description: z.string().max(10_000, 'Description is too long').optional(),
   collectionId: z.number().nullable(),
-  tagIds: z.number().array().nullable(),
+  tags: z
+    .object({
+      label: z.string(),
+      value: z.string(),
+      __isNew__: z.boolean().optional(),
+    })
+    .array()
+    .nullable(),
 });

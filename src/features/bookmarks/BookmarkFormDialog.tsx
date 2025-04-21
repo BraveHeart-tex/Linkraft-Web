@@ -37,6 +37,7 @@ const exampleTags = ['advice', 'tech', 'video', 'learning'];
 const tagSelectOptions: SelectOption[] = exampleTags.map((tag, index) => ({
   label: tag,
   value: index.toString(),
+  __isNew__: false,
 }));
 
 interface BookmarkFormDialogProps {
@@ -55,7 +56,8 @@ const BookmarkFormDialog = ({
       title: '',
       url: '',
       collectionId: null,
-      tagIds: null,
+      // TODO: Populate based on initial data
+      tags: [],
     },
   });
 
@@ -177,7 +179,7 @@ const BookmarkFormDialog = ({
             </div>
             <FormField
               control={form.control}
-              name="tagIds"
+              name="tags"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tags</FormLabel>
@@ -185,17 +187,23 @@ const BookmarkFormDialog = ({
                     <MultiSelect
                       isCreatable
                       isClearable
-                      value={tagSelectOptions.filter((option) =>
-                        field.value?.includes(parseInt(option.value))
-                      )}
+                      value={field.value || []}
                       ref={field.ref}
                       onChange={(options) =>
                         field.onChange(
-                          options.map((opt) => parseInt(opt.value))
+                          options.map((opt) => ({
+                            ...opt,
+                            __isNew__: false,
+                          }))
                         )
                       }
                       onCreateOption={(value) => {
-                        alert(`value ${value}`);
+                        const newOption = {
+                          label: value,
+                          id: value,
+                          __isNew__: true,
+                        };
+                        field.onChange([...(field.value || []), newOption]);
                       }}
                       noOptionsMessage="No tags found"
                       options={tagSelectOptions}

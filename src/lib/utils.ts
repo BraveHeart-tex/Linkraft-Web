@@ -1,7 +1,8 @@
+import { SelectOption } from '@/components/ui/multi-select';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
 
@@ -20,13 +21,30 @@ export const CUSTOM_EVENT_KEYS = {
   OPEN_EDIT_COLLECTION_DIALOG: 'OPEN_EDIT_COLLECTION_DIALOG',
 };
 
-export function addTypedCustomEventListener<T>(
+export const addTypedCustomEventListener = <T>(
   type: string,
   handler: (event: CustomEvent<T>) => void
-) {
+): (() => void) => {
   const wrapped = (event: Event) => {
     handler(event as CustomEvent<T>);
   };
   window.addEventListener(type, wrapped);
   return () => window.removeEventListener(type, wrapped);
-}
+};
+
+export const parseTags = (
+  selectedTags: SelectOption[]
+): { existingTagIds: string[]; newTags: string[] } => {
+  const existingTagIds: string[] = [];
+  const newTags: string[] = [];
+
+  selectedTags.forEach((tag) => {
+    if (tag.__isNew__) {
+      newTags.push(tag.label.trim());
+    } else {
+      existingTagIds.push(tag.value);
+    }
+  });
+
+  return { existingTagIds, newTags };
+};

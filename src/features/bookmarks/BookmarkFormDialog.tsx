@@ -30,6 +30,14 @@ import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { StatusCodes } from 'http-status-codes';
+import { MultiSelect, SelectOption } from '@/components/ui/multi-select';
+
+const exampleTags = ['advice', 'tech', 'video', 'learning'];
+
+const tagSelectOptions: SelectOption[] = exampleTags.map((tag, index) => ({
+  label: tag,
+  value: index.toString(),
+}));
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -47,6 +55,7 @@ const BookmarkFormDialog = ({
       title: '',
       url: '',
       collectionId: null,
+      tagIds: null,
     },
   });
 
@@ -172,6 +181,32 @@ const BookmarkFormDialog = ({
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="tagIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      isCreatable
+                      isClearable
+                      value={tagSelectOptions.filter((option) =>
+                        field.value?.includes(parseInt(option.value))
+                      )}
+                      onChange={(options) =>
+                        field.onChange(
+                          options.map((opt) => parseInt(opt.value))
+                        )
+                      }
+                      noOptionsMessage="No tags found"
+                      options={tagSelectOptions}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="title"

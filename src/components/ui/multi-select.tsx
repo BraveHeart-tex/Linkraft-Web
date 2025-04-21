@@ -1,25 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import * as React from 'react';
-import AsyncSelect from 'react-select/async';
-import CreatableSelect from 'react-select/creatable';
+import AsyncSelect, { AsyncProps } from 'react-select/async';
+import CreatableSelect, { CreatableProps } from 'react-select/creatable';
 import AsyncCreatableSelect from 'react-select/async-creatable';
-import type { ClassNamesConfig } from 'react-select';
+import Select from 'react-select';
 import { cn } from '@/lib/utils';
+import type { ClassNamesConfig, GroupBase } from 'react-select';
 
 export interface SelectOption {
   label: string;
   value: string;
 }
 
-export interface MultiSelectProps {
+interface BaseMultiSelectProps {
   options?: SelectOption[];
   defaultValue?: SelectOption[];
   value?: SelectOption[];
-  onChange: (options: SelectOption[]) => void;
-  loadOptions?: (inputValue: string) => Promise<SelectOption[]>;
-  isCreatable?: boolean;
-  isAsync?: boolean;
+  onChange?: (options: SelectOption[]) => void;
   placeholder?: string;
   className?: string;
   label?: string;
@@ -28,14 +27,46 @@ export interface MultiSelectProps {
   isDisabled?: boolean;
   isClearable?: boolean;
   noOptionsMessage?: string;
+
+  ref?: React.Ref<any>;
 }
+
+interface AsyncMultiSelectProps extends BaseMultiSelectProps {
+  isAsync: true;
+  isCreatable?: boolean;
+  loadOptions: AsyncProps<
+    SelectOption,
+    true,
+    GroupBase<SelectOption>
+  >['loadOptions'];
+}
+
+interface CreatableMultiSelectProps extends BaseMultiSelectProps {
+  isAsync?: false;
+  isCreatable: true;
+  onCreateOption?: CreatableProps<
+    SelectOption,
+    true,
+    GroupBase<SelectOption>
+  >['onCreateOption'];
+}
+
+interface StandardMultiSelectProps extends BaseMultiSelectProps {
+  isAsync?: false;
+  isCreatable?: false;
+}
+
+export type MultiSelectProps =
+  | AsyncMultiSelectProps
+  | CreatableMultiSelectProps
+  | StandardMultiSelectProps;
 
 export function MultiSelect({
   options = [],
   defaultValue,
   value,
-  onChange,
   loadOptions,
+  onChange,
   isCreatable = false,
   isAsync = false,
   placeholder = 'Select options...',
@@ -45,6 +76,8 @@ export function MultiSelect({
   isDisabled = false,
   isClearable = true,
   noOptionsMessage = 'No options available',
+  ref,
+  ...restProps
 }: MultiSelectProps) {
   const selectClassNames: ClassNamesConfig = {
     control: ({ isFocused }) =>
@@ -78,31 +111,41 @@ export function MultiSelect({
     noOptionsMessage: () => '!text-muted-foreground !text-sm !py-1.5 !px-2',
   };
 
-  const SelectComponent = React.useMemo(() => {
-    if (isAsync && isCreatable) return AsyncCreatableSelect;
-    if (isAsync) return AsyncSelect;
-    if (isCreatable) return CreatableSelect;
-    return AsyncSelect;
-  }, [isAsync, isCreatable]);
-
   const selectId = React.useId();
   const inputId = id || selectId;
 
-  return (
-    <SelectComponent
-      inputId={inputId}
-      isMulti
-      options={options}
-      defaultValue={defaultValue}
-      value={value}
-      onChange={(selected) => onChange(selected as SelectOption[])}
-      loadOptions={loadOptions}
-      placeholder={placeholder}
-      classNames={selectClassNames}
-      isDisabled={isDisabled}
-      isClearable={isClearable}
-      noOptionsMessage={() => noOptionsMessage}
-      {...(!isAsync && { options })}
-    />
-  );
+  const commonProps = {
+    inputId,
+    isMulti: true,
+    options,
+    defaultValue,
+    value,
+    onChange: (selected: any) => onChange?.(selected as SelectOption[]),
+    placeholder,
+    classNames: selectClassNames,
+    isDisabled,
+    isClearable,
+    noOptionsMessage: () => noOptionsMessage,
+    ref,
+    ...restProps,
+  };
+
+  if (isAsync && isCreatable) {
+    return (
+      <AsyncCreatableSelect
+        loadOptions={loadOptions}
+        {...(commonProps as any)}
+      />
+    );
+  }
+
+  if (isAsync) {
+    return <AsyncSelect loadOptions={loadOptions} {...(commonProps as any)} />;
+  }
+
+  if (isCreatable) {
+    return <CreatableSelect options={options} {...(commonProps as any)} />;
+  }
+
+  return <Select options={options} {...(commonProps as any)} />;
 }

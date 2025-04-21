@@ -194,11 +194,15 @@ const BookmarkFormDialog = ({
                       value={tagSelectOptions.filter((option) =>
                         field.value?.includes(parseInt(option.value))
                       )}
+                      ref={field.ref}
                       onChange={(options) =>
                         field.onChange(
                           options.map((opt) => parseInt(opt.value))
                         )
                       }
+                      onCreateOption={(value) => {
+                        alert(`value ${value}`);
+                      }}
                       noOptionsMessage="No tags found"
                       options={tagSelectOptions}
                     />

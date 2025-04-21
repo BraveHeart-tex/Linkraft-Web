@@ -20,8 +20,6 @@ interface BookmarkCardProps {
   bookmark: Bookmark;
 }
 
-const exampleTags = ['advice', 'tech', 'video', 'learning'];
-
 const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const formattedDate = formatIsoDate(bookmark.createdAt, 'DD');
   const domain = new URL(bookmark.url).hostname.replace('www.', '');
@@ -113,9 +111,9 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-2">
         <div className="flex flex-wrap gap-1">
-          {exampleTags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
+          {bookmark.tags.map((tag) => (
+            <Badge key={tag.id} variant="secondary" className="text-xs">
+              {tag.name}
             </Badge>
           ))}
         </div>

@@ -11,6 +11,11 @@ export interface Bookmark {
   deletedAt: string | null;
   isMetadataPending: boolean;
   faviconUrl: string | null;
+
+  tags: {
+    id: number;
+    name: string;
+  }[];
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;

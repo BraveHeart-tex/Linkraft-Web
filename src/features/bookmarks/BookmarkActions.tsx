@@ -12,7 +12,7 @@ import {
   Copy,
   Edit,
   MoreVertical,
-  Star,
+  PinIcon,
   Trash,
 } from 'lucide-react';
 import {
@@ -254,8 +254,8 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
               Copy URL
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Star className="mr-2 h-4 w-4" />
-              Add to favorites
+              <PinIcon className="mr-2 h-4 w-4" />
+              Pin
             </DropdownMenuItem>
           </>
         ) : (

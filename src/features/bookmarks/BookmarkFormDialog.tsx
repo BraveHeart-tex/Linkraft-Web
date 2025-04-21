@@ -24,14 +24,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { ComboBox, ComboboxOption } from '@/components/ui/combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { StatusCodes } from 'http-status-codes';
-import { MultiSelect, SelectOption } from '@/components/ui/multi-select';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { useCollections } from '../collections/collection.api';
 import { parseTags } from '@/lib/utils';
+import { useTags } from '../tags/tag.api';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -44,8 +45,7 @@ const BookmarkFormDialog = ({
   onOpenChange,
   initialData,
 }: BookmarkFormDialogProps) => {
-  // TODO: FOR TESTING, WILL REMOVE AFTER TAG API
-  const [tagSelectOptions, setTagSelectOptions] = useState<SelectOption[]>([]);
+  const { data: tags } = useTags();
   const form = useForm<CreateBookmarkDto>({
     resolver: zodResolver(createBookmarkSchema),
     defaultValues: {
@@ -219,11 +219,14 @@ const BookmarkFormDialog = ({
                           value,
                           __isNew__: true,
                         };
-                        setTagSelectOptions((prev) => [...prev, newOption]);
                         field.onChange([...(field.value || []), newOption]);
                       }}
                       noOptionsMessage="No tags found"
-                      options={tagSelectOptions}
+                      options={tags?.map((tag) => ({
+                        label: tag.name,
+                        value: tag.id.toString(),
+                        __isNew__: false,
+                      }))}
                     />
                   </FormControl>
                   <FormMessage />

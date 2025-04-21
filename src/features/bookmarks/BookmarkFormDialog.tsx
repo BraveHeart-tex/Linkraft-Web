@@ -29,6 +29,7 @@ import { useMemo } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
+import { StatusCodes } from 'http-status-codes';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -73,9 +74,8 @@ const BookmarkFormDialog = ({
       onError(error) {
         const apiError = error as ErrorApiResponse;
 
-        // TODO: Use status codes instead of hard-coded strings
-        switch (apiError.error.code) {
-          case 'CONFLICT': {
+        switch (apiError.status) {
+          case StatusCodes.CONFLICT: {
             const existing = (
               apiError.error.details as { bookmarkWithSameUrl: Bookmark }
             )?.bookmarkWithSameUrl;

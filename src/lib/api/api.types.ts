@@ -1,11 +1,15 @@
 import { SignInResponse } from '@/features/auth/auth.types';
 import { AxiosError } from 'axios';
+import { StatusCodes } from 'http-status-codes';
+
+type HttpStatusCode = (typeof StatusCodes)[keyof typeof StatusCodes];
 
 export interface SuccessApiResponse<T> {
   success: true;
   data: T;
   message: string;
   error: null;
+  status: HttpStatusCode;
 }
 
 export interface ErrorApiResponse {
@@ -16,6 +20,7 @@ export interface ErrorApiResponse {
     code: string;
     details?: unknown;
   };
+  status: HttpStatusCode;
 }
 
 export type ApiResponse<T> = SuccessApiResponse<T> | ErrorApiResponse;

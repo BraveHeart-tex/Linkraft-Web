@@ -161,10 +161,10 @@ export const useRestoreBookmark = (
     ...options,
   });
 
-// TODO: Have enabled pattern here
 export const useBookmarkMetadataUpdate = (
   bookmarkId: number,
-  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void
+  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void,
+  enabled: boolean
 ) => {
   const socket = useSocket();
 
@@ -173,10 +173,12 @@ export const useBookmarkMetadataUpdate = (
 
     const event = `bookmark:update:${bookmarkId}`;
 
-    socket.on(event, onUpdate);
+    if (enabled) {
+      socket.on(event, onUpdate);
+    }
 
     return () => {
       socket.off(event, onUpdate);
     };
-  }, [bookmarkId, onUpdate, socket]);
+  }, [bookmarkId, onUpdate, socket, enabled]);
 };

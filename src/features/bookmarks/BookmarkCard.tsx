@@ -14,6 +14,7 @@ import { Calendar, Folder, Globe, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import BookmarkActions from './BookmarkActions';
+import { useCallback } from 'react';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -26,26 +27,35 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const domain = new URL(bookmark.url).hostname.replace('www.', '');
   const queryClient = useQueryClient();
 
-  useBookmarkMetadataUpdate(bookmark.id, (metadata) => {
-    queryClient.setQueryData<Bookmark[]>(
-      [QUERY_KEYS.bookmarks.getBookmarks],
-      (old) => {
-        if (!old) return [];
+  const handleBookmarkUpdate = useCallback(
+    (metadata: Pick<Bookmark, 'title' | 'faviconUrl'>) => {
+      queryClient.setQueryData<Bookmark[]>(
+        [QUERY_KEYS.bookmarks.getBookmarks],
+        (old) => {
+          if (!old) return [];
 
-        return old.map((oldBookmark) => {
-          if (oldBookmark.id === bookmark.id) {
-            return {
-              ...oldBookmark,
-              title: metadata.title,
-              faviconUrl: metadata?.faviconUrl,
-              isMetadataPending: false,
-            };
-          }
-          return oldBookmark;
-        });
-      }
-    );
-  });
+          return old.map((oldBookmark) => {
+            if (oldBookmark.id === bookmark.id) {
+              return {
+                ...oldBookmark,
+                title: metadata.title,
+                faviconUrl: metadata?.faviconUrl,
+                isMetadataPending: false,
+              };
+            }
+            return oldBookmark;
+          });
+        }
+      );
+    },
+    [bookmark.id, queryClient]
+  );
+
+  useBookmarkMetadataUpdate(
+    bookmark.id,
+    handleBookmarkUpdate,
+    bookmark.isMetadataPending
+  );
 
   return (
     <Card className={cn('w-full transition-all hover:shadow-md')}>

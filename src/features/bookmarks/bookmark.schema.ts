@@ -5,8 +5,8 @@ export const createBookmarkSchema = z.object({
   url: z
     .string({ required_error: 'URL is required' })
     .url('Please enter a valid URL'),
-  title: z.string().max(255, 'Title must be under 255 characters').optional(),
-  description: z.string().max(10_000, 'Description is too long').optional(),
+  title: z.string().max(255, 'Title must be under 255 characters').nullable(),
+  description: z.string().max(10_000, 'Description is too long').nullable(),
   collectionId: z.number().nullable(),
   tags: z
     .object({

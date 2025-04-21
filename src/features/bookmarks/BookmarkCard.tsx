@@ -111,7 +111,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-2">
         <div className="flex flex-wrap gap-1">
-          {bookmark.tags.map((tag) => (
+          {bookmark?.tags?.map((tag) => (
             <Badge key={tag.id} variant="secondary" className="text-xs">
               {tag.name}
             </Badge>
@@ -119,7 +119,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
         </div>
         <div className="flex items-center text-xs text-muted-foreground">
           <Folder className="mr-1 h-3 w-3" />
-          {'My collection'}
+          {bookmark?.collection?.name}
         </div>
       </CardFooter>
     </Card>

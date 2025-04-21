@@ -26,6 +26,7 @@ import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { DateTime } from 'luxon';
+import { useModalStore } from '@/lib/stores/modalStore';
 
 interface BookmarkActionsProps {
   bookmark: Bookmark;
@@ -35,6 +36,7 @@ const BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES = 60;
 
 const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
   const isTrashed = !!bookmark.deletedAt;
+  const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
   const { mutate: permanentlyDeleteBookmark } = usePermanentlyDeleteBookmark({
     async onMutate() {
@@ -232,6 +234,15 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     });
   };
 
+  const handleEditBookmark = () => {
+    openModal({
+      type: 'edit-bookmark',
+      payload: {
+        bookmark,
+      },
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -245,7 +256,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
       <DropdownMenuContent align="end">
         {!isTrashed ? (
           <>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleEditBookmark}>
               <Edit className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>

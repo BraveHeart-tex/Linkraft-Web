@@ -24,7 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ComboBox, ComboboxOption } from '@/components/ui/combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
@@ -36,11 +36,13 @@ import { parseTags } from '@/lib/utils';
 interface BookmarkFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  initialData?: Bookmark;
 }
 
 const BookmarkFormDialog = ({
   isOpen,
   onOpenChange,
+  initialData,
 }: BookmarkFormDialogProps) => {
   // TODO: FOR TESTING, WILL REMOVE AFTER TAG API
   const [tagSelectOptions, setTagSelectOptions] = useState<SelectOption[]>([]);
@@ -51,10 +53,23 @@ const BookmarkFormDialog = ({
       title: '',
       url: '',
       collectionId: null,
-      // TODO: Populate based on initial data
       tags: [],
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      const { id, title, url, description, tags, collection } = initialData;
+      form.reset({
+        id,
+        collectionId: collection?.id,
+        description,
+        title,
+        url,
+        existingTagIds: tags?.map((tag) => tag.id),
+      });
+    }
+  }, [form, initialData]);
 
   const { data: collections } = useCollections();
   const queryClient = useQueryClient();
@@ -225,6 +240,7 @@ const BookmarkFormDialog = ({
                     <Input
                       placeholder="Will be generated if left empty"
                       {...field}
+                      value={field.value || ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -238,7 +254,11 @@ const BookmarkFormDialog = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Notes, thoughts etc..." {...field} />
+                    <Textarea
+                      placeholder="Notes, thoughts etc..."
+                      {...field}
+                      value={field.value || ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

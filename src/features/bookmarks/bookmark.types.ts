@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createBookmarkSchema } from './bookmark.schema';
+import { Collection } from '../collections/collection.types';
 
 export interface Bookmark {
   id: number;
@@ -11,11 +12,14 @@ export interface Bookmark {
   deletedAt: string | null;
   isMetadataPending: boolean;
   faviconUrl: string | null;
+  collection: Pick<Collection, 'id' | 'name'> | null;
 
-  tags: {
-    id: number;
-    name: string;
-  }[];
+  tags:
+    | {
+        id: number;
+        name: string;
+      }[]
+    | null;
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;

@@ -9,4 +9,7 @@ export const QUERY_KEYS = {
     getBookmarks: 'getBookmarks',
     getTrashedBookmarks: 'getTrashedBookmarks',
   },
+  tags: {
+    getTags: 'getTags',
+  },
 };

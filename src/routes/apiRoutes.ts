@@ -20,4 +20,7 @@ export const API_ROUTES = {
     restoreBookmark: (bookmarkId: number) => `/bookmarks/${bookmarkId}/restore`,
     getTrashedBookmarks: '/bookmarks/trash',
   },
+  tags: {
+    getUserTags: '/tags',
+  },
 } as const;

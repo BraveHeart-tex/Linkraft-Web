@@ -28,22 +28,7 @@ import { useCollections } from '@/features/collections/collection.api';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import { useState } from 'react';
 import Link from 'next/link';
-
-const tags = [
-  { name: 'advice', count: 2 },
-  { name: 'apple', count: 1 },
-  { name: 'finance', count: 1 },
-  { name: 'fitness', count: 2 },
-  { name: 'food', count: 3 },
-  { name: 'gaming', count: 1 },
-  { name: 'productivity', count: 3 },
-  { name: 'software design', count: 1 },
-  { name: 'studies', count: 4 },
-  { name: 'theories', count: 1 },
-  { name: 'virtual reality', count: 2 },
-  { name: 'WFH', count: 1 },
-  { name: 'work', count: 1 },
-];
+import { useTags } from '@/features/tags/tag.api';
 
 const sidebarLinks = [
   {
@@ -107,16 +92,7 @@ const AppSidebar = () => {
             <CollapsibleContent className="animate-collapsible-down data-[state=closed]:animate-collapsible-up">
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {tags.map((tag) => (
-                    <SidebarMenuItem key={tag.name}>
-                      <SidebarMenuButton asChild>
-                        <a href="#">
-                          <span className="text-sky-400">#</span> {tag.name}
-                        </a>
-                      </SidebarMenuButton>
-                      <SidebarMenuBadge>{tag.count}</SidebarMenuBadge>
-                    </SidebarMenuItem>
-                  ))}
+                  <SidebarTagList />
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>
@@ -125,6 +101,21 @@ const AppSidebar = () => {
       </SidebarContent>
     </Sidebar>
   );
+};
+
+const SidebarTagList = () => {
+  const { data: tags } = useTags();
+
+  return (tags || []).map((tag) => (
+    <SidebarMenuItem key={tag.name}>
+      <SidebarMenuButton asChild>
+        <a href="#">
+          <span className="text-sky-400">#</span> {tag.name}
+        </a>
+      </SidebarMenuButton>
+      <SidebarMenuBadge>{tag.usageCount}</SidebarMenuBadge>
+    </SidebarMenuItem>
+  ));
 };
 
 const SidebarCollectionsList = () => {

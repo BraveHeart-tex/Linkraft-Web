@@ -24,13 +24,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { ComboBox, ComboboxOption } from '@/components/ui/combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { Collection } from '../collections/collection.types';
 import { useMemo } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { StatusCodes } from 'http-status-codes';
 import { MultiSelect, SelectOption } from '@/components/ui/multi-select';
+import { useCollections } from '../collections/collection.api';
 
 const exampleTags = ['advice', 'tech', 'video', 'learning'];
 
@@ -59,14 +59,8 @@ const BookmarkFormDialog = ({
     },
   });
 
+  const { data: collections } = useCollections();
   const queryClient = useQueryClient();
-  const collections = useMemo(
-    () =>
-      queryClient.getQueryData<Collection[]>([
-        QUERY_KEYS.collections.getCollections,
-      ]) || [],
-    [queryClient]
-  );
 
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark({
@@ -119,7 +113,7 @@ const BookmarkFormDialog = ({
   const collectionOptions: ComboboxOption[] = useMemo(() => {
     return [
       { label: 'Select an option', value: null },
-      ...collections.map<ComboboxOption>((collection) => ({
+      ...(collections || []).map<ComboboxOption>((collection) => ({
         label: collection.name,
         value: collection.id,
       })),

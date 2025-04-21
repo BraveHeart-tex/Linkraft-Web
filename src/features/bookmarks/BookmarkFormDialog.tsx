@@ -24,21 +24,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { ComboBox, ComboboxOption } from '@/components/ui/combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { StatusCodes } from 'http-status-codes';
 import { MultiSelect, SelectOption } from '@/components/ui/multi-select';
 import { useCollections } from '../collections/collection.api';
-
-const exampleTags = ['advice', 'tech', 'video', 'learning'];
-
-const tagSelectOptions: SelectOption[] = exampleTags.map((tag, index) => ({
-  label: tag,
-  value: index.toString(),
-  __isNew__: false,
-}));
+import { parseTags } from '@/lib/utils';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -49,6 +42,8 @@ const BookmarkFormDialog = ({
   isOpen,
   onOpenChange,
 }: BookmarkFormDialogProps) => {
+  // TODO: FOR TESTING, WILL REMOVE AFTER TAG API
+  const [tagSelectOptions, setTagSelectOptions] = useState<SelectOption[]>([]);
   const form = useForm<CreateBookmarkDto>({
     resolver: zodResolver(createBookmarkSchema),
     defaultValues: {
@@ -123,7 +118,12 @@ const BookmarkFormDialog = ({
   }, [collections]);
 
   const onSubmit = (values: CreateBookmarkDto) => {
-    createBookmark(values);
+    const { existingTagIds, newTags } = parseTags(values.tags);
+    createBookmark({
+      ...values,
+      existingTagIds,
+      newTags,
+    });
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -201,8 +201,10 @@ const BookmarkFormDialog = ({
                         const newOption = {
                           label: value,
                           id: value,
+                          value,
                           __isNew__: true,
                         };
+                        setTagSelectOptions((prev) => [...prev, newOption]);
                         field.onChange([...(field.value || []), newOption]);
                       }}
                       noOptionsMessage="No tags found"

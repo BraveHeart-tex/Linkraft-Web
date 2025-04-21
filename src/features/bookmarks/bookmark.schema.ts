@@ -14,6 +14,7 @@ export const createBookmarkSchema = z.object({
       value: z.string(),
       __isNew__: z.boolean().optional(),
     })
-    .array()
-    .nullable(),
+    .array(),
+  existingTagIds: z.number().array().nullable().optional(),
+  newTags: z.string().array().nullable().optional(),
 });

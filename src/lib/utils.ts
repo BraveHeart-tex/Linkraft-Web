@@ -34,15 +34,15 @@ export const addTypedCustomEventListener = <T>(
 
 export const parseTags = (
   selectedTags: SelectOption[]
-): { existingTagIds: string[]; newTags: string[] } => {
-  const existingTagIds: string[] = [];
+): { existingTagIds: number[]; newTags: string[] } => {
+  const existingTagIds: number[] = [];
   const newTags: string[] = [];
 
   selectedTags.forEach((tag) => {
     if (tag.__isNew__) {
       newTags.push(tag.label.trim());
     } else {
-      existingTagIds.push(tag.value);
+      existingTagIds.push(+tag.value);
     }
   });
 

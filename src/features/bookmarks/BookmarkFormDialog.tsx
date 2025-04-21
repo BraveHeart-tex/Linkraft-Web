@@ -50,10 +50,13 @@ const BookmarkFormDialog = ({
   });
 
   const queryClient = useQueryClient();
-  const collections =
-    queryClient.getQueryData<Collection[]>([
-      QUERY_KEYS.collections.getCollections,
-    ]) || [];
+  const collections = useMemo(
+    () =>
+      queryClient.getQueryData<Collection[]>([
+        QUERY_KEYS.collections.getCollections,
+      ]) || [],
+    [queryClient]
+  );
 
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark({

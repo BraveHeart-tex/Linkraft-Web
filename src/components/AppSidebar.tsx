@@ -109,9 +109,9 @@ const SidebarTagList = () => {
   return (tags || []).map((tag) => (
     <SidebarMenuItem key={tag.name}>
       <SidebarMenuButton asChild>
-        <a href="#">
-          <span className="text-sky-400">#</span> {tag.name}
-        </a>
+        <Link href={`/tags/${tag.id}`}>
+          <span className="text-sky-600 text-base">#</span> {tag.name}
+        </Link>
       </SidebarMenuButton>
       <SidebarMenuBadge>{tag.usageCount}</SidebarMenuBadge>
     </SidebarMenuItem>

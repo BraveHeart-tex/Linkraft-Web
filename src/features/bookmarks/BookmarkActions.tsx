@@ -168,6 +168,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
 
   const handleCopyUrl = async () => {
     await navigator.clipboard.writeText(bookmark.url);
+    showSuccessToast('URL copied to clipboard');
   };
 
   const handleTrashBookmark = () => {

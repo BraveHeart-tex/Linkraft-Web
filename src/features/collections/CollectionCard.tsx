@@ -20,6 +20,8 @@ import { ErrorApiResponse } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CUSTOM_EVENT_KEYS } from '@/lib/utils';
+import { useMemo } from 'react';
+import { UserWithoutPasswordHash } from '../auth/auth.types';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -27,6 +29,12 @@ interface CollectionCardProps {
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
   const queryClient = useQueryClient();
+
+  const user = useMemo(() => {
+    return queryClient.getQueryData<UserWithoutPasswordHash>([
+      QUERY_KEYS.auth.getCurrentUser,
+    ]);
+  }, [queryClient]);
 
   const { mutate: deleteCollection } = useDeleteCollection({
     async onMutate() {
@@ -141,10 +149,9 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           </DropdownMenu>
         </div>
         <div className="flex items-center w-full justify-between gap-8">
-          {/* TODO: */}
           <UserAvatar
             profilePicture=""
-            visibleName="Bora Karaca"
+            visibleName={user?.visibleName || ''}
             avatarClassNames="shadow-sm"
           />
           <div className="text-sm text-muted-foreground space-y-1">

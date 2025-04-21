@@ -9,11 +9,13 @@ import { safeApiCall } from '@/lib/api/safeApiCall';
 export const useCurrentUser = () =>
   useQuery({
     queryFn: async () => {
-      return safeApiCall(() =>
+      const response = await safeApiCall(() =>
         api.get<ApiResponse<SessionValidationResult>>(
           API_ROUTES.auth.getCurrentUser
         )
       );
+
+      return response.data?.user;
     },
     queryKey: [QUERY_KEYS.auth.getCurrentUser],
   });

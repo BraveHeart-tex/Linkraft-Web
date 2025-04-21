@@ -1,4 +1,5 @@
 'use client';
+import { TrashIcon } from 'lucide-react';
 import { useTrashedBookmarks } from '../bookmark.api';
 import BookmarkCard from '../BookmarkCard';
 import BookmarkCardSkeleton from '../BookmarkCardSkeleton';
@@ -28,6 +29,7 @@ const TrashedBookmarkList = () => {
         onClick: () => refetch(),
         disabled: isRefetching,
       }}
+      emptyIcon={<TrashIcon className="h-10 w-10 stroke-muted-foreground" />}
       errorTitle="Couldn't load trashed bookmarks"
       containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
     />

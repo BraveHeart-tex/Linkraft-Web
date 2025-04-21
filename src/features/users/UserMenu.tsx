@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 
 const UserMenu = () => {
   const router = useRouter();
-  const { data } = useCurrentUser();
+  const { data: user } = useCurrentUser();
 
   const { mutate: signOut, isPending } = useSignOut({
     onSuccess() {
@@ -38,16 +38,14 @@ const UserMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <UserAvatar
-          profilePicture={data?.data?.user?.profilePicture}
-          visibleName={data?.data?.user?.visibleName}
+          profilePicture={user?.profilePicture}
+          visibleName={user?.visibleName}
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="flex flex-col gap-1">
-          <span>{data?.data?.user?.visibleName}</span>
-          <span className="text-muted-foreground">
-            {data?.data?.user?.email}
-          </span>
+          <span>{user?.visibleName}</span>
+          <span className="text-muted-foreground">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link

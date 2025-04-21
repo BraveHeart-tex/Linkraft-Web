@@ -7,6 +7,7 @@ import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
 import { useState } from 'react';
 import BookmarkFormDialog from './BookmarkFormDialog';
+import { LinkIcon } from 'lucide-react';
 
 const BookmarkList = () => {
   const { data: bookmarks, isLoading, error, refetch } = useBookmarks();
@@ -24,6 +25,7 @@ const BookmarkList = () => {
       emptyAction={{
         element: <AddBookmarkDialog />,
       }}
+      emptyIcon={<LinkIcon className="h-10 w-10 stroke-muted-foreground" />}
       errorTitle="Couldn't load bookmarks"
       containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
     />

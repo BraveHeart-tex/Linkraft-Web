@@ -17,7 +17,6 @@ export interface ErrorApiResponse {
   data: null;
   message: string;
   error: {
-    code: string;
     details?: unknown;
   };
   status: HttpStatusCode;

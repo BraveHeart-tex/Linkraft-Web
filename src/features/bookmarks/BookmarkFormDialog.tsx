@@ -184,9 +184,6 @@ const BookmarkFormDialog = ({
       async onSettled() {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
-          }),
-          queryClient.invalidateQueries({
             queryKey: [QUERY_KEYS.tags.getTags],
           }),
           queryClient.invalidateQueries({

@@ -28,7 +28,9 @@ export const useUpdateBookmark = (
 ): UseMutationResult<ApiResponse<Bookmark>, unknown, UpdateBookmarkDto> =>
   useMutation({
     mutationFn: async (data) =>
-      safeApiCall(() => api.put(API_ROUTES.bookmark.updateBookmark(data.id))),
+      safeApiCall(() =>
+        api.put(API_ROUTES.bookmark.updateBookmark(data.id), data)
+      ),
     ...options,
   });
 
@@ -36,9 +38,13 @@ export const useCreateBookmark = (
   options?: UseMutationOptions<
     ApiResponse<Bookmark>,
     unknown,
-    CreateBookmarkDto
+    Omit<CreateBookmarkDto, 'tags'>
   >
-): UseMutationResult<ApiResponse<Bookmark>, unknown, CreateBookmarkDto> => {
+): UseMutationResult<
+  ApiResponse<Bookmark>,
+  unknown,
+  Omit<CreateBookmarkDto, 'tags'>
+> => {
   return useMutation({
     mutationFn: async (data) => {
       return safeApiCall(() =>

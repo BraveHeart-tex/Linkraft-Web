@@ -26,7 +26,10 @@ import { ComboBox, ComboboxOption } from '@/components/ui/combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useEffect, useMemo } from 'react';
-import { useCreateBookmark } from '@/features/bookmarks/bookmark.api';
+import {
+  useCreateBookmark,
+  useUpdateBookmark,
+} from '@/features/bookmarks/bookmark.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { StatusCodes } from 'http-status-codes';
@@ -68,13 +71,19 @@ const BookmarkFormDialog = ({
         title,
         url,
         existingTagIds: tags?.map((tag) => tag.id),
+        tags: tags?.map((tag) => ({
+          __isNew__: false,
+          label: tag.name,
+          value: tag.id.toString(),
+        })),
       });
     }
   }, [form, initialData]);
 
   const { data: collections } = useCollections();
   const queryClient = useQueryClient();
-
+  const { mutate: updateBookmark, isPending: isUpdatingBookmark } =
+    useUpdateBookmark();
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark({
       onSuccess(data) {
@@ -135,11 +144,26 @@ const BookmarkFormDialog = ({
 
   const onSubmit = (values: CreateBookmarkDto) => {
     const { existingTagIds, newTags } = parseTags(values.tags);
-    createBookmark({
-      ...values,
-      existingTagIds,
-      newTags,
-    });
+    if (!values.id) {
+      createBookmark({
+        collectionId: values.collectionId,
+        description: values.description,
+        title: values.title,
+        url: values.url,
+        existingTagIds,
+        newTags,
+      });
+    } else {
+      updateBookmark({
+        id: values.id,
+        collectionId: values.collectionId,
+        description: values.description,
+        title: values.title,
+        url: values.url,
+        existingTagIds,
+        newTags,
+      });
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -274,8 +298,17 @@ const BookmarkFormDialog = ({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isCreatingBookmark}>
-                {isCreatingBookmark ? 'Creating' : 'Create'} Bookmark
+              <Button
+                type="submit"
+                disabled={isCreatingBookmark || isUpdatingBookmark}
+              >
+                {isCreatingBookmark
+                  ? 'Creating Bookmark...'
+                  : isUpdatingBookmark
+                    ? 'Updating Bookmark...'
+                    : initialData
+                      ? 'Update Bookmark'
+                      : 'Create Bookmark'}
               </Button>
             </div>
           </form>

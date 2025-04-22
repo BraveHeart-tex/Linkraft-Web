@@ -1,5 +1,6 @@
 'use client';
 import { getSocket } from '@/lib/socket';
+import { Nullable } from '@/lib/common.types';
 import {
   createContext,
   useContext,
@@ -8,15 +9,15 @@ import {
   type ReactNode,
 } from 'react';
 
-const SocketContext = createContext<ReturnType<typeof getSocket> | null>(null);
+const SocketContext =
+  createContext<Nullable<ReturnType<typeof getSocket>>>(null);
 
-// FIXME: Check for getSocket calls
-// so we don't make unnecessary connections
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket] = useState(getSocket());
 
   useEffect(() => {
     socket.connect();
+
     return () => {
       socket.disconnect();
     };

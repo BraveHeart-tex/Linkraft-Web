@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { createBookmarkSchema } from './bookmark.schema';
 import { Collection } from '../collections/collection.types';
+import { Tag } from '../tags/tag.types';
+import { Nullable } from '@/lib/common.types';
 
 export interface Bookmark {
   id: number;
@@ -8,18 +10,18 @@ export interface Bookmark {
   userId: number;
   url: string;
   title: string;
-  description: string | null;
-  deletedAt: string | null;
+  description: Nullable<string>;
+  deletedAt: Nullable<string>;
   isMetadataPending: boolean;
-  faviconUrl: string | null;
-  collection: Pick<Collection, 'id' | 'name'> | null;
+  faviconUrl: Nullable<string>;
+  collection: Nullable<Pick<Collection, 'id' | 'name'>>;
 
-  tags:
-    | {
-        id: number;
-        name: string;
-      }[]
-    | null;
+  tags: Nullable<
+    {
+      id: number;
+      name: string;
+    }[]
+  >;
 }
 
 export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;
@@ -27,3 +29,9 @@ export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;
 export type UpdateBookmarkDto = Partial<CreateBookmarkDto> & {
   id: Bookmark['id'];
 };
+
+export interface UpdateBookmarkResponse {
+  success: boolean;
+  updatedBookmark: Bookmark;
+  createdTags: Tag[];
+}

@@ -10,7 +10,13 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { Calendar, Folder, Globe, ExternalLink } from 'lucide-react';
+import {
+  Calendar,
+  Folder,
+  Globe,
+  ExternalLink,
+  LoaderIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import BookmarkActions from './BookmarkActions';
@@ -49,17 +55,15 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
     [bookmark.id, queryClient]
   );
 
-  useBookmarkMetadataUpdate(
-    bookmark.id,
-    handleBookmarkUpdate,
-    bookmark.isMetadataPending
-  );
+  useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
   return (
     <Card className={cn('w-full transition-all hover:shadow-md')}>
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">
-          {bookmark.faviconUrl ? (
+          {bookmark.isMetadataPending ? (
+            <LoaderIcon className="text-muted-foreground animate-spin" />
+          ) : bookmark.faviconUrl ? (
             <img
               src={bookmark.faviconUrl || '/placeholder.svg'}
               alt={`${bookmark.title} favicon`}
@@ -110,17 +114,21 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
         </a>
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-2">
-        <div className="flex flex-wrap gap-1">
-          {bookmark?.tags?.map((tag) => (
-            <Badge key={tag.id} variant="secondary" className="text-xs">
-              {tag.name}
-            </Badge>
-          ))}
-        </div>
-        <div className="flex items-center text-xs text-muted-foreground">
-          <Folder className="mr-1 h-3 w-3" />
-          {bookmark?.collection?.name}
-        </div>
+        {bookmark?.tags?.length ? (
+          <div className="flex flex-wrap gap-1">
+            {bookmark?.tags?.map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="text-xs">
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+        {bookmark?.collection ? (
+          <div className="flex items-center text-xs text-muted-foreground">
+            <Folder className="mr-1 h-3 w-3" />
+            {bookmark?.collection?.name}
+          </div>
+        ) : null}
       </CardFooter>
     </Card>
   );

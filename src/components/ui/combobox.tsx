@@ -21,17 +21,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { Nullable } from '@/lib/common.types';
 import { useMemo, useState } from 'react';
 import type React from 'react';
 
-type FieldValue = string | number | null;
+type FieldValue = Nullable<string | number>;
 
 interface ComboBoxProps {
   options: ComboboxOption[];
 
   value: FieldValue;
-  onValueChange: (newValue: string | null) => void;
-  ref?: React.Ref<HTMLButtonElement | null>;
+  onValueChange: (newValue: Nullable<string>) => void;
+  ref?: React.Ref<Nullable<HTMLButtonElement>>;
 }
 
 export interface ComboboxOption {
@@ -57,7 +58,7 @@ export const ComboBox = ({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild ref={ref}>
           <Button variant="outline" className="justify-start">
-            {selectedOption?.label}
+            {selectedOption?.label || 'Select an option'}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="start">
@@ -75,7 +76,7 @@ export const ComboBox = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild ref={ref}>
         <Button variant="outline" className="justify-start">
-          {selectedOption?.label}
+          {selectedOption?.label || 'Select an option'}
         </Button>
       </DrawerTrigger>
       <DrawerTitle className="sr-only">Select an option</DrawerTitle>

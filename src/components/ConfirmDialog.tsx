@@ -12,6 +12,7 @@ import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
 import { TriangleAlertIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Nullable } from '@/lib/common.types';
 
 const ConfirmDialog = () => {
   const {
@@ -28,7 +29,7 @@ const ConfirmDialog = () => {
     secondaryButtonVariant,
     alertText,
   } = useConfirmDialogStore((state) => state);
-  const actionRef = useRef<HTMLButtonElement | null>(null);
+  const actionRef = useRef<Nullable<HTMLButtonElement>>(null);
 
   useEffect(() => {
     if (visible && actionRef?.current) {

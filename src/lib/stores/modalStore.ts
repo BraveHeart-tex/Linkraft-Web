@@ -1,12 +1,13 @@
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { create } from 'zustand';
+import { Nullable } from '../common.types';
 
 export type ModalType = {
   type: 'edit-bookmark';
   payload: { bookmark: Bookmark };
 };
 
-type ModalState = ModalType | null;
+type ModalState = Nullable<ModalType>;
 
 interface ModalStore {
   modal: ModalState;

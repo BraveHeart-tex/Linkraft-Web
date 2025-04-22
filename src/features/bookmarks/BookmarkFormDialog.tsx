@@ -182,13 +182,17 @@ const BookmarkFormDialog = ({
         });
       },
       async onSettled() {
-        await queryClient.invalidateQueries({
-          queryKey: [
-            QUERY_KEYS.bookmarks.getBookmarks,
-            QUERY_KEYS.tags.getTags,
-            QUERY_KEYS.collections.getCollections,
-          ],
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.tags.getTags],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.collections.getCollections],
+          }),
+        ]);
       },
     });
   const { mutate: createBookmark, isPending: isCreatingBookmark } =

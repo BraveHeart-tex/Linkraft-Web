@@ -70,7 +70,6 @@ const CollectionFormDialog = ({
         form.reset();
       },
       onError(error) {
-        // TODO: Handle validation errors as well
         const apiError = error as ErrorApiResponse;
 
         showErrorToast('Something went wrong while creating a collection', {

@@ -8,6 +8,9 @@ export const getSocket = () => {
     socket = io(`${process.env.NEXT_PUBLIC_API_URL!}/bookmarks`, {
       withCredentials: true,
       transports: ['websocket'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
   }
 

@@ -69,16 +69,18 @@ const BookmarkFormDialog = ({
       const { id, title, url, description, tags, collection } = initialData;
       form.reset({
         id,
-        collectionId: collection?.id,
+        collectionId: collection?.id || null,
         description,
         title,
         url,
         existingTagIds: tags?.map((tag) => tag.id),
-        tags: tags?.map((tag) => ({
-          __isNew__: false,
-          label: tag.name,
-          value: tag.id.toString(),
-        })),
+        tags: tags?.length
+          ? tags?.map((tag) => ({
+              __isNew__: false,
+              label: tag.name,
+              value: tag.id.toString(),
+            }))
+          : [],
       });
     }
   }, [form, initialData]);
@@ -274,6 +276,7 @@ const BookmarkFormDialog = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
+          {JSON.stringify(form.watch('tags'))}
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="w-full grid gap-4 md:grid-cols-2">
               <FormField
@@ -331,6 +334,7 @@ const BookmarkFormDialog = ({
                         )
                       }
                       onCreateOption={(value) => {
+                        if (!value) return;
                         const newOption = {
                           label: value,
                           id: value,

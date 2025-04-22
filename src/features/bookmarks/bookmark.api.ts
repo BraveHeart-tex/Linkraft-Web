@@ -200,8 +200,7 @@ export const useRestoreBookmark = (
 
 export const useBookmarkMetadataUpdate = (
   bookmarkId: number,
-  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void,
-  enabled: boolean
+  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void
 ) => {
   const socket = useSocket();
 
@@ -210,12 +209,10 @@ export const useBookmarkMetadataUpdate = (
 
     const event = `bookmark:update:${bookmarkId}`;
 
-    if (enabled) {
-      socket.on(event, onUpdate);
-    }
+    socket.on(event, onUpdate);
 
     return () => {
       socket.off(event, onUpdate);
     };
-  }, [bookmarkId, onUpdate, socket, enabled]);
+  }, [bookmarkId, onUpdate, socket]);
 };

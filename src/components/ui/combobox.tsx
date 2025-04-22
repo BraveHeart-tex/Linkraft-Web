@@ -58,7 +58,7 @@ export const ComboBox = ({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild ref={ref}>
           <Button variant="outline" className="justify-start">
-            {selectedOption?.label}
+            {selectedOption?.label || 'Select an option'}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="start">
@@ -76,7 +76,7 @@ export const ComboBox = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild ref={ref}>
         <Button variant="outline" className="justify-start">
-          {selectedOption?.label}
+          {selectedOption?.label || 'Select an option'}
         </Button>
       </DrawerTrigger>
       <DrawerTitle className="sr-only">Select an option</DrawerTitle>

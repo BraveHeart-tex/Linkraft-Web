@@ -49,11 +49,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
     [bookmark.id, queryClient]
   );
 
-  useBookmarkMetadataUpdate(
-    bookmark.id,
-    handleBookmarkUpdate,
-    bookmark.isMetadataPending
-  );
+  useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
   return (
     <Card className={cn('w-full transition-all hover:shadow-md')}>

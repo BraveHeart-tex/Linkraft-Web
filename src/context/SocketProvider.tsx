@@ -12,13 +12,12 @@ import {
 const SocketContext =
   createContext<Nullable<ReturnType<typeof getSocket>>>(null);
 
-// FIXME: Check for getSocket calls
-// so we don't make unnecessary connections
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket] = useState(getSocket());
 
   useEffect(() => {
     socket.connect();
+
     return () => {
       socket.disconnect();
     };

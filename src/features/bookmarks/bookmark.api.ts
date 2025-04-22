@@ -207,8 +207,8 @@ export const useBookmarkMetadataUpdate = (
   useEffect(() => {
     if (!socket) return;
 
-    const event = `bookmark:update:${bookmarkId}`;
-
+    socket.emit('subscribeToBookmark', { bookmarkId });
+    const event = `bookmark:update`;
     socket.on(event, onUpdate);
 
     return () => {

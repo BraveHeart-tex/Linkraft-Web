@@ -37,7 +37,6 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { useCollections } from '../collections/collection.api';
 import { parseTags } from '@/lib/utils';
 import { useTags } from '../tags/tag.api';
-import { ApiError } from 'next/dist/server/api-utils';
 import { Tag } from '../tags/tag.types';
 import { CollectionWithBookmarkCount } from '../collections/collection.types';
 
@@ -176,10 +175,32 @@ const BookmarkFormDialog = ({
           context?.previousBookmarks
         );
 
-        const apiError = error as ApiError;
-        showErrorToast('Something went wrong while updating the bookmark', {
-          description: apiError.message,
-        });
+        const apiError = error as ErrorApiResponse;
+        switch (apiError.status) {
+          case StatusCodes.CONFLICT: {
+            const existing = (
+              apiError.error.details as { bookmarkWithSameUrl: Bookmark }
+            )?.bookmarkWithSameUrl;
+            if (existing && typeof existing === 'object') {
+              form.setError(
+                'url',
+                {
+                  message: `There is already a bookmark with this URL ${existing.deletedAt ? 'in Trash' : ''}`,
+                },
+                {
+                  shouldFocus: true,
+                }
+              );
+            }
+            break;
+          }
+
+          default:
+            showErrorToast('Something went wrong while updating the bookmark', {
+              description: apiError.message,
+            });
+            break;
+        }
       },
       async onSettled() {
         await Promise.all([

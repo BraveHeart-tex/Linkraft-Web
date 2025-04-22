@@ -37,6 +37,9 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { useCollections } from '../collections/collection.api';
 import { parseTags } from '@/lib/utils';
 import { useTags } from '../tags/tag.api';
+import { ApiError } from 'next/dist/server/api-utils';
+import { Tag } from '../tags/tag.types';
+import { CollectionWithBookmarkCount } from '../collections/collection.types';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -83,7 +86,97 @@ const BookmarkFormDialog = ({
   const { data: collections } = useCollections();
   const queryClient = useQueryClient();
   const { mutate: updateBookmark, isPending: isUpdatingBookmark } =
-    useUpdateBookmark();
+    useUpdateBookmark({
+      onMutate(variables) {
+        const hasUrlChanged = variables.url !== initialData?.url;
+        const hasTitleChanged = variables.title !== initialData?.title;
+        const isPendingMetadata = hasUrlChanged && !hasTitleChanged;
+
+        const previousBookmarks =
+          queryClient.getQueryData<Bookmark[]>([
+            QUERY_KEYS.bookmarks.getBookmarks,
+          ]) || [];
+
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          (old) =>
+            (old || []).map((oldBookmark) => ({
+              ...oldBookmark,
+              url: variables?.url || '',
+              title: isPendingMetadata
+                ? 'Fetching Title'
+                : variables?.title || oldBookmark.title,
+              description: variables?.description || '',
+              isMetadataPending: isPendingMetadata,
+            }))
+        );
+
+        return { previousBookmarks };
+      },
+      async onSuccess(data, variables) {
+        if (!data) return;
+        const { createdTags, updatedBookmark } = data;
+
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          (old) =>
+            (old || []).map((oldBookmark) =>
+              oldBookmark.id === variables.id ? updatedBookmark : oldBookmark
+            )
+        );
+
+        queryClient.setQueryData<Tag[]>(
+          [QUERY_KEYS.tags.getTags],
+          (oldTags) => [
+            ...(oldTags || []),
+            ...createdTags.map((tag) => ({
+              ...tag,
+              usageCount: 1,
+            })),
+          ]
+        );
+
+        if (variables.collectionId !== initialData?.collection?.id) {
+          queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+            [QUERY_KEYS.collections.getCollections],
+            (oldCollections) =>
+              oldCollections?.map((oldCollection) => ({
+                ...oldCollection,
+                bookmarkCount:
+                  oldCollection.id === variables.collectionId
+                    ? oldCollection.bookmarkCount + 1
+                    : initialData?.collection?.id
+                      ? oldCollection.bookmarkCount - 1
+                      : oldCollection.bookmarkCount,
+              }))
+          );
+        }
+
+        showSuccessToast('Bookmark updated successfully');
+        form.reset();
+        onOpenChange(false);
+      },
+      async onError(error, _variables, context) {
+        queryClient.setQueryData<Bookmark[]>(
+          [QUERY_KEYS.bookmarks.getBookmarks],
+          context?.previousBookmarks
+        );
+
+        const apiError = error as ApiError;
+        showErrorToast('Something went wrong while updating the bookmark', {
+          description: apiError.message,
+        });
+      },
+      async onSettled() {
+        await queryClient.invalidateQueries({
+          queryKey: [
+            QUERY_KEYS.bookmarks.getBookmarks,
+            QUERY_KEYS.tags.getTags,
+            QUERY_KEYS.collections.getCollections,
+          ],
+        });
+      },
+    });
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark({
       onSuccess(data) {

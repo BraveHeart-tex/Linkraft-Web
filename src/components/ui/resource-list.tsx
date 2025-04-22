@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Nullable } from '@/lib/common.types';
 
 type EmptyAction =
   | {
@@ -28,7 +29,7 @@ function isCustomAction(
 export interface ResourceListProps<T> {
   data?: T[];
   isLoading?: boolean;
-  error?: Error | string | null;
+  error?: Nullable<Error | string>;
   onRetry?: () => void;
   renderItem: (item: T, index: number) => React.ReactNode;
   renderSkeleton?: () => React.ReactNode;

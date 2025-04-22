@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
+import { Nullable } from './common.types';
 
-let socket: Socket | null = null;
+let socket: Nullable<Socket> = null;
 
 export const getSocket = () => {
   if (!socket) {

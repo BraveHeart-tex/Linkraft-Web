@@ -12,25 +12,39 @@ import {
   Bookmark,
   CreateBookmarkDto,
   UpdateBookmarkDto,
+  UpdateBookmarkResponse,
 } from './bookmark.types';
 import { useEffect } from 'react';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useSocket } from '@/context/SocketProvider';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import api from '@/lib/api/api';
+import { Nullable } from '@/lib/common.types';
 
 export const useUpdateBookmark = (
   options?: UseMutationOptions<
-    ApiResponse<Bookmark>,
+    Nullable<UpdateBookmarkResponse>,
     unknown,
-    UpdateBookmarkDto
+    UpdateBookmarkDto,
+    { previousBookmarks: Bookmark[] }
   >
-): UseMutationResult<ApiResponse<Bookmark>, unknown, UpdateBookmarkDto> =>
+): UseMutationResult<
+  Nullable<UpdateBookmarkResponse>,
+  unknown,
+  UpdateBookmarkDto,
+  { previousBookmarks: Bookmark[] }
+> =>
   useMutation({
-    mutationFn: async (data) =>
-      safeApiCall(() =>
-        api.put(API_ROUTES.bookmark.updateBookmark(data.id), data)
-      ),
+    mutationFn: async (data) => {
+      const response = await safeApiCall(() =>
+        api.put<ApiResponse<UpdateBookmarkResponse>>(
+          API_ROUTES.bookmark.updateBookmark(data.id),
+          data
+        )
+      );
+
+      return response.data;
+    },
     ...options,
   });
 

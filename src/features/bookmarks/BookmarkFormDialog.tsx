@@ -102,15 +102,19 @@ const BookmarkFormDialog = ({
         queryClient.setQueryData<Bookmark[]>(
           [QUERY_KEYS.bookmarks.getBookmarks],
           (old) =>
-            (old || []).map((oldBookmark) => ({
-              ...oldBookmark,
-              url: variables?.url || '',
-              title: isPendingMetadata
-                ? 'Fetching Title'
-                : variables?.title || oldBookmark.title,
-              description: variables?.description || '',
-              isMetadataPending: isPendingMetadata,
-            }))
+            (old || []).map((oldBookmark) => {
+              if (oldBookmark.id !== variables.id) return oldBookmark;
+
+              return {
+                ...oldBookmark,
+                url: variables?.url || oldBookmark.url,
+                title: isPendingMetadata
+                  ? 'Fetching Title'
+                  : variables?.title || oldBookmark.title,
+                description: variables?.description ?? oldBookmark.description,
+                isMetadataPending: isPendingMetadata,
+              };
+            })
         );
 
         return { previousBookmarks };
@@ -123,7 +127,15 @@ const BookmarkFormDialog = ({
           [QUERY_KEYS.bookmarks.getBookmarks],
           (old) =>
             (old || []).map((oldBookmark) =>
-              oldBookmark.id === variables.id ? updatedBookmark : oldBookmark
+              oldBookmark.id === variables.id
+                ? {
+                    ...oldBookmark,
+                    ...updatedBookmark,
+                    title: oldBookmark.title,
+                    faviconUrl: oldBookmark.faviconUrl,
+                    isMetadataPending: oldBookmark.isMetadataPending,
+                  }
+                : oldBookmark
             )
         );
 
@@ -276,7 +288,6 @@ const BookmarkFormDialog = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          {JSON.stringify(form.watch('tags'))}
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="w-full grid gap-4 md:grid-cols-2">
               <FormField

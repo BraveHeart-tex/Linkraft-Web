@@ -10,7 +10,13 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { Calendar, Folder, Globe, ExternalLink } from 'lucide-react';
+import {
+  Calendar,
+  Folder,
+  Globe,
+  ExternalLink,
+  LoaderIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import BookmarkActions from './BookmarkActions';
@@ -55,7 +61,9 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
     <Card className={cn('w-full transition-all hover:shadow-md')}>
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">
-          {bookmark.faviconUrl ? (
+          {bookmark.isMetadataPending ? (
+            <LoaderIcon className="text-muted-foreground animate-spin" />
+          ) : bookmark.faviconUrl ? (
             <img
               src={bookmark.faviconUrl || '/placeholder.svg'}
               alt={`${bookmark.title} favicon`}

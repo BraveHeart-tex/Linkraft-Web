@@ -7,13 +7,7 @@ const ColorModeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    if (document.startViewTransition) {
-      document.startViewTransition(() => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-      });
-    } else {
-      setTheme(theme === 'dark' ? 'light' : 'dark');
-    }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (

@@ -3,10 +3,15 @@ import { ApiResponse } from '@/lib/api/api.types';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { API_ROUTES } from '@/routes/apiRoutes';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { Tag } from './tag.types';
 
-export const useTags = () =>
+export const useTags = (
+  options?: Omit<
+    UseQueryOptions<(Tag & { usageCount: number })[], Error>,
+    'queryKey'
+  >
+) =>
   useQuery({
     queryKey: [QUERY_KEYS.tags.getTags],
     queryFn: async () => {
@@ -18,4 +23,5 @@ export const useTags = () =>
 
       return result.data || [];
     },
+    ...options,
   });

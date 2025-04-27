@@ -14,8 +14,14 @@ import { Bookmark } from '../bookmarks/bookmark.types';
 import { useCollections } from '../collections/collection.api';
 import { CollectionWithBookmarkCount } from '../collections/collection.types';
 import DashboardMetricCard from './DashboardMetricCard';
+import { useTags } from '../tags/tag.api';
+import DashboardMetricCardSkeleton from './DashboardMetricCardSkeleton';
 
-const exampleTags = ['advice', 'tech', 'video', 'learning'];
+interface DashboardStatItem {
+  icon: LucideIcon;
+  title: string;
+  value: number;
+}
 
 const DashboardPage = () => {
   const queryClient = useQueryClient();
@@ -31,12 +37,11 @@ const DashboardPage = () => {
       ]),
     }
   );
+  const { data: tags, isPending: isPendingTags } = useTags({
+    initialData: queryClient.getQueryData([QUERY_KEYS.tags.getTags]),
+  });
 
-  const dashboardStats: {
-    icon: LucideIcon;
-    title: string;
-    value: number;
-  }[] = [
+  const dashboardStats: DashboardStatItem[] = [
     {
       icon: LinkIcon,
       title: 'Bookmarks',
@@ -50,7 +55,7 @@ const DashboardPage = () => {
     {
       icon: HashIcon,
       title: 'Tags',
-      value: exampleTags.length,
+      value: tags?.length || 0,
     },
     {
       icon: PinIcon,
@@ -60,7 +65,7 @@ const DashboardPage = () => {
     },
   ];
 
-  const isLoading = isPendingBookmarks || isPendingCollections;
+  const isLoading = isPendingBookmarks || isPendingCollections || isPendingTags;
 
   return (
     <main className="space-y-8">
@@ -78,18 +83,15 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
-        {isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4">
-            Loading...
-          </div>
-        ) : null}
-        {!isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {dashboardStats.map((stat) => (
-              <DashboardMetricCard key={stat.title} {...stat} />
-            ))}
-          </div>
-        ) : null}
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {isLoading
+            ? Array.from({ length: dashboardStats.length }).map((_, index) => (
+                <DashboardMetricCardSkeleton key={index} />
+              ))
+            : dashboardStats.map((item) => (
+                <DashboardMetricCard key={item.title} {...item} />
+              ))}
+        </div>
       </div>
     </main>
   );

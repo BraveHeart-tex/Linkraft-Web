@@ -1,35 +1,46 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
-import CollectionFormDialog from './CollectionFormDialog';
+
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import CollectionFormDialog from './CollectionFormDialog';
 
 interface AddNewCollectionButtonProps {
-  variant?: 'default' | 'complimentary';
+  label?: React.ReactNode;
+  icon?: React.ReactNode;
+  buttonProps?: React.ComponentProps<typeof Button>;
+  defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  dialogProps?: React.ComponentProps<typeof CollectionFormDialog>;
 }
 
 const AddNewCollectionButton = ({
-  variant = 'default',
+  label = 'Add Collection',
+  icon,
+  buttonProps,
+  defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
+  dialogProps = {},
 }: AddNewCollectionButtonProps) => {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
+  const setOpen = isControlled ? onOpenChange! : setUncontrolledOpen;
+
   return (
     <>
-      {variant === 'complimentary' ? (
-        <Button
-          variant="secondary"
-          className="flex-col h-full font-semibold! text-lg hover:shadow-sm shadow-lg"
-          onClick={() => setOpen(true)}
-        >
-          Add Collection
-          <PlusIcon className="size-7" />
-        </Button>
-      ) : (
-        <Button onClick={() => setOpen(true)}>
-          Add Collection
-          <PlusIcon />
-        </Button>
-      )}
-      <CollectionFormDialog isOpen={open} onOpenChange={setOpen} />
+      <Button onClick={() => setOpen(true)} {...buttonProps}>
+        {label}
+        {icon && <span className="ml-2">{icon}</span>}
+      </Button>
+
+      <CollectionFormDialog
+        isOpen={isOpen}
+        onOpenChange={setOpen}
+        {...dialogProps}
+      />
     </>
   );
 };

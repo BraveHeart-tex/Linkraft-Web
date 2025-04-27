@@ -1,13 +1,13 @@
 'use client';
 import CollectionCardSkeleton from '@/components/CollectionCardSkeleton';
+import ResourceList from '@/components/ui/resource-list';
 import AddNewCollectionButton from '@/features/collections/AddNewCollectionButton';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
-import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionsPage = () => {
-  const { data: collections, isLoading, isError } = useCollections();
+  const { data: collections, isLoading, error } = useCollections();
 
   return (
     <main className="space-y-8">
@@ -25,45 +25,33 @@ const CollectionsPage = () => {
             </div>
           </div>
         </div>
-        {isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4">
-            <CollectionCardSkeleton />
-            <CollectionCardSkeleton />
-            <CollectionCardSkeleton />
-          </div>
-        ) : null}
-        {!isLoading && isError ? (
-          <div className="min-h-[60vh] flex items-center justify-center flex-col space-y-1">
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              An Error Occurred
-            </h3>
-            <p className="text-muted-foreground">
-              Please try again after refreshing the page
-            </p>
-          </div>
-        ) : null}
-        {collections && collections.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4">
-            {collections?.map((collection) => (
-              <CollectionCard collection={collection} key={collection.id} />
-            ))}
-            <AddNewCollectionButton variant="complimentary" />
-            <CollectionFormDialog shouldRegisterCustomListeners />
-          </div>
-        ) : null}
-        {!isLoading && !isError && collections?.length === 0 ? (
-          <div className="min-h-[60vh] flex items-center justify-center flex-col space-y-1">
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              No Collections Yet
-            </h3>
-            <p className="text-muted-foreground">
-              Get started by adding a new collection
-            </p>
-            <div className="pt-1">
-              <AddNewCollectionButton />
-            </div>
-          </div>
-        ) : null}
+        <ResourceList
+          data={collections}
+          isLoading={isLoading}
+          error={error}
+          renderItem={(collection) => (
+            <CollectionCard collection={collection} key={collection.id} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          emptyMessage="No collections found - add one to get started"
+          containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
+          errorTitle="Couldn't load collections"
+          emptyIcon={
+            <FolderIcon className="h-10 w-10 stroke-muted-foreground" />
+          }
+          renderSkeleton={CollectionCardSkeleton}
+          emptyAction={{
+            element: (
+              <AddNewCollectionButton
+                buttonProps={{
+                  size: 'sm',
+                  variant: 'outline',
+                  className: 'mt-4',
+                }}
+              />
+            ),
+          }}
+        />
       </div>
     </main>
   );

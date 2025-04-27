@@ -20,14 +20,13 @@ import { useSignUp } from './auth.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { showErrorToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api/api.types';
+import { ErrorApiResponse } from '@/lib/api/api.types';
 
 const SignUpForm = () => {
   const router = useRouter();
   const { mutate, isPending } = useSignUp({
     onError(error) {
-      const { response } = error as AxiosApiError;
-      showErrorToast(response?.data.message);
+      showErrorToast((error as ErrorApiResponse).message);
     },
     onSuccess(data) {
       toast.success(data.message);

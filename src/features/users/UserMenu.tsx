@@ -12,7 +12,7 @@ import { CogIcon, LogOutIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
 import { showErrorToast } from '@/lib/toast';
-import { AxiosApiError } from '@/lib/api/api.types';
+import { ErrorApiResponse } from '@/lib/api/api.types';
 import UserAvatar from './UserAvatar';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ const UserMenu = () => {
       router.push('/sign-in');
     },
     onError(error) {
-      showErrorToast((error as AxiosApiError).message);
+      showErrorToast((error as ErrorApiResponse)?.message);
     },
   });
 

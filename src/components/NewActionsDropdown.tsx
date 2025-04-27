@@ -3,11 +3,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { ChevronDown, Plus } from 'lucide-react';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { useState } from 'react';
 import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 
@@ -28,19 +28,12 @@ const NewActionsDropdown = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-max grid">
-          <DropdownMenuItem
-            className="justify-start"
-            asChild
-            onClick={() => setIsBookmarkFormDialogOpen(true)}
-          >
-            <Button variant="ghost">New Bookmark</Button>
+          <DropdownMenuItem>Import from Browser</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsBookmarkFormDialogOpen(true)}>
+            New Bookmark
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="justify-start"
-            asChild
-            onClick={() => setIsCollectionDialogOpen(true)}
-          >
-            <Button variant="ghost">New Collection</Button>
+          <DropdownMenuItem onClick={() => setIsCollectionDialogOpen(true)}>
+            New Collection
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

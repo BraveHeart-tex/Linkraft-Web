@@ -32,18 +32,17 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { Collection, CollectionWithBookmarkCount } from './collection.types';
 import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useState } from 'react';
-import { addTypedCustomEventListener, CUSTOM_EVENT_KEYS } from '@/lib/utils';
 
 interface CollectionFormDialogProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  shouldRegisterCustomListeners?: boolean;
+  initialData?: Collection;
 }
 
 const CollectionFormDialog = ({
   isOpen,
   onOpenChange,
-  shouldRegisterCustomListeners = false,
+  initialData,
 }: CollectionFormDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(isOpen);
 
@@ -56,6 +55,17 @@ const CollectionFormDialog = ({
       name: '',
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        color: initialData.color,
+        description: initialData.description,
+        id: initialData.id,
+        name: initialData.name,
+      });
+    }
+  }, [form, initialData]);
 
   const { mutate: createCollection, isPending: isCreatingCollection } =
     useCreateCollection({
@@ -144,20 +154,6 @@ const CollectionFormDialog = ({
   useEffect(() => {
     setInternalOpen(isOpen);
   }, [isOpen]);
-
-  useEffect(() => {
-    if (shouldRegisterCustomListeners) {
-      const cleanup = addTypedCustomEventListener<Collection>(
-        CUSTOM_EVENT_KEYS.OPEN_EDIT_COLLECTION_DIALOG,
-        (event) => {
-          form.reset(event.detail);
-          setInternalOpen(true);
-        }
-      );
-
-      return cleanup;
-    }
-  }, [shouldRegisterCustomListeners]);
 
   const handleOpenChange = (open: boolean) => {
     setInternalOpen(open);

@@ -17,10 +17,6 @@ export const generateAvatarFallback = (visibleName: string): string => {
   return firstInitial + secondInitial || firstInitial || '?';
 };
 
-export const CUSTOM_EVENT_KEYS = {
-  OPEN_EDIT_COLLECTION_DIALOG: 'OPEN_EDIT_COLLECTION_DIALOG',
-};
-
 export const addTypedCustomEventListener = <T>(
   type: string,
   handler: (event: CustomEvent<T>) => void

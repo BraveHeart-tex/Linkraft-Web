@@ -19,9 +19,9 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { CUSTOM_EVENT_KEYS } from '@/lib/utils';
 import { useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
+import { useModalStore } from '@/lib/stores/modalStore';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -35,6 +35,8 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       QUERY_KEYS.auth.getCurrentUser,
     ]);
   }, [queryClient]);
+
+  const openModal = useModalStore((s) => s.openModal);
 
   const { mutate: deleteCollection } = useDeleteCollection({
     async onMutate() {
@@ -96,6 +98,16 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     });
   };
 
+  const handleEditCollection = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    openModal({
+      type: 'edit-collection',
+      payload: {
+        collection,
+      },
+    });
+  };
+
   return (
     <Card
       className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-all"
@@ -122,18 +134,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
             >
               <DropdownMenuItem
                 className="justify-start"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  const customEvent = new CustomEvent(
-                    CUSTOM_EVENT_KEYS.OPEN_EDIT_COLLECTION_DIALOG,
-                    {
-                      bubbles: true,
-                      cancelable: true,
-                      detail: collection,
-                    }
-                  );
-                  window.dispatchEvent(customEvent);
-                }}
+                onClick={handleEditCollection}
                 asChild
               >
                 <Button variant="ghost">Edit Collection Info</Button>

@@ -5,9 +5,9 @@ import ResourceList from '@/components/ui/resource-list';
 import { useBookmarks } from '@/features/bookmarks/bookmark.api';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
-import { useState } from 'react';
-import BookmarkFormDialog from './BookmarkFormDialog';
+import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 import { LinkIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const BookmarkList = () => {
   const { data: bookmarks, isLoading, error, refetch } = useBookmarks();

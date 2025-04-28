@@ -101,13 +101,13 @@ export const usePermanentlyDeleteBookmark = (
     ApiResponse<null>,
     unknown,
     { bookmarkId: number },
-    { previousBookmarks: Bookmark[]; toastId: number | string }
+    { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
   { bookmarkId: number },
-  { previousBookmarks: Bookmark[]; toastId: number | string }
+  { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
 > =>
   useMutation({
     mutationFn: async (data) =>

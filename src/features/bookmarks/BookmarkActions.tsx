@@ -42,22 +42,33 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
   const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
   const { mutate: permanentlyDeleteBookmark } = usePermanentlyDeleteBookmark({
-    async onMutate() {
+    async onMutate(variables) {
       const toastId = showSuccessToast('Bookmark deleted successfully.');
 
       await queryClient.cancelQueries({
         queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
       });
 
-      const previousBookmarks = queryClient.getQueryData<Bookmark[]>([
-        QUERY_KEYS.bookmarks.getTrashedBookmarks,
-      ]);
+      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
+        [QUERY_KEYS.bookmarks.getTrashedBookmarks]
+      );
 
       if (!previousBookmarks) return;
 
-      queryClient.setQueryData<Bookmark[]>(
+      queryClient.setQueryData<InfiniteBookmarksData>(
         [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-        (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
+        (oldData) =>
+          oldData
+            ? {
+                ...oldData,
+                pages: oldData.pages.map((page) => ({
+                  ...page,
+                  bookmarks: page.bookmarks.filter(
+                    (oldBookmark) => oldBookmark.id !== variables.bookmarkId
+                  ),
+                })),
+              }
+            : undefined
       );
 
       return { previousBookmarks, toastId };
@@ -65,7 +76,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     onError(error, _variables, context) {
       const apiError = error as ErrorApiResponse;
 
-      queryClient.setQueryData(
+      queryClient.setQueryData<InfiniteBookmarksData>(
         [QUERY_KEYS.bookmarks.getTrashedBookmarks],
         context?.previousBookmarks
       );
@@ -73,6 +84,11 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
       showErrorToast('An error occurred while deleting the bookmark', {
         description: apiError.message,
         id: context?.toastId,
+      });
+    },
+    async onSettled() {
+      await queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
       });
     },
   });

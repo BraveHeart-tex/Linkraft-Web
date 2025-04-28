@@ -2,6 +2,7 @@
 import { ApiResponse } from '@/lib/api/api.types';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
+  useInfiniteQuery,
   useMutation,
   UseMutationOptions,
   UseMutationResult,
@@ -11,6 +12,7 @@ import {
 import {
   Bookmark,
   CreateBookmarkDto,
+  GetBookmarksResponse,
   UpdateBookmarkDto,
   UpdateBookmarkResponse,
 } from './bookmark.types';
@@ -118,34 +120,23 @@ export const usePermanentlyDeleteBookmark = (
     ...options,
   });
 
-export const useBookmarks = (
-  options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>
-  // queryParams?: {
-  //   page: number;
-  //   pageSize: number;
-  //   search?: string;
-  // }
-) => {
-  // const page = queryParams?.page ?? 1;
-  // const pageSize = queryParams?.pageSize ?? 10;
-  // const search = queryParams?.search ?? '';
-
-  // const queryString = new URLSearchParams({
-  //   page: page.toString(),
-  //   pageSize: pageSize.toString(),
-  //   ...(search ? { search } : {}),
-  // }).toString();
-
-  return useQuery({
+export const useBookmarks = () => {
+  return useInfiniteQuery({
     queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
-        api.get<ApiResponse<Bookmark[]>>(`${API_ROUTES.bookmark.getBookmarks}`)
+        api.get<ApiResponse<GetBookmarksResponse>>(
+          `${API_ROUTES.bookmark.getBookmarks(pageParam)}`
+        )
       );
 
-      return response.data || [];
+      return {
+        bookmarks: response?.data?.items || [],
+        nextCursor: response?.data?.nextCursor,
+      };
     },
-    ...options,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 };
 

@@ -8,16 +8,8 @@ export const API_ROUTES = {
     signOut: '/auth/sign-out',
     getCurrentUser: '/auth/me',
   },
-  collection: {
-    createCollection: '/collections',
-    getUserCollections: '/collections',
-    deleteCollection: (collectionId: Collection['id']) =>
-      `/collections/${collectionId}`,
-    updateCollection: (collectionId: Collection['id']) =>
-      `/collections/${collectionId}`,
-  },
   bookmark: {
-    getBookmarks: '/bookmarks',
+    getBookmarks: (cursor: number) => `/bookmarks?cursor=${cursor}`,
     createBookmark: '/bookmarks',
     updateBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
     trashBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
@@ -27,6 +19,17 @@ export const API_ROUTES = {
     restoreBookmark: (bookmarkId: Bookmark['id']) =>
       `/bookmarks/${bookmarkId}/restore`,
     importBookmarks: '/import-bookmarks',
+  },
+  collection: {
+    createCollection: '/collections',
+    getUserCollections: '/collections',
+    deleteCollection: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}`,
+    updateCollection: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}`,
+  },
+  dashboard: {
+    getGeneralStats: '/stats',
   },
   tags: {
     getUserTags: '/tags',

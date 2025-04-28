@@ -1,6 +1,4 @@
 'use client';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   FolderIcon,
   HashIcon,
@@ -9,13 +7,9 @@ import {
   LucideIcon,
   PinIcon,
 } from 'lucide-react';
-import { useBookmarks } from '../bookmarks/bookmark.api';
-import { Bookmark } from '../bookmarks/bookmark.types';
-import { useCollections } from '../collections/collection.api';
-import { CollectionWithBookmarkCount } from '../collections/collection.types';
 import DashboardMetricCard from './DashboardMetricCard';
-import { useTags } from '../tags/tag.api';
 import DashboardMetricCardSkeleton from './DashboardMetricCardSkeleton';
+import { useGeneralStats } from '@/features/dashboard/dashboard.api';
 
 interface DashboardStatItem {
   icon: LucideIcon;
@@ -24,38 +18,23 @@ interface DashboardStatItem {
 }
 
 const DashboardPage = () => {
-  const queryClient = useQueryClient();
-  const { data: bookmarks, isPending: isPendingBookmarks } = useBookmarks({
-    initialData: queryClient.getQueryData<Bookmark[]>([
-      QUERY_KEYS.bookmarks.getBookmarks,
-    ]),
-  });
-  const { data: collections, isPending: isPendingCollections } = useCollections(
-    {
-      initialData: queryClient.getQueryData<CollectionWithBookmarkCount[]>([
-        QUERY_KEYS.collections.getCollections,
-      ]),
-    }
-  );
-  const { data: tags, isPending: isPendingTags } = useTags({
-    initialData: queryClient.getQueryData([QUERY_KEYS.tags.getTags]),
-  });
+  const { data, isPending } = useGeneralStats();
 
   const dashboardStats: DashboardStatItem[] = [
     {
       icon: LinkIcon,
       title: 'Bookmarks',
-      value: bookmarks?.length || 0,
+      value: data?.bookmarkCount || 0,
     },
     {
       icon: FolderIcon,
       title: 'Collections',
-      value: collections?.length || 0,
+      value: data?.collectionCount || 0,
     },
     {
       icon: HashIcon,
       title: 'Tags',
-      value: tags?.length || 0,
+      value: data?.tagCount || 0,
     },
     {
       icon: PinIcon,
@@ -64,8 +43,6 @@ const DashboardPage = () => {
       value: 0,
     },
   ];
-
-  const isLoading = isPendingBookmarks || isPendingCollections || isPendingTags;
 
   return (
     <main className="space-y-8">
@@ -84,7 +61,7 @@ const DashboardPage = () => {
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {isLoading
+          {isPending
             ? Array.from({ length: dashboardStats.length }).map((_, index) => (
                 <DashboardMetricCardSkeleton key={index} />
               ))

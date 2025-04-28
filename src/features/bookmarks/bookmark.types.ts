@@ -35,3 +35,8 @@ export interface UpdateBookmarkResponse {
   updatedBookmark: Bookmark;
   createdTags: Tag[];
 }
+
+export interface GetBookmarksResponse {
+  items: Bookmark[];
+  nextCursor: Nullable<number>;
+}

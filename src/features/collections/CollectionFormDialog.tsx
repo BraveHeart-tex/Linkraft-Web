@@ -204,6 +204,7 @@ const CollectionFormDialog = ({
                   <FormControl>
                     <Textarea
                       {...field}
+                      value={field.value || ''}
                       placeholder="The purpose of this collection"
                     />
                   </FormControl>

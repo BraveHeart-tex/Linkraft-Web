@@ -79,44 +79,42 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
 
   const { mutate: restoreBookmark, isPending: isRestoringBookmark } =
     useRestoreBookmark({
-      async onMutate() {
+      async onMutate(variables) {
         const toastId = showSuccessToast('Bookmark restored successfully.');
 
         await queryClient.cancelQueries({
           queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
         });
 
-        const previousBookmarks = queryClient.getQueryData<Bookmark[]>([
-          QUERY_KEYS.bookmarks.getBookmarks,
-        ]);
+        const previousTrashedBookmarks =
+          queryClient.getQueryData<InfiniteBookmarksData>([
+            QUERY_KEYS.bookmarks.getTrashedBookmarks,
+          ]);
 
-        const previousTrashedBookmarks = queryClient.getQueryData<Bookmark[]>([
-          QUERY_KEYS.bookmarks.getTrashedBookmarks,
-        ]);
+        if (!previousTrashedBookmarks) return;
 
-        if (!previousBookmarks || !previousTrashedBookmarks) return;
-
-        queryClient.setQueryData<Bookmark[]>(
-          [QUERY_KEYS.bookmarks.getBookmarks],
-          (old) => [...(old || []), { ...bookmark, deletedAt: null }]
-        );
-
-        queryClient.setQueryData<Bookmark[]>(
+        queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-          (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
+          (oldData) =>
+            oldData
+              ? {
+                  ...oldData,
+                  pages: oldData.pages.map((page) => ({
+                    ...page,
+                    bookmarks: page.bookmarks.filter(
+                      (oldBookmark) => oldBookmark.id !== variables.bookmarkId
+                    ),
+                  })),
+                }
+              : undefined
         );
 
-        return { previousBookmarks, previousTrashedBookmarks, toastId };
+        return { previousTrashedBookmarks, toastId };
       },
       onError(error, _variables, context) {
         const apiError = error as ErrorApiResponse;
 
-        queryClient.setQueryData(
-          [QUERY_KEYS.bookmarks.getBookmarks],
-          context?.previousBookmarks
-        );
-
-        queryClient.setQueryData(
+        queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getTrashedBookmarks],
           context?.previousTrashedBookmarks
         );
@@ -128,6 +126,16 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
             id: context?.toastId,
           }
         );
+      },
+      async onSettled() {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+          }),
+        ]);
       },
     });
 

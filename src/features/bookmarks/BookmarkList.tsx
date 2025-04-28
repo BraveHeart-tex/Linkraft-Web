@@ -50,6 +50,7 @@ const BookmarkList = () => {
       <div className="flex items-center justify-center w-full col-span-full">
         <Button
           ref={ref}
+          variant="outline"
           onClick={() => fetchNextPage()}
           disabled={!hasNextPage || isFetchingNextPage}
         >

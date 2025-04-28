@@ -6,8 +6,6 @@ import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
-  useQuery,
-  UseQueryOptions,
 } from '@tanstack/react-query';
 import {
   Bookmark,
@@ -141,21 +139,23 @@ export const useBookmarks = () => {
   });
 };
 
-export const useTrashedBookmarks = (
-  options?: Omit<UseQueryOptions<Bookmark[], Error>, 'queryKey'>
-) => {
-  return useQuery({
+export const useTrashedBookmarks = () => {
+  return useInfiniteQuery({
     queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
     queryFn: async () => {
       const response = await safeApiCall(() =>
-        api.get<ApiResponse<Bookmark[]>>(
+        api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getTrashedBookmarks}`
         )
       );
 
-      return response.data ?? [];
+      return {
+        bookmarks: response.data?.items || [],
+        nextCursor: response?.data?.nextCursor,
+      };
     },
-    ...options,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 };
 
@@ -165,8 +165,7 @@ export const useRestoreBookmark = (
     unknown,
     { bookmarkId: number },
     {
-      previousBookmarks: Bookmark[];
-      previousTrashedBookmarks: Bookmark[];
+      previousTrashedBookmarks: InfiniteBookmarksData;
       toastId: number | string;
     }
   >
@@ -175,8 +174,7 @@ export const useRestoreBookmark = (
   unknown,
   { bookmarkId: number },
   {
-    previousBookmarks: Bookmark[];
-    previousTrashedBookmarks: Bookmark[];
+    previousTrashedBookmarks: InfiniteBookmarksData;
     toastId: number | string;
   }
 > =>

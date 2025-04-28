@@ -4,19 +4,35 @@ import { useTrashedBookmarks } from '../bookmark.api';
 import BookmarkCard from '../BookmarkCard';
 import BookmarkCardSkeleton from '../BookmarkCardSkeleton';
 import ResourceList from '@/components/ui/resource-list';
+import { Button } from '@/components/ui/button';
+import { useInView } from 'react-intersection-observer';
+import { useEffect } from 'react';
 
 const TrashedBookmarkList = () => {
   const {
-    data: trashedBookmarks,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
     isLoading,
     error,
-    refetch,
     isRefetching,
   } = useTrashedBookmarks();
 
+  const { inView, ref } = useInView({
+    rootMargin: '100px 0px 100px 0px',
+  });
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
+
   return (
     <ResourceList
-      data={trashedBookmarks}
+      data={data?.pages.flatMap((page) => page.bookmarks)}
       isLoading={isLoading}
       error={error}
       onRetry={refetch}
@@ -32,7 +48,22 @@ const TrashedBookmarkList = () => {
       emptyIcon={<TrashIcon className="h-10 w-10 stroke-muted-foreground" />}
       errorTitle="Couldn't load trashed bookmarks"
       containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
-    />
+    >
+      <div className="flex items-center justify-center w-full col-span-full">
+        <Button
+          ref={ref}
+          variant="outline"
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+        >
+          {isFetchingNextPage
+            ? 'Loading more...'
+            : hasNextPage
+              ? 'Load Newer'
+              : 'Nothing more to load'}
+        </Button>
+      </div>
+    </ResourceList>
   );
 };
 

@@ -27,13 +27,13 @@ export const useUpdateBookmark = (
     Nullable<UpdateBookmarkResponse>,
     unknown,
     UpdateBookmarkDto,
-    { previousBookmarks: Bookmark[] }
+    { previousBookmarks: InfiniteBookmarksData }
   >
 ): UseMutationResult<
   Nullable<UpdateBookmarkResponse>,
   unknown,
   UpdateBookmarkDto,
-  { previousBookmarks: Bookmark[] }
+  { previousBookmarks: InfiniteBookmarksData }
 > =>
   useMutation({
     mutationFn: async (data) => {

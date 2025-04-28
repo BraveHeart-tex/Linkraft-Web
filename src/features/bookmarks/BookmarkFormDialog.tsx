@@ -8,7 +8,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useForm } from 'react-hook-form';
-import { Bookmark, CreateBookmarkDto } from './bookmark.types';
+import {
+  Bookmark,
+  CreateBookmarkDto,
+  InfiniteBookmarksData,
+} from './bookmark.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createBookmarkSchema } from './bookmark.schema';
 import { Button } from '@/components/ui/button';
@@ -94,26 +98,37 @@ const BookmarkFormDialog = ({
         const isPendingMetadata = hasUrlChanged && !hasTitleChanged;
 
         const previousBookmarks =
-          queryClient.getQueryData<Bookmark[]>([
+          queryClient.getQueryData<InfiniteBookmarksData>([
             QUERY_KEYS.bookmarks.getBookmarks,
-          ]) || [];
+          ]);
 
-        queryClient.setQueryData<Bookmark[]>(
+        if (!previousBookmarks) return;
+
+        queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getBookmarks],
-          (old) =>
-            (old || []).map((oldBookmark) => {
-              if (oldBookmark.id !== variables.id) return oldBookmark;
-
-              return {
-                ...oldBookmark,
-                url: variables?.url || oldBookmark.url,
-                title: isPendingMetadata
-                  ? 'Fetching Title'
-                  : variables?.title || oldBookmark.title,
-                description: variables?.description ?? oldBookmark.description,
-                isMetadataPending: isPendingMetadata,
-              };
-            })
+          (old) => {
+            if (!old) return undefined;
+            return {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                bookmarks: page.bookmarks.map((oldBookmark) => ({
+                  ...oldBookmark,
+                  ...(oldBookmark.id === variables.id
+                    ? {
+                        url: variables?.url || oldBookmark.url,
+                        title: isPendingMetadata
+                          ? 'Fetching Title'
+                          : variables?.title || oldBookmark.title,
+                        description:
+                          variables?.description ?? oldBookmark.description,
+                        isMetadataPending: isPendingMetadata,
+                      }
+                    : {}),
+                })),
+              })),
+            };
+          }
         );
 
         return { previousBookmarks };
@@ -122,20 +137,28 @@ const BookmarkFormDialog = ({
         if (!data) return;
         const { createdTags, updatedBookmark } = data;
 
-        queryClient.setQueryData<Bookmark[]>(
+        queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getBookmarks],
-          (old) =>
-            (old || []).map((oldBookmark) =>
-              oldBookmark.id === variables.id
-                ? {
-                    ...oldBookmark,
-                    ...updatedBookmark,
-                    title: oldBookmark.title,
-                    faviconUrl: oldBookmark.faviconUrl,
-                    isMetadataPending: oldBookmark.isMetadataPending,
-                  }
-                : oldBookmark
-            )
+          (old) => {
+            if (!old) return undefined;
+            return {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                bookmarks: page.bookmarks.map((oldBookmark) => ({
+                  ...oldBookmark,
+                  ...(oldBookmark.id === variables.id
+                    ? {
+                        ...updatedBookmark,
+                        title: oldBookmark.title,
+                        faviconUrl: oldBookmark.faviconUrl,
+                        isMetadataPending: oldBookmark.isMetadataPending,
+                      }
+                    : {}),
+                })),
+              })),
+            };
+          }
         );
 
         queryClient.setQueryData<Tag[]>(
@@ -170,7 +193,7 @@ const BookmarkFormDialog = ({
         onOpenChange(false);
       },
       async onError(error, _variables, context) {
-        queryClient.setQueryData<Bookmark[]>(
+        queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getBookmarks],
           context?.previousBookmarks
         );

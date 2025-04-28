@@ -49,6 +49,7 @@ export const hexToHSL = (hex: string): { h: number; s: number; l: number } => {
 };
 
 export const generateSubtleGradientFromHex = (hex: string): string => {
+  if (!hex) return '';
   const { h, s, l } = hexToHSL(hex);
 
   const visibleAccent = `hsla(${h}, ${Math.max(40, s - 10)}%, ${Math.min(85, l + 10)}%, 0.15)`;

@@ -2,9 +2,9 @@ import { getCurrentUser } from '@/features/auth/auth.server';
 import { redirect } from 'next/navigation';
 
 const SettingsPage = async () => {
-  const result = await getCurrentUser();
+  const requestValidationResult = await getCurrentUser();
 
-  if (!result.user) {
+  if (!requestValidationResult?.user) {
     redirect('/sign-in');
   }
 

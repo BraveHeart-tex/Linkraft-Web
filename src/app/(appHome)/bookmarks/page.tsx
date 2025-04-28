@@ -1,7 +1,15 @@
+import { getCurrentUser } from '@/features/auth/auth.server';
 import BookmarkList from '@/features/bookmarks/BookmarkList';
 import { LinkIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
-const BookmarksPage = () => {
+const BookmarksPage = async () => {
+  const requestValidationResult = await getCurrentUser();
+
+  if (!requestValidationResult?.user) {
+    redirect('/sign-in');
+  }
+
   return (
     <main className="space-y-8">
       <div className="space-y-4">

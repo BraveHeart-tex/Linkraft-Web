@@ -1,3 +1,4 @@
+'use server';
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import api from '@/lib/api/api';
 import { API_ROUTES } from '@/routes/apiRoutes';

@@ -1,7 +1,15 @@
+import { getCurrentUser } from '@/features/auth/auth.server';
 import TrashedBookmarkList from '@/features/bookmarks/trash/TrashedBookmarkList';
 import { TrashIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
-const TrashPage = () => {
+const TrashPage = async () => {
+  const requestValidationResult = await getCurrentUser();
+
+  if (!requestValidationResult?.user) {
+    redirect('/sign-in');
+  }
+
   return (
     <main className="space-y-8">
       <div className="space-y-4">

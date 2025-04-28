@@ -200,6 +200,16 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         id: context?.toastId,
       });
     },
+    async onSettled() {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+        }),
+      ]);
+    },
   });
 
   const showConfirmDialog = useConfirmDialogStore(

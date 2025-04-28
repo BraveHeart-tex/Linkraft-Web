@@ -1,6 +1,9 @@
 'use client';
 import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
-import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import {
+  Bookmark,
+  InfiniteBookmarksData,
+} from '@/features/bookmarks/bookmark.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -33,22 +36,26 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
 
   const handleBookmarkUpdate = useCallback(
     (metadata: Pick<Bookmark, 'title' | 'faviconUrl'>) => {
-      queryClient.setQueryData<Bookmark[]>(
+      queryClient.setQueryData<InfiniteBookmarksData>(
         [QUERY_KEYS.bookmarks.getBookmarks],
         (old) => {
-          if (!old) return [];
-
-          return old.map((oldBookmark) => {
-            if (oldBookmark.id === bookmark.id) {
-              return {
+          if (!old) return undefined;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              bookmarks: page.bookmarks.map((oldBookmark) => ({
                 ...oldBookmark,
-                title: metadata.title,
-                faviconUrl: metadata?.faviconUrl,
-                isMetadataPending: false,
-              };
-            }
-            return oldBookmark;
-          });
+                ...(oldBookmark.id === bookmark.id
+                  ? {
+                      title: metadata.title,
+                      faviconUrl: metadata?.faviconUrl,
+                      isMetadataPending: false,
+                    }
+                  : {}),
+              })),
+            })),
+          };
         }
       );
     },

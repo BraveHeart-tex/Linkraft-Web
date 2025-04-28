@@ -26,6 +26,7 @@ export const API_ROUTES = {
       `/bookmarks/${bookmarkId}/permanent`,
     restoreBookmark: (bookmarkId: Bookmark['id']) =>
       `/bookmarks/${bookmarkId}/restore`,
+    importBookmarks: '/import-bookmarks',
   },
   tags: {
     getUserTags: '/tags',

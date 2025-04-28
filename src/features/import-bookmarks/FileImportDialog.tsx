@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useImportBookmarkFile } from './import-bookmark.api';
 
 interface FileImportDialogProps {
   isOpen: boolean;
@@ -27,7 +28,8 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Handle file drop and file input selection
+  const { mutate: importBookmarkFile } = useImportBookmarkFile();
+
   const onDrop = (acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile) {
@@ -51,20 +53,23 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
 
   const handleUpload = async () => {
     if (!file) return;
-
     setIsUploading(true);
     setProgress(0);
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 500);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    importBookmarkFile({
+      formData,
+      requestConfig: {
+        onUploadProgress(progressEvent) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
+          );
+          setProgress(percentCompleted);
+        },
+      },
+    });
   };
 
   return (

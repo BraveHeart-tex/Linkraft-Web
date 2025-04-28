@@ -152,7 +152,7 @@ const SidebarCollectionsList = () => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {collections.map((item) => (
-                  <SidebarMenuItem key={item.name}>
+                  <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton asChild>
                       <Link href={`/collections/${item.id}`}>{item.name}</Link>
                     </SidebarMenuButton>

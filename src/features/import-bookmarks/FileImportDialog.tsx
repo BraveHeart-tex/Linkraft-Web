@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import CircularProgress from '@/components/ui/circular-progress';
 import {
@@ -71,14 +72,14 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Bookmarks</DialogTitle>
-          <DialogDescription className="text-success">
+          <DialogDescription>
             Drag and drop your bookmark file (HTML) here or click to select a
             file.
           </DialogDescription>
         </DialogHeader>
 
         {isUploading ? (
-          <div className="mt-4 flex items-center justify-center flex-col">
+          <div className="flex items-center justify-center flex-col">
             <CircularProgress
               value={progress}
               size={120}
@@ -86,8 +87,8 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
               showLabel
               labelClassName="text-xl font-bold"
               renderLabel={(progress) => `${progress}%`}
-              className="stroke-orange-500/25"
-              progressClassName="stroke-orange-600"
+              className="stroke-secondary"
+              progressClassName="stroke-primary"
             />
             <p className="text-center mt-2">Uploading...</p>
           </div>

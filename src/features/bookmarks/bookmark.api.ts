@@ -13,6 +13,7 @@ import {
   Bookmark,
   CreateBookmarkDto,
   GetBookmarksResponse,
+  InfiniteBookmarksData,
   UpdateBookmarkDto,
   UpdateBookmarkResponse,
 } from './bookmark.types';
@@ -79,13 +80,13 @@ export const useTrashBookmark = (
     ApiResponse<null>,
     unknown,
     { bookmarkId: number },
-    { previousBookmarks: Bookmark[]; toastId: number | string }
+    { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
   { bookmarkId: number },
-  { previousBookmarks: Bookmark[]; toastId: number | string }
+  { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
 > => {
   return useMutation({
     mutationFn: async (data) => {

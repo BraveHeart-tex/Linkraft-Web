@@ -4,7 +4,10 @@ import {
   useRestoreBookmark,
   useTrashBookmark,
 } from '@/features/bookmarks/bookmark.api';
-import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import {
+  Bookmark,
+  InfiniteBookmarksData,
+} from '@/features/bookmarks/bookmark.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -129,22 +132,33 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     });
 
   const { mutate: trashBookmark } = useTrashBookmark({
-    async onMutate() {
+    async onMutate(variables) {
       const toastId = showSuccessToast('Bookmark moved to trash successfully.');
 
       await queryClient.cancelQueries({
         queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
       });
 
-      const previousBookmarks = queryClient.getQueryData<Bookmark[]>([
-        QUERY_KEYS.bookmarks.getBookmarks,
-      ]);
+      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
+        [QUERY_KEYS.bookmarks.getBookmarks]
+      );
 
       if (!previousBookmarks) return;
 
-      queryClient.setQueryData<Bookmark[]>(
+      queryClient.setQueryData<InfiniteBookmarksData>(
         [QUERY_KEYS.bookmarks.getBookmarks],
-        (old) => old?.filter((oldBookmark) => oldBookmark.id !== bookmark.id)
+        (oldData) =>
+          oldData
+            ? {
+                ...oldData,
+                pages: oldData.pages.map((page) => ({
+                  ...page,
+                  bookmarks: page.bookmarks.filter(
+                    (oldBookmark) => oldBookmark.id !== variables.bookmarkId
+                  ),
+                })),
+              }
+            : undefined
       );
 
       return { previousBookmarks, toastId };

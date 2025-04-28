@@ -3,6 +3,7 @@ import { createBookmarkSchema } from './bookmark.schema';
 import { Collection } from '../collections/collection.types';
 import { Tag } from '../tags/tag.types';
 import { Nullable } from '@/lib/common.types';
+import { InfiniteData } from '@tanstack/react-query';
 
 export interface Bookmark {
   id: number;
@@ -40,3 +41,10 @@ export interface GetBookmarksResponse {
   items: Bookmark[];
   nextCursor: Nullable<number>;
 }
+
+export type PaginatedBookmarksPage = {
+  bookmarks: Bookmark[];
+  nextCursor: number | null | undefined;
+};
+
+export type InfiniteBookmarksData = InfiniteData<PaginatedBookmarksPage>;

@@ -19,7 +19,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
 import { useModalStore } from '@/lib/stores/modalStore';
 
@@ -55,7 +55,9 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       queryClient.setQueryData<CollectionWithBookmarkCount[]>(
         QUERY_KEYS.collections.list(),
         (old) =>
-          old?.filter((oldCollection) => oldCollection.id !== collection.id)
+          old
+            ? old.filter((oldCollection) => oldCollection.id !== collection.id)
+            : old
       );
 
       return { previousCollections };
@@ -80,6 +82,13 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     (state) => state.showConfirmDialog
   );
   const router = useRouter();
+
+  const generatedCardStyles: CSSProperties = useMemo(() => {
+    return {
+      backgroundImage: generateSubtleGradientFromHex(collection.color),
+      backgroundRepeat: 'no-repeat',
+    };
+  }, [collection.color]);
 
   const handleDeleteCollection = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -108,14 +117,16 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     });
   };
 
+  const handleClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    router.push(`/collections/${collection.id}`);
+  };
+
   return (
     <Card
       className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-all"
-      style={{
-        backgroundImage: generateSubtleGradientFromHex(collection.color),
-        backgroundRepeat: 'no-repeat',
-      }}
-      onClick={() => router.push(`/collections/${collection.id}`)}
+      style={generatedCardStyles}
+      onClick={handleClick}
     >
       <CardContent className="p-4 py-1 space-y-14">
         <div className="flex items-center justify-between gap-4 w-full">

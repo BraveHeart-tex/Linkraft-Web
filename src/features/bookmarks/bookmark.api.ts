@@ -129,7 +129,7 @@ export const usePermanentlyDeleteBookmark = (
 
 export const useBookmarks = () => {
   return useInfiniteQuery({
-    queryKey: [QUERY_KEYS.bookmarks.list()],
+    queryKey: QUERY_KEYS.bookmarks.list(),
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
@@ -149,7 +149,7 @@ export const useBookmarks = () => {
 
 export const useTrashedBookmarks = () => {
   return useInfiniteQuery({
-    queryKey: [QUERY_KEYS.bookmarks.trashed()],
+    queryKey: QUERY_KEYS.bookmarks.trashed(),
     queryFn: async () => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(

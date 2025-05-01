@@ -30,10 +30,7 @@ const SignInForm = () => {
     onSuccess(data) {
       showSuccessToast(data.message);
       router.push('/');
-      queryClient.setQueryData(
-        [QUERY_KEYS.auth.currentUser()],
-        data.data?.user
-      );
+      queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), data.data?.user);
     },
     onError(error) {
       showErrorToast((error as ErrorApiResponse)?.message);

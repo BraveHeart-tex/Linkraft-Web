@@ -4,7 +4,7 @@ import {
 } from '@/features/bookmarks/bookmark.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { showErrorToast, showSuccessToast, ToastId } from '@/lib/toast';
-import { useQueryClient } from '@tanstack/react-query';
+import { QueryKey, useQueryClient } from '@tanstack/react-query';
 
 interface BookmarkMutateContext {
   previousBookmarks: InfiniteBookmarksData | undefined;
@@ -32,7 +32,7 @@ export function useOptimisticRemoveHandler<T extends object>({
   getId,
   successMessage,
 }: {
-  queryKey: unknown[];
+  queryKey: QueryKey;
   getId: (variables: T) => string | number;
   successMessage: string;
 }) {
@@ -79,14 +79,12 @@ export function useOptimisticRemoveHandler<T extends object>({
   };
 }
 
-export function useOnSettledHandler(queryKeys: readonly unknown[]) {
+export function useOnSettledHandler(queryKeys: QueryKey[]) {
   const queryClient = useQueryClient();
 
   return async () => {
     await Promise.all(
-      queryKeys.map((key) =>
-        queryClient.invalidateQueries({ queryKey: key as readonly unknown[] })
-      )
+      queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: key }))
     );
   };
 }

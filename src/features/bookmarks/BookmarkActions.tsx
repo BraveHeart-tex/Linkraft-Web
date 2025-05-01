@@ -5,7 +5,6 @@ import {
   Copy,
   Edit,
   MoreVertical,
-  PinIcon,
   Trash,
 } from 'lucide-react';
 import {
@@ -41,12 +40,13 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
           <MoreVertical className="size-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent aria-label="More options" align="end">
         {bookmark.deletedAt ? (
           <>
             <DropdownMenuItem
               onClick={handleRestoreBookmark}
               disabled={isRestoringBookmark}
+              aria-disabled={isRestoringBookmark}
             >
               <ArchiveRestoreIcon className="mr-2 size-4" />
               Restore
@@ -61,10 +61,6 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
             <DropdownMenuItem onClick={handleCopyUrl}>
               <Copy className="mr-2 size-4" />
               Copy URL
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <PinIcon className="mr-2 size-4" />
-              Pin
             </DropdownMenuItem>
           </>
         )}

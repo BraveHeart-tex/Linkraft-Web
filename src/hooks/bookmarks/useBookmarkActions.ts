@@ -28,14 +28,14 @@ export function useBookmarkActions(bookmark: Bookmark) {
 
   const { onMutate: trashOnMutate, onError: trashOnError } =
     useOptimisticRemoveHandler<TrashBookmarkVariables>({
-      queryKey: [QUERY_KEYS.bookmarks.list()],
+      queryKey: QUERY_KEYS.bookmarks.list(),
       getId: (v) => v.bookmarkId,
       successMessage: 'Bookmark moved to trash successfully.',
     });
 
   const trashOnSettled = useOnSettledHandler([
-    [QUERY_KEYS.bookmarks.list()],
-    [QUERY_KEYS.bookmarks.trashed()],
+    QUERY_KEYS.bookmarks.list(),
+    QUERY_KEYS.bookmarks.trashed(),
   ]);
 
   const { mutate: trashBookmark } = useTrashBookmark({
@@ -46,13 +46,11 @@ export function useBookmarkActions(bookmark: Bookmark) {
 
   const { onMutate: deleteOnMutate, onError: deleteOnError } =
     useOptimisticRemoveHandler<PermanentlyDeleteBookmarkVariables>({
-      queryKey: [QUERY_KEYS.bookmarks.trashed()],
+      queryKey: QUERY_KEYS.bookmarks.trashed(),
       getId: (v) => v.bookmarkId,
       successMessage: 'Bookmark deleted successfully.',
     });
-  const deleteOnSettled = useOnSettledHandler([
-    [QUERY_KEYS.bookmarks.trashed()],
-  ]);
+  const deleteOnSettled = useOnSettledHandler([QUERY_KEYS.bookmarks.trashed()]);
   const { mutate: permanentlyDeleteBookmark } = usePermanentlyDeleteBookmark({
     onMutate: deleteOnMutate,
     onError: deleteOnError,
@@ -65,18 +63,18 @@ export function useBookmarkActions(bookmark: Bookmark) {
         const toastId = showSuccessToast('Bookmark restored successfully.');
 
         await queryClient.cancelQueries({
-          queryKey: [QUERY_KEYS.bookmarks.list()],
+          queryKey: QUERY_KEYS.bookmarks.list(),
         });
 
         const previousTrashedBookmarks =
-          queryClient.getQueryData<InfiniteBookmarksData>([
-            QUERY_KEYS.bookmarks.trashed(),
-          ]);
+          queryClient.getQueryData<InfiniteBookmarksData>(
+            QUERY_KEYS.bookmarks.trashed()
+          );
 
         if (!previousTrashedBookmarks) return;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.trashed()],
+          QUERY_KEYS.bookmarks.trashed(),
           (oldData) =>
             oldData
               ? {
@@ -97,7 +95,7 @@ export function useBookmarkActions(bookmark: Bookmark) {
         const apiError = error as ErrorApiResponse;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.trashed()],
+          QUERY_KEYS.bookmarks.trashed(),
           context?.previousTrashedBookmarks
         );
 
@@ -112,10 +110,10 @@ export function useBookmarkActions(bookmark: Bookmark) {
       async onSettled() {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.bookmarks.list()],
+            queryKey: QUERY_KEYS.bookmarks.list(),
           }),
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.bookmarks.trashed()],
+            queryKey: QUERY_KEYS.bookmarks.trashed(),
           }),
         ]);
       },

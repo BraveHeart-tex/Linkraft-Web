@@ -72,7 +72,7 @@ const CollectionFormDialog = ({
       onSuccess(data) {
         if (!data?.data) return;
         queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-          [QUERY_KEYS.collections.list()],
+          QUERY_KEYS.collections.list(),
           (old) => [...(old || []), { ...data.data, bookmarkCount: 0 }]
         );
         showSuccessToast('Collection created successfully');
@@ -88,7 +88,7 @@ const CollectionFormDialog = ({
       },
       async onSettled() {
         await queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.collections.list()],
+          queryKey: QUERY_KEYS.collections.list(),
         });
       },
     });
@@ -98,17 +98,17 @@ const CollectionFormDialog = ({
         const toastId = showSuccessToast('Collection edited successfully');
 
         await queryClient.cancelQueries({
-          queryKey: [QUERY_KEYS.collections.list()],
+          queryKey: QUERY_KEYS.collections.list(),
         });
 
         const previousCollections = queryClient.getQueryData<
           CollectionWithBookmarkCount[]
-        >([QUERY_KEYS.collections.list()]);
+        >(QUERY_KEYS.collections.list());
 
         if (!previousCollections) return;
 
         queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-          [QUERY_KEYS.collections.list()],
+          QUERY_KEYS.collections.list(),
           (old) => {
             if (!old) return;
             return old.map((oldCollection) => {
@@ -133,7 +133,7 @@ const CollectionFormDialog = ({
         const apiError = error as ErrorApiResponse;
 
         queryClient.setQueryData(
-          [QUERY_KEYS.collections.list()],
+          QUERY_KEYS.collections.list(),
           context?.previousCollections
         );
         showErrorToast('Something went wrong while editing the collection', {
@@ -143,7 +143,7 @@ const CollectionFormDialog = ({
       },
       async onSettled() {
         await queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.collections.list()],
+          queryKey: QUERY_KEYS.collections.list(),
         });
       },
     });

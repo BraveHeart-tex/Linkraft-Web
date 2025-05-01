@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import BookmarkActions from './BookmarkActions';
 import { useCallback } from 'react';
+import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -37,26 +38,16 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const handleBookmarkUpdate = useCallback(
     (metadata: Pick<Bookmark, 'title' | 'faviconUrl'>) => {
       queryClient.setQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.list()],
-        (old) => {
-          if (!old) return undefined;
-          return {
-            ...old,
-            pages: old.pages.map((page) => ({
-              ...page,
-              bookmarks: page.bookmarks.map((oldBookmark) => ({
-                ...oldBookmark,
-                ...(oldBookmark.id === bookmark.id
-                  ? {
-                      title: metadata.title,
-                      faviconUrl: metadata?.faviconUrl,
-                      isMetadataPending: false,
-                    }
-                  : {}),
-              })),
-            })),
-          };
-        }
+        QUERY_KEYS.bookmarks.list(),
+        (old) =>
+          old
+            ? updatePaginatedBookmark(old, bookmark.id, (b) => ({
+                ...b,
+                title: metadata.title,
+                faviconUrl: metadata?.faviconUrl,
+                isMetadataPending: false,
+              }))
+            : old
       );
     },
     [bookmark.id, queryClient]

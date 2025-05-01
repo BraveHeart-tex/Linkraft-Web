@@ -13,7 +13,7 @@ export const useTags = (
   >
 ) =>
   useQuery({
-    queryKey: [QUERY_KEYS.tags.list()],
+    queryKey: QUERY_KEYS.tags.list(),
     queryFn: async () => {
       const result = await safeApiCall(() =>
         api.get<ApiResponse<(Tag & { usageCount: number })[]>>(

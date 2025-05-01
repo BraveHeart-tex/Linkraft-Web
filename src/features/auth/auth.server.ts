@@ -1,11 +1,9 @@
 'use server';
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import api from '@/lib/api/api';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { SessionValidationResult } from './auth.types';
 import { ApiResponse } from '@/lib/api/api.types';
 import { cookies } from 'next/headers';
-
 export const getCurrentUser = async (): Promise<SessionValidationResult> => {
   try {
     const cookieStore = await cookies();
@@ -17,11 +15,18 @@ export const getCurrentUser = async (): Promise<SessionValidationResult> => {
         },
       }
     );
-    const data = response.data.data;
 
-    return {
-      user: data?.user!,
-    };
+    if (!response.data || !response.data.data) {
+      throw new Error('Invalid response structure');
+    }
+
+    const { user } = response.data.data;
+
+    if (!user) {
+      throw new Error('User not found in response');
+    }
+
+    return { user };
   } catch (error) {
     console.error('getCurrentUser error', error);
     return {

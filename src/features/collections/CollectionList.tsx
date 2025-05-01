@@ -1,13 +1,22 @@
 'use client';
 import CollectionCardSkeleton from '@/components/CollectionCardSkeleton';
+import { Button } from '@/components/ui/button';
 import ResourceList from '@/components/ui/resource-list';
-import AddNewCollectionButton from '@/features/collections/AddNewCollectionButton';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
+import { useModalStore } from '@/lib/stores/modalStore';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionList = () => {
   const { data: collections, isLoading, error } = useCollections();
+  const openModal = useModalStore((state) => state.openModal);
+
+  const handleAddCollection = () => {
+    openModal({
+      type: 'create-collection',
+    });
+  };
+
   return (
     <ResourceList
       data={collections}
@@ -24,13 +33,14 @@ const CollectionList = () => {
       renderSkeleton={CollectionCardSkeleton}
       emptyAction={{
         element: (
-          <AddNewCollectionButton
-            buttonProps={{
-              size: 'sm',
-              variant: 'outline',
-              className: 'mt-4',
-            }}
-          />
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-4"
+            onClick={handleAddCollection}
+          >
+            Add Collection
+          </Button>
         ),
       }}
     />

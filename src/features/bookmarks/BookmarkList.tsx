@@ -5,9 +5,9 @@ import ResourceList from '@/components/ui/resource-list';
 import { useBookmarks } from '@/features/bookmarks/bookmark.api';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
-import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
+import { useModalStore } from '@/lib/stores/modalStore';
 import { LinkIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 const BookmarkList = () => {
@@ -24,7 +24,7 @@ const BookmarkList = () => {
     error,
   } = useBookmarks();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
@@ -41,7 +41,7 @@ const BookmarkList = () => {
       keyExtractor={(item) => item?.id?.toString?.()}
       emptyMessage="No bookmarks found — add one to get started."
       emptyAction={{
-        element: <AddBookmarkDialog />,
+        element: <AddBookmarkButton />,
       }}
       emptyIcon={<LinkIcon className="h-10 w-10 stroke-muted-foreground" />}
       errorTitle="Couldn't load bookmarks"
@@ -65,23 +65,22 @@ const BookmarkList = () => {
   );
 };
 
-const AddBookmarkDialog = () => {
-  const [isBookmarkDialogOpen, setIsBookmarkDialogOpen] = useState(false);
+const AddBookmarkButton = () => {
+  const openModal = useModalStore((s) => s.openModal);
+  const handleAddBookmark = () => {
+    openModal({
+      type: 'create-bookmark',
+    });
+  };
   return (
-    <>
-      <BookmarkFormDialog
-        isOpen={isBookmarkDialogOpen}
-        onOpenChange={setIsBookmarkDialogOpen}
-      />
-      <Button
-        size="sm"
-        variant="outline"
-        className="mt-4"
-        onClick={() => setIsBookmarkDialogOpen(true)}
-      >
-        Add Bookmark
-      </Button>
-    </>
+    <Button
+      size="sm"
+      variant="outline"
+      className="mt-4"
+      onClick={handleAddBookmark}
+    >
+      Add Bookmark
+    </Button>
   );
 };
 

@@ -51,8 +51,8 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
           old
             ? updatePaginatedBookmark(old, bookmark.id, (b) => ({
                 ...b,
-                title: metadata.title,
-                faviconUrl: metadata?.faviconUrl,
+                title: metadata.title || b.title,
+                faviconUrl: metadata?.faviconUrl || b.faviconUrl,
                 isMetadataPending: false,
               }))
             : old

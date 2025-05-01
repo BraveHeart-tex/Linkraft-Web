@@ -24,7 +24,7 @@ import { ErrorApiResponse } from '@/lib/api/api.types';
 
 const SignUpForm = () => {
   const router = useRouter();
-  const { mutate, isPending } = useSignUp({
+  const { mutate: signUp, isPending } = useSignUp({
     onError(error) {
       showErrorToast((error as ErrorApiResponse).message);
     },
@@ -44,7 +44,7 @@ const SignUpForm = () => {
   });
 
   const onSubmit = (values: SignUpDto) => {
-    mutate(values);
+    signUp(values);
   };
 
   return (

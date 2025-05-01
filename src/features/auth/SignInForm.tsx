@@ -26,9 +26,8 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 
 const SignInForm = () => {
   const queryClient = useQueryClient();
-
   const router = useRouter();
-  const { mutate, isPending } = useSignIn({
+  const { mutate: signIn, isPending } = useSignIn({
     onSuccess(data) {
       showSuccessToast(data.message);
       router.push('/');
@@ -50,7 +49,7 @@ const SignInForm = () => {
   });
 
   const onSubmit = (values: SignInDto) => {
-    mutate(values);
+    signIn(values);
   };
 
   return (

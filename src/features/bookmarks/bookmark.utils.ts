@@ -33,7 +33,7 @@ export function useOptimisticRemoveHandler<T extends object>({
   successMessage,
 }: {
   queryKey: QueryKey;
-  getId: (variables: T) => string | number;
+  getId: (variables: T) => Bookmark['id'];
   successMessage: string;
 }) {
   const queryClient = useQueryClient();
@@ -50,16 +50,11 @@ export function useOptimisticRemoveHandler<T extends object>({
 
       queryClient.setQueryData<InfiniteBookmarksData>(queryKey, (oldData) =>
         oldData
-          ? {
-              ...oldData,
-              pages: oldData.pages.map((page) => ({
-                ...page,
-                bookmarks: page.bookmarks.filter(
-                  (bookmark) => bookmark.id !== getId(variables)
-                ),
-              })),
-            }
-          : undefined
+          ? filterInfiniteBookmarks(
+              oldData,
+              (bookmark) => bookmark.id !== getId(variables)
+            )
+          : oldData
       );
 
       return { previousBookmarks, toastId };
@@ -79,7 +74,9 @@ export function useOptimisticRemoveHandler<T extends object>({
   };
 }
 
-export function useOnSettledHandler(queryKeys: QueryKey[]) {
+export const useOnSettledHandler = (
+  queryKeys: QueryKey[]
+): (() => Promise<void>) => {
   const queryClient = useQueryClient();
 
   return async () => {
@@ -87,4 +84,19 @@ export function useOnSettledHandler(queryKeys: QueryKey[]) {
       queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: key }))
     );
   };
-}
+};
+
+export const filterInfiniteBookmarks = (
+  oldData: InfiniteBookmarksData,
+  predicate: (bookmark: Bookmark) => boolean
+): InfiniteBookmarksData => {
+  if (!oldData) return oldData;
+
+  return {
+    ...oldData,
+    pages: oldData.pages.map((page) => ({
+      ...page,
+      bookmarks: page.bookmarks.filter(predicate),
+    })),
+  };
+};

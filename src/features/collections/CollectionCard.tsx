@@ -22,6 +22,8 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CSSProperties, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
 import { useModalStore } from '@/lib/stores/modalStore';
+import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
+import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -52,6 +54,10 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
 
       if (!previousCollections) return;
 
+      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list()
+      );
+
       queryClient.setQueryData<CollectionWithBookmarkCount[]>(
         QUERY_KEYS.collections.list(),
         (old) =>
@@ -60,13 +66,29 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
             : old
       );
 
-      return { previousCollections };
+      queryClient.setQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list(),
+        (old) =>
+          old
+            ? filterInfiniteBookmarks(old, (bookmark) =>
+                bookmark.collection
+                  ? bookmark.collection.id !== collection.id
+                  : true
+              )
+            : old
+      );
+
+      return { previousCollections, previousBookmarks };
     },
     onError(error, _variables, context) {
       const apiError = error as ErrorApiResponse;
       queryClient.setQueryData(
         QUERY_KEYS.collections.list(),
         context?.previousCollections
+      );
+      queryClient.setQueryData(
+        QUERY_KEYS.bookmarks.list(),
+        context?.previousBookmarks
       );
       showErrorToast('An error occurred while deleting the collection', {
         description: apiError.message,

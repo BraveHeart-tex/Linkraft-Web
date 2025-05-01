@@ -73,7 +73,7 @@ const CollectionFormDialog = ({
         if (!data?.data) return;
         queryClient.setQueryData<CollectionWithBookmarkCount[]>(
           QUERY_KEYS.collections.list(),
-          (old) => [...(old || []), { ...data.data, bookmarkCount: 0 }]
+          (old) => (old ? [...old, { ...data.data, bookmarkCount: 0 }] : old)
         );
         showSuccessToast('Collection created successfully');
         onOpenChange?.(false);

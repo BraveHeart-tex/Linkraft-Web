@@ -12,6 +12,7 @@ import { Collection, CollectionWithBookmarkCount } from './collection.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import api from '@/lib/api/api';
 import { safeApiCall } from '@/lib/api/safeApiCall';
+import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 
 export const useCreateCollection = (
   options?: UseMutationOptions<
@@ -52,18 +53,23 @@ export const useCollections = (
     ...options,
   });
 
+interface UseDeleteCollectionContext {
+  previousCollections: CollectionWithBookmarkCount[];
+  previousBookmarks?: InfiniteBookmarksData;
+}
+
 export const useDeleteCollection = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
     { collectionId: number },
-    { previousCollections: CollectionWithBookmarkCount[] }
+    UseDeleteCollectionContext
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
   { collectionId: number },
-  { previousCollections: CollectionWithBookmarkCount[] }
+  UseDeleteCollectionContext
 > =>
   useMutation({
     mutationFn: async ({ collectionId }) => {

@@ -17,6 +17,7 @@ import type { ErrorApiResponse } from '@/lib/api/api.types';
 import { DateTime } from 'luxon';
 import { useModalStore } from '@/lib/stores/modalStore';
 import {
+  filterInfiniteBookmarks,
   useOnSettledHandler,
   useOptimisticRemoveHandler,
 } from '@/features/bookmarks/bookmark.utils';
@@ -77,15 +78,10 @@ export function useBookmarkActions(bookmark: Bookmark) {
           QUERY_KEYS.bookmarks.trashed(),
           (oldData) =>
             oldData
-              ? {
-                  ...oldData,
-                  pages: oldData.pages.map((page) => ({
-                    ...page,
-                    bookmarks: page.bookmarks.filter(
-                      (oldBookmark) => oldBookmark.id !== variables.bookmarkId
-                    ),
-                  })),
-                }
+              ? filterInfiniteBookmarks(
+                  oldData,
+                  (oldBookmark) => oldBookmark.id !== variables.bookmarkId
+                )
               : undefined
         );
 

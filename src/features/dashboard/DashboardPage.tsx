@@ -18,23 +18,23 @@ interface DashboardStatItem {
 }
 
 const DashboardPage = () => {
-  const { data, isPending } = useGeneralStats();
+  const { data: dashboardStats, isPending } = useGeneralStats();
 
-  const dashboardStats: DashboardStatItem[] = [
+  const dashboardSummaryData: DashboardStatItem[] = [
     {
       icon: LinkIcon,
       title: 'Bookmarks',
-      value: data?.bookmarkCount || 0,
+      value: dashboardStats?.bookmarkCount || 0,
     },
     {
       icon: FolderIcon,
       title: 'Collections',
-      value: data?.collectionCount || 0,
+      value: dashboardStats?.collectionCount || 0,
     },
     {
       icon: HashIcon,
       title: 'Tags',
-      value: data?.tagCount || 0,
+      value: dashboardStats?.tagCount || 0,
     },
     {
       icon: PinIcon,
@@ -62,10 +62,10 @@ const DashboardPage = () => {
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {isPending
-            ? Array.from({ length: dashboardStats.length }).map((_, index) => (
-                <DashboardMetricCardSkeleton key={index} />
-              ))
-            : dashboardStats.map((item) => (
+            ? Array.from({ length: dashboardSummaryData.length }).map(
+                (_, index) => <DashboardMetricCardSkeleton key={index} />
+              )
+            : dashboardSummaryData.map((item) => (
                 <DashboardMetricCard key={item.title} {...item} />
               ))}
         </div>

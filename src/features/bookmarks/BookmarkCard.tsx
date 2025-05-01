@@ -38,7 +38,6 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
 
   const handleBookmarkUpdate = useCallback(
     (metadata: BookmarkMetadataResponse) => {
-      if (metadata.bookmarkId !== bookmark.id) return;
       queryClient.setQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list(),
         (old) =>
@@ -63,16 +62,16 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
         <div className="h-8 w-8 overflow-hidden">
           {bookmark.isMetadataPending ? (
             <LoaderIcon className="text-muted-foreground animate-spin" />
-          ) : bookmark.faviconUrl ? (
+          ) : (
             <img
-              src={bookmark.faviconUrl || '/placeholder.svg'}
+              src={bookmark.faviconUrl || '/globe.svg'}
               alt={`${bookmark.title} favicon`}
               className="h-full w-full object-cover rounded-md"
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/globe.svg';
+              }}
             />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted rounded-md">
-              <Globe className="h-5 w-5 text-muted-foreground" />
-            </div>
           )}
         </div>
         <div className="flex-1 space-y-1">

@@ -208,10 +208,15 @@ export const useBookmarkMetadataUpdate = (
 
     socket.emit('subscribeToBookmark', { bookmarkId });
     const event = `bookmark:update`;
-    socket.on(event, onUpdate);
+    const onMetadataUpdate = (data: BookmarkMetadataResponse) => {
+      if (data.bookmarkId === bookmarkId) {
+        onUpdate(data);
+      }
+    };
+    socket.on(event, onMetadataUpdate);
 
     return () => {
-      socket.off(event, onUpdate);
+      socket.off(event, onMetadataUpdate);
     };
   }, [bookmarkId, onUpdate, socket]);
 };

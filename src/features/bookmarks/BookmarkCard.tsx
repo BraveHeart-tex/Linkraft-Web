@@ -2,6 +2,7 @@
 import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
 import {
   Bookmark,
+  BookmarkMetadataResponse,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
@@ -36,7 +37,8 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const queryClient = useQueryClient();
 
   const handleBookmarkUpdate = useCallback(
-    (metadata: Pick<Bookmark, 'title' | 'faviconUrl'>) => {
+    (metadata: BookmarkMetadataResponse) => {
+      if (metadata.bookmarkId !== bookmark.id) return;
       queryClient.setQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list(),
         (old) =>
@@ -65,10 +67,10 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
             <img
               src={bookmark.faviconUrl || '/placeholder.svg'}
               alt={`${bookmark.title} favicon`}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-md"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted">
+            <div className="flex h-full w-full items-center justify-center bg-muted rounded-md">
               <Globe className="h-5 w-5 text-muted-foreground" />
             </div>
           )}

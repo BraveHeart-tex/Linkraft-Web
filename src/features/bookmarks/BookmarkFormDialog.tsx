@@ -222,11 +222,27 @@ const BookmarkFormDialog = ({
     });
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark({
-      onSuccess(data) {
-        if (!data?.data) return;
-        queryClient.setQueryData<Bookmark[]>(
+      onSuccess(response) {
+        if (!response?.data) return;
+
+        queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.list(),
-          (old) => [...(old || []), { ...data.data }]
+          (previousBookmarksData) =>
+            previousBookmarksData
+              ? {
+                  ...previousBookmarksData,
+                  pages: [
+                    {
+                      ...previousBookmarksData.pages[0],
+                      bookmarks: [
+                        response.data,
+                        ...(previousBookmarksData.pages[0]?.bookmarks || []),
+                      ],
+                    },
+                    ...previousBookmarksData.pages.slice(1),
+                  ],
+                }
+              : previousBookmarksData
         );
         showSuccessToast('Bookmark created successfully');
         onOpenChange(false);

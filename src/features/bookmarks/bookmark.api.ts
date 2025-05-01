@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 import {
   Bookmark,
+  BookmarkMetadataResponse,
   CreateBookmarkDto,
   GetBookmarksResponse,
   InfiniteBookmarksData,
@@ -198,7 +199,7 @@ export const useRestoreBookmark = (
 
 export const useBookmarkMetadataUpdate = (
   bookmarkId: number,
-  onUpdate: (metadata: Pick<Bookmark, 'faviconUrl' | 'title'>) => void
+  onUpdate: (metadata: BookmarkMetadataResponse) => void
 ) => {
   const socket = useSocket();
 

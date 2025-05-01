@@ -48,3 +48,10 @@ export type PaginatedBookmarksPage = {
 };
 
 export type InfiniteBookmarksData = InfiniteData<PaginatedBookmarksPage>;
+
+export interface BookmarkMetadataResponse {
+  bookmarkId: Bookmark['id'];
+  title: string;
+  isMetadataPending: boolean;
+  faviconUrl: string;
+}

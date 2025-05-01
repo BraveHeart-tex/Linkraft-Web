@@ -43,6 +43,7 @@ import { parseTags } from '@/lib/utils';
 import { useTags } from '../tags/tag.api';
 import { Tag } from '../tags/tag.types';
 import { CollectionWithBookmarkCount } from '../collections/collection.types';
+import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
 
 interface BookmarkFormDialogProps {
   isOpen: boolean;
@@ -106,66 +107,43 @@ const BookmarkFormDialog = ({
 
         queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getBookmarks],
-          (old) => {
-            if (!old) return undefined;
-            return {
-              ...old,
-              pages: old.pages.map((page) => ({
-                ...page,
-                bookmarks: page.bookmarks.map((oldBookmark) => ({
-                  ...oldBookmark,
-                  ...(oldBookmark.id === variables.id
-                    ? {
-                        url: variables?.url || oldBookmark.url,
-                        title: isPendingMetadata
-                          ? 'Fetching Title'
-                          : variables?.title || oldBookmark.title,
-                        description:
-                          variables?.description ?? oldBookmark.description,
-                        isMetadataPending: isPendingMetadata,
-                      }
-                    : {}),
-                })),
-              })),
-            };
-          }
+          (old) =>
+            old
+              ? updatePaginatedBookmark(old, variables.id, (b) => ({
+                  ...b,
+                  url: variables.url ?? b.url,
+                  title: isPendingMetadata
+                    ? 'Fetching Title'
+                    : (variables.title ?? b.title),
+                  description: variables.description ?? b.description,
+                  isMetadataPending: isPendingMetadata,
+                }))
+              : old
         );
 
         return { previousBookmarks };
       },
       async onSuccess(data, variables) {
         if (!data) return;
-        const { createdTags, updatedBookmark } = data;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
           [QUERY_KEYS.bookmarks.getBookmarks],
-          (old) => {
-            if (!old) return undefined;
-            return {
-              ...old,
-              pages: old.pages.map((page) => ({
-                ...page,
-                bookmarks: page.bookmarks.map((oldBookmark) => ({
-                  ...oldBookmark,
-                  ...(oldBookmark.id === variables.id
-                    ? {
-                        ...updatedBookmark,
-                        title: oldBookmark.title,
-                        faviconUrl: oldBookmark.faviconUrl,
-                        isMetadataPending: oldBookmark.isMetadataPending,
-                      }
-                    : {}),
-                })),
-              })),
-            };
-          }
+          (old) =>
+            old
+              ? updatePaginatedBookmark(old, variables.id, (b) => ({
+                  ...data.updatedBookmark,
+                  title: b.title,
+                  faviconUrl: b.faviconUrl,
+                  isMetadataPending: b.isMetadataPending,
+                }))
+              : old
         );
 
         queryClient.setQueryData<Tag[]>(
           [QUERY_KEYS.tags.getTags],
           (oldTags) => [
             ...(oldTags || []),
-            ...createdTags.map((tag) => ({
+            ...data.createdTags.map((tag) => ({
               ...tag,
               usageCount: 1,
             })),

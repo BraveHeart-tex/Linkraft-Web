@@ -74,9 +74,9 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
             />
           )}
         </div>
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-1 overflow-hidden">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold leading-none tracking-tight">
+            <h3 className="font-semibold leading-none tracking-tight text-foreground line-clamp-1 lg:line-clamp-2">
               {bookmark.title}
             </h3>
             <div className="flex items-center gap-2">

@@ -32,7 +32,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
 
   const user = useMemo(() => {
     return queryClient.getQueryData<UserWithoutPasswordHash>([
-      QUERY_KEYS.auth.getCurrentUser,
+      QUERY_KEYS.auth.currentUser(),
     ]);
   }, [queryClient]);
 
@@ -43,17 +43,17 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       showSuccessToast('Collection deleted successfully.');
 
       await queryClient.cancelQueries({
-        queryKey: [QUERY_KEYS.collections.getCollections],
+        queryKey: [QUERY_KEYS.collections.list()],
       });
 
       const previousCollections = queryClient.getQueryData<
         CollectionWithBookmarkCount[]
-      >([QUERY_KEYS.collections.getCollections]);
+      >([QUERY_KEYS.collections.list()]);
 
       if (!previousCollections) return;
 
       queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-        [QUERY_KEYS.collections.getCollections],
+        [QUERY_KEYS.collections.list()],
         (old) =>
           old?.filter((oldCollection) => oldCollection.id !== collection.id)
       );
@@ -63,7 +63,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     onError(error, _variables, context) {
       const apiError = error as ErrorApiResponse;
       queryClient.setQueryData(
-        [QUERY_KEYS.collections.getCollections],
+        [QUERY_KEYS.collections.list()],
         context?.previousCollections
       );
       showErrorToast('An error occurred while deleting the collection', {
@@ -72,7 +72,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     },
     async onSettled() {
       await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.collections.getCollections],
+        queryKey: [QUERY_KEYS.collections.list()],
       });
     },
   });

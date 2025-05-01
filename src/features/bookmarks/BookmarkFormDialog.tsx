@@ -70,24 +70,27 @@ const BookmarkFormDialog = ({
 
   useEffect(() => {
     if (initialData) {
-      const { id, title, url, description, tags, collection } = initialData;
       form.reset({
-        id,
-        collectionId: collection?.id || null,
-        description,
-        title,
-        url,
-        existingTagIds: tags?.map((tag) => tag.id),
-        tags: tags?.length
-          ? tags?.map((tag) => ({
-              __isNew__: false,
-              label: tag.name,
-              value: tag.id.toString(),
-            }))
-          : [],
+        id: initialData.id,
+        collectionId: initialData.collection?.id || null,
+        description: initialData.description,
+        title: initialData.title,
+        url: initialData.url,
+        existingTagIds:
+          Array.isArray(tags) && tags.length > 0
+            ? tags.map((tag) => tag.id)
+            : [],
+        tags:
+          Array.isArray(tags) && tags.length > 0
+            ? tags.map((tag) => ({
+                __isNew__: false,
+                label: tag.name,
+                value: tag.id.toString(),
+              }))
+            : [],
       });
     }
-  }, [form, initialData]);
+  }, [form, initialData, tags]);
 
   const { data: collections } = useCollections();
   const queryClient = useQueryClient();
@@ -100,13 +103,13 @@ const BookmarkFormDialog = ({
 
         const previousBookmarks =
           queryClient.getQueryData<InfiniteBookmarksData>([
-            QUERY_KEYS.bookmarks.getBookmarks,
+            QUERY_KEYS.bookmarks.list(),
           ]);
 
         if (!previousBookmarks) return;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.getBookmarks],
+          [QUERY_KEYS.bookmarks.list()],
           (old) =>
             old
               ? updatePaginatedBookmark(old, variables.id, (b) => ({
@@ -127,7 +130,7 @@ const BookmarkFormDialog = ({
         if (!data) return;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.getBookmarks],
+          [QUERY_KEYS.bookmarks.list()],
           (old) =>
             old
               ? updatePaginatedBookmark(old, variables.id, (b) => ({
@@ -139,20 +142,17 @@ const BookmarkFormDialog = ({
               : old
         );
 
-        queryClient.setQueryData<Tag[]>(
-          [QUERY_KEYS.tags.getTags],
-          (oldTags) => [
-            ...(oldTags || []),
-            ...data.createdTags.map((tag) => ({
-              ...tag,
-              usageCount: 1,
-            })),
-          ]
-        );
+        queryClient.setQueryData<Tag[]>([QUERY_KEYS.tags.list()], (oldTags) => [
+          ...(oldTags || []),
+          ...data.createdTags.map((tag) => ({
+            ...tag,
+            usageCount: 1,
+          })),
+        ]);
 
         if (variables.collectionId !== initialData?.collection?.id) {
           queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-            [QUERY_KEYS.collections.getCollections],
+            [QUERY_KEYS.collections.list()],
             (collections) =>
               collections?.map((collection) => {
                 if (collection.id === variables.collectionId) {
@@ -178,7 +178,7 @@ const BookmarkFormDialog = ({
       },
       async onError(error, _variables, context) {
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.getBookmarks],
+          [QUERY_KEYS.bookmarks.list()],
           context?.previousBookmarks
         );
 
@@ -212,10 +212,10 @@ const BookmarkFormDialog = ({
       async onSettled() {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.tags.getTags],
+            queryKey: [QUERY_KEYS.tags.list()],
           }),
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.collections.getCollections],
+            queryKey: [QUERY_KEYS.collections.list()],
           }),
         ]);
       },
@@ -225,7 +225,7 @@ const BookmarkFormDialog = ({
       onSuccess(data) {
         if (!data?.data) return;
         queryClient.setQueryData<Bookmark[]>(
-          [QUERY_KEYS.bookmarks.getBookmarks],
+          [QUERY_KEYS.bookmarks.list()],
           (old) => [...(old || []), { ...data.data }]
         );
         showSuccessToast('Bookmark created successfully');
@@ -263,7 +263,7 @@ const BookmarkFormDialog = ({
       },
       async onSettled() {
         await queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+          queryKey: [QUERY_KEYS.bookmarks.list()],
         });
       },
     });

@@ -48,7 +48,7 @@ export const useCollections = (
 
       return response.data || [];
     },
-    queryKey: [QUERY_KEYS.collections.getCollections],
+    queryKey: [QUERY_KEYS.collections.list()],
     ...options,
   });
 

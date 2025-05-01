@@ -37,7 +37,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const handleBookmarkUpdate = useCallback(
     (metadata: Pick<Bookmark, 'title' | 'faviconUrl'>) => {
       queryClient.setQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getBookmarks],
+        [QUERY_KEYS.bookmarks.list()],
         (old) => {
           if (!old) return undefined;
           return {

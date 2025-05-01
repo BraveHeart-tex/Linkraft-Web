@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useGeneralStats = () =>
   useQuery({
-    queryKey: [QUERY_KEYS.dashboard.getGeneralStats],
+    queryKey: [QUERY_KEYS.dashboard.generalStats()],
     queryFn: () =>
       safeApiCall(() =>
         api.get<ApiResponse<GeneralStats>>(API_ROUTES.dashboard.getGeneralStats)

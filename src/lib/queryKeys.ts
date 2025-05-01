@@ -1,18 +1,19 @@
 export const QUERY_KEYS = {
   auth: {
-    getCurrentUser: 'getCurrentUser',
+    currentUser: () => ['auth', 'currentUser'] as const,
   },
   bookmarks: {
-    getBookmarks: 'getBookmarks',
-    getTrashedBookmarks: 'getTrashedBookmarks',
+    list: () => ['bookmarks', 'list'] as const,
+    byId: (id: string) => ['bookmarks', 'byId', id] as const,
+    trashed: () => ['bookmarks', 'trashed'] as const,
   },
   collections: {
-    getCollections: 'getCollections',
+    list: () => ['collections', 'list'] as const,
   },
   dashboard: {
-    getGeneralStats: 'getGeneralStats',
+    generalStats: () => ['dashboard', 'generalStats'] as const,
   },
   tags: {
-    getTags: 'getTags',
+    list: () => ['tags', 'list'] as const,
   },
 };

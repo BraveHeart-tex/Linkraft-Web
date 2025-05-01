@@ -1,5 +1,5 @@
 'use client';
-import { ApiResponse } from '@/lib/api/api.types';
+import { ApiResponse, ErrorApiResponse } from '@/lib/api/api.types';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useInfiniteQuery,
@@ -73,17 +73,21 @@ export const useCreateBookmark = (
   });
 };
 
+export interface TrashBookmarkVariables {
+  bookmarkId: Bookmark['id'];
+}
+
 export const useTrashBookmark = (
   options?: UseMutationOptions<
     ApiResponse<null>,
-    unknown,
-    { bookmarkId: number },
+    ErrorApiResponse,
+    TrashBookmarkVariables,
     { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
-  unknown,
-  { bookmarkId: number },
+  ErrorApiResponse,
+  TrashBookmarkVariables,
   { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
 > => {
   return useMutation({
@@ -96,17 +100,21 @@ export const useTrashBookmark = (
   });
 };
 
+export interface PermanentlyDeleteBookmarkVariables {
+  bookmarkId: Bookmark['id'];
+}
+
 export const usePermanentlyDeleteBookmark = (
   options?: UseMutationOptions<
     ApiResponse<null>,
-    unknown,
-    { bookmarkId: number },
+    ErrorApiResponse,
+    PermanentlyDeleteBookmarkVariables,
     { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
   >
 ): UseMutationResult<
   ApiResponse<null>,
-  unknown,
-  { bookmarkId: number },
+  ErrorApiResponse,
+  PermanentlyDeleteBookmarkVariables,
   { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
 > =>
   useMutation({
@@ -121,7 +129,7 @@ export const usePermanentlyDeleteBookmark = (
 
 export const useBookmarks = () => {
   return useInfiniteQuery({
-    queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+    queryKey: [QUERY_KEYS.bookmarks.list()],
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
@@ -141,7 +149,7 @@ export const useBookmarks = () => {
 
 export const useTrashedBookmarks = () => {
   return useInfiniteQuery({
-    queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+    queryKey: [QUERY_KEYS.bookmarks.trashed()],
     queryFn: async () => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(

@@ -1,5 +1,7 @@
 'use client';
 import {
+  PermanentlyDeleteBookmarkVariables,
+  TrashBookmarkVariables,
   usePermanentlyDeleteBookmark,
   useRestoreBookmark,
   useTrashBookmark,
@@ -30,6 +32,10 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { DateTime } from 'luxon';
 import { useModalStore } from '@/lib/stores/modalStore';
+import {
+  useOnSettledHandler,
+  useOptimisticRemoveHandler,
+} from '@/features/bookmarks/bookmark.utils';
 
 interface BookmarkActionsProps {
   bookmark: Bookmark;
@@ -41,56 +47,38 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
   const isTrashed = !!bookmark.deletedAt;
   const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
+
+  const { onMutate: trashOnMutate, onError: trashOnError } =
+    useOptimisticRemoveHandler<TrashBookmarkVariables>({
+      queryKey: [QUERY_KEYS.bookmarks.list()],
+      getId: (v) => v.bookmarkId,
+      successMessage: 'Bookmark moved to trash successfully.',
+    });
+
+  const trashOnSettled = useOnSettledHandler([
+    [QUERY_KEYS.bookmarks.list()],
+    [QUERY_KEYS.bookmarks.trashed()],
+  ]);
+
+  const { mutate: trashBookmark } = useTrashBookmark({
+    onMutate: trashOnMutate,
+    onError: trashOnError,
+    onSettled: trashOnSettled,
+  });
+
+  const { onMutate: deleteOnMutate, onError: deleteOnError } =
+    useOptimisticRemoveHandler<PermanentlyDeleteBookmarkVariables>({
+      queryKey: [QUERY_KEYS.bookmarks.trashed()],
+      getId: (v) => v.bookmarkId,
+      successMessage: 'Bookmark deleted successfully.',
+    });
+  const deleteOnSettled = useOnSettledHandler([
+    [QUERY_KEYS.bookmarks.trashed()],
+  ]);
   const { mutate: permanentlyDeleteBookmark } = usePermanentlyDeleteBookmark({
-    async onMutate(variables) {
-      const toastId = showSuccessToast('Bookmark deleted successfully.');
-
-      await queryClient.cancelQueries({
-        queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-      });
-
-      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getTrashedBookmarks]
-      );
-
-      if (!previousBookmarks) return;
-
-      queryClient.setQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-        (oldData) =>
-          oldData
-            ? {
-                ...oldData,
-                pages: oldData.pages.map((page) => ({
-                  ...page,
-                  bookmarks: page.bookmarks.filter(
-                    (oldBookmark) => oldBookmark.id !== variables.bookmarkId
-                  ),
-                })),
-              }
-            : undefined
-      );
-
-      return { previousBookmarks, toastId };
-    },
-    onError(error, _variables, context) {
-      const apiError = error as ErrorApiResponse;
-
-      queryClient.setQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-        context?.previousBookmarks
-      );
-
-      showErrorToast('An error occurred while deleting the bookmark', {
-        description: apiError.message,
-        id: context?.toastId,
-      });
-    },
-    async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-      });
-    },
+    onMutate: deleteOnMutate,
+    onError: deleteOnError,
+    onSettled: deleteOnSettled,
   });
 
   const { mutate: restoreBookmark, isPending: isRestoringBookmark } =
@@ -99,18 +87,18 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         const toastId = showSuccessToast('Bookmark restored successfully.');
 
         await queryClient.cancelQueries({
-          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+          queryKey: [QUERY_KEYS.bookmarks.list()],
         });
 
         const previousTrashedBookmarks =
           queryClient.getQueryData<InfiniteBookmarksData>([
-            QUERY_KEYS.bookmarks.getTrashedBookmarks,
+            QUERY_KEYS.bookmarks.trashed(),
           ]);
 
         if (!previousTrashedBookmarks) return;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+          [QUERY_KEYS.bookmarks.trashed()],
           (oldData) =>
             oldData
               ? {
@@ -131,7 +119,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         const apiError = error as ErrorApiResponse;
 
         queryClient.setQueryData<InfiniteBookmarksData>(
-          [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+          [QUERY_KEYS.bookmarks.trashed()],
           context?.previousTrashedBookmarks
         );
 
@@ -146,79 +134,28 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
       async onSettled() {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
+            queryKey: [QUERY_KEYS.bookmarks.list()],
           }),
           queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
+            queryKey: [QUERY_KEYS.bookmarks.trashed()],
           }),
         ]);
       },
     });
-
-  const { mutate: trashBookmark } = useTrashBookmark({
-    async onMutate(variables) {
-      const toastId = showSuccessToast('Bookmark moved to trash successfully.');
-
-      await queryClient.cancelQueries({
-        queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
-      });
-
-      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getBookmarks]
-      );
-
-      if (!previousBookmarks) return;
-
-      queryClient.setQueryData<InfiniteBookmarksData>(
-        [QUERY_KEYS.bookmarks.getBookmarks],
-        (oldData) =>
-          oldData
-            ? {
-                ...oldData,
-                pages: oldData.pages.map((page) => ({
-                  ...page,
-                  bookmarks: page.bookmarks.filter(
-                    (oldBookmark) => oldBookmark.id !== variables.bookmarkId
-                  ),
-                })),
-              }
-            : undefined
-      );
-
-      return { previousBookmarks, toastId };
-    },
-    onError(error, _variables, context) {
-      const apiError = error as ErrorApiResponse;
-
-      queryClient.setQueryData(
-        [QUERY_KEYS.bookmarks.getBookmarks],
-        context?.previousBookmarks
-      );
-
-      showErrorToast('An error occurred while moving the bookmark to trash', {
-        description: apiError.message,
-        id: context?.toastId,
-      });
-    },
-    async onSettled() {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.bookmarks.getTrashedBookmarks],
-        }),
-      ]);
-    },
-  });
 
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
   );
 
   const handleCopyUrl = async () => {
-    await navigator.clipboard.writeText(bookmark.url);
-    showSuccessToast('URL copied to clipboard');
+    try {
+      await navigator.clipboard.writeText(bookmark.url);
+      showSuccessToast('URL copied to clipboard');
+    } catch {
+      showErrorToast('Failed to copy URL to clipboard', {
+        description: 'Please try again.',
+      });
+    }
   };
 
   const handleTrashBookmark = () => {

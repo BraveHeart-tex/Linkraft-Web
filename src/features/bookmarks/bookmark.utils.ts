@@ -27,19 +27,19 @@ export const updatePaginatedBookmark = (
   };
 };
 
-export function useOptimisticRemoveHandler({
+export function useOptimisticRemoveHandler<T extends object>({
   queryKey,
   getId,
   successMessage,
 }: {
   queryKey: unknown[];
-  getId: (variables: Record<string, unknown>) => string | number;
+  getId: (variables: T) => string | number;
   successMessage: string;
 }) {
   const queryClient = useQueryClient();
 
   return {
-    async onMutate(variables: Record<string, unknown>) {
+    async onMutate(variables: T) {
       const toastId = showSuccessToast(successMessage);
 
       await queryClient.cancelQueries({ queryKey });
@@ -67,7 +67,7 @@ export function useOptimisticRemoveHandler({
 
     onError(
       error: ErrorApiResponse,
-      _variables: Record<string, unknown>,
+      _variables: T,
       context?: BookmarkMutateContext
     ) {
       queryClient.setQueryData(queryKey, context?.previousBookmarks);
@@ -85,7 +85,7 @@ export function useOnSettledHandler(queryKeys: readonly unknown[]) {
   return async () => {
     await Promise.all(
       queryKeys.map((key) =>
-        queryClient.invalidateQueries({ queryKey: key as unknown[] })
+        queryClient.invalidateQueries({ queryKey: key as readonly unknown[] })
       )
     );
   };

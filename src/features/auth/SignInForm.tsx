@@ -1,5 +1,4 @@
 'use client';
-
 import { useForm } from 'react-hook-form';
 import { SignInDto, SignInSchema } from './auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +31,7 @@ const SignInForm = () => {
       showSuccessToast(data.message);
       router.push('/');
       queryClient.setQueryData(
-        [QUERY_KEYS.auth.getCurrentUser],
+        [QUERY_KEYS.auth.currentUser()],
         data.data?.user
       );
     },

@@ -30,6 +30,10 @@ const ModalHost = () => {
       );
     }
 
+    case 'create-bookmark': {
+      return <BookmarkFormDialog isOpen onOpenChange={closeModal} />;
+    }
+
     default:
       return null;
   }

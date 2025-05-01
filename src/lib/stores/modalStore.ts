@@ -9,6 +9,14 @@ export type ModalType =
       payload: { bookmark: Bookmark };
     }
   | {
+      type: 'create-collection';
+      payload?: undefined;
+    }
+  | {
+      type: 'create-bookmark';
+      payload?: undefined;
+    }
+  | {
       type: 'edit-collection';
       payload: { collection: Collection };
     };

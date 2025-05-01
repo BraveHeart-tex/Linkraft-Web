@@ -13,6 +13,10 @@ export type ModalType =
       payload?: undefined;
     }
   | {
+      type: 'import-bookmarks';
+      payload?: undefined;
+    }
+  | {
       type: 'create-bookmark';
       payload?: undefined;
     }

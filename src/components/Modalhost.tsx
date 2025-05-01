@@ -1,6 +1,7 @@
 'use client';
 import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
+import FileImportDialog from '@/features/import-bookmarks/FileImportDialog';
 import { useModalStore } from '@/lib/stores/modalStore';
 
 const ModalHost = () => {
@@ -32,6 +33,14 @@ const ModalHost = () => {
 
     case 'create-bookmark': {
       return <BookmarkFormDialog isOpen onOpenChange={closeModal} />;
+    }
+
+    case 'import-bookmarks': {
+      return <FileImportDialog isOpen onOpenChange={closeModal} />;
+    }
+
+    case 'create-collection': {
+      return <CollectionFormDialog isOpen onOpenChange={closeModal} />;
     }
 
     default:

@@ -21,10 +21,9 @@ import {
   ExternalLink,
   LoaderIcon,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import BookmarkActions from './BookmarkActions';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
 
 interface BookmarkCardProps {
@@ -33,7 +32,15 @@ interface BookmarkCardProps {
 
 const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   const formattedDate = formatIsoDate(bookmark.createdAt, 'DD');
-  const domain = new URL(bookmark.url).hostname.replace('www.', '');
+
+  const domain: string = useMemo(() => {
+    try {
+      return new URL(bookmark.url).hostname.replace('www.', '');
+    } catch {
+      return '';
+    }
+  }, [bookmark.url]);
+
   const queryClient = useQueryClient();
 
   const handleBookmarkUpdate = useCallback(
@@ -57,7 +64,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
   return (
-    <Card className={cn('w-full transition-all hover:shadow-md')}>
+    <Card className="w-full">
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">
           {bookmark.isMetadataPending ? (

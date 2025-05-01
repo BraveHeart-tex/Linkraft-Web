@@ -86,8 +86,8 @@ const CollectionFormDialog = ({
           description: apiError.message,
         });
       },
-      onSettled() {
-        queryClient.invalidateQueries({
+      async onSettled() {
+        await queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.collections.getCollections],
         });
       },
@@ -141,8 +141,8 @@ const CollectionFormDialog = ({
           id: context?.toastId,
         });
       },
-      onSettled() {
-        queryClient.invalidateQueries({
+      async onSettled() {
+        await queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.collections.getCollections],
         });
       },

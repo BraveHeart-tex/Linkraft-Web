@@ -70,8 +70,8 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
         description: apiError.message,
       });
     },
-    onSettled() {
-      queryClient.invalidateQueries({
+    async onSettled() {
+      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.collections.getCollections],
       });
     },

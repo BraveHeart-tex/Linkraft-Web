@@ -277,8 +277,8 @@ const BookmarkFormDialog = ({
             break;
         }
       },
-      onSettled() {
-        queryClient.invalidateQueries({
+      async onSettled() {
+        await queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.bookmarks.getBookmarks],
         });
       },

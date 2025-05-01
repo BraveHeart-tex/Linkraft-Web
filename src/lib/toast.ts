@@ -1,6 +1,6 @@
 import { ExternalToast, toast } from 'sonner';
 
-type ToastId = number | string;
+export type ToastId = number | string;
 
 export const showErrorToast = (
   message: string | undefined,

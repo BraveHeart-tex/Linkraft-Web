@@ -153,16 +153,22 @@ const BookmarkFormDialog = ({
         if (variables.collectionId !== initialData?.collection?.id) {
           queryClient.setQueryData<CollectionWithBookmarkCount[]>(
             [QUERY_KEYS.collections.getCollections],
-            (oldCollections) =>
-              oldCollections?.map((oldCollection) => ({
-                ...oldCollection,
-                bookmarkCount:
-                  oldCollection.id === variables.collectionId
-                    ? oldCollection.bookmarkCount + 1
-                    : initialData?.collection?.id
-                      ? oldCollection.bookmarkCount - 1
-                      : oldCollection.bookmarkCount,
-              }))
+            (collections) =>
+              collections?.map((collection) => {
+                if (collection.id === variables.collectionId) {
+                  return {
+                    ...collection,
+                    bookmarkCount: collection.bookmarkCount + 1,
+                  };
+                }
+                if (collection.id === initialData?.collection?.id) {
+                  return {
+                    ...collection,
+                    bookmarkCount: collection.bookmarkCount - 1,
+                  };
+                }
+                return collection;
+              })
           );
         }
 

@@ -16,8 +16,8 @@ const BookmarkImportProgress = () => {
       role="alert"
       data-state={status}
       className={cn(
-        `fixed bottom-6 right-6 w-80 bg-background border shadow-lg rounded-xl p-4 flex flex-col gap-3 transition-all duration-300 opacity-0 translate-y-4`,
-        importJobId && 'opacity-100 translate-y-0'
+        `fixed bottom-6 right-6 w-80 bg-background border border-border shadow-lg rounded-xl p-4 flex flex-col gap-3 transition-all duration-300 opacity-0 translate-y-4 text-popover-foreground`,
+        importJobId && progress && 'opacity-100 translate-y-0'
       )}
     >
       <div
@@ -40,7 +40,12 @@ const BookmarkImportProgress = () => {
         )}
       </div>
       {status === 'processing' && (
-        <Progress value={progress} className="h-2 rounded-full" />
+        <>
+          <Progress value={progress} className="h-2 rounded-full" />
+          <p className="text-xs text-muted-foreground">
+            Processing {progress}% of bookmarks...
+          </p>
+        </>
       )}
       {status === 'completed' && (
         <p className="text-xs text-muted-foreground">

@@ -22,6 +22,7 @@ import { useSocket } from '@/context/SocketProvider';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import api from '@/lib/api/api';
 import { Nullable } from '@/lib/common.types';
+import { SOCKET_EVENTS } from '@/lib/socket';
 
 export const useUpdateBookmark = (
   options?: UseMutationOptions<
@@ -206,8 +207,8 @@ export const useBookmarkMetadataUpdate = (
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit('subscribeToBookmark', { bookmarkId });
-    const event = `bookmark:update`;
+    socket.emit(SOCKET_EVENTS.BOOKMARK.SUBSCRIBE, { bookmarkId });
+    const event = SOCKET_EVENTS.BOOKMARK.UPDATE;
     const onMetadataUpdate = (data: BookmarkMetadataResponse) => {
       if (data.bookmarkId === bookmarkId) {
         onUpdate(data);

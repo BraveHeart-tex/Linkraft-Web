@@ -22,6 +22,13 @@ export const showInfoToast = (
   return toast.info(message, data);
 };
 
+export const showLoadingToast = (
+  message: string | undefined,
+  data?: ExternalToast
+): ToastId => {
+  return toast.loading(message, data);
+};
+
 export const dismissToast = (toastId: ToastId) => {
   return toast.dismiss(toastId);
 };

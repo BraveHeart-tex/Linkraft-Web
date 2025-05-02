@@ -2,7 +2,7 @@
 import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import FileImportDialog from '@/features/import-bookmarks/FileImportDialog';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 
 const ModalHost = () => {
   const modal = useModalStore((s) => s.modal);

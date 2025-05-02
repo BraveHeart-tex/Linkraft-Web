@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import ResourceList from '@/components/ui/resource-list';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionList = () => {

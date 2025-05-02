@@ -5,7 +5,7 @@ import ResourceList from '@/components/ui/resource-list';
 import { useBookmarks } from '@/features/bookmarks/bookmark.api';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { LinkIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';

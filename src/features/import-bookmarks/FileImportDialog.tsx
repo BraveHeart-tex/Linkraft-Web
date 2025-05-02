@@ -13,22 +13,31 @@ import {
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useImportBookmarkFile } from './import-bookmark.api';
+import { BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES } from '@/features/import-bookmarks/import-bookmark.constants';
+import { useBookmarkImportStore } from '@/lib/stores/bookmark-import/useBookmarkImportStore';
 
 interface FileImportDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-// Maximum size for imported bookmark files (5 MiB)
-const BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-
 const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
+  const setImportJobId = useBookmarkImportStore(
+    (state) => state.setImportJobId
+  );
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { mutate: importBookmarkFile } = useImportBookmarkFile();
+  const { mutate: importBookmarkFile } = useImportBookmarkFile({
+    onSuccess(response) {
+      if (!response.data?.jobId) return;
+      setIsUploading(false);
+      setProgress(0);
+      setImportJobId(response.data.jobId);
+    },
+  });
 
   const onDrop = (acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];

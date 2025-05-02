@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Nullable } from '../common.types';
+import { Nullable } from '../../common.types';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { Collection } from '@/features/collections/collection.types';
 

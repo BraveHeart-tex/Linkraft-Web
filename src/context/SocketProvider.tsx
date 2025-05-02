@@ -8,9 +8,9 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { Socket } from 'socket.io-client';
 
-const SocketContext =
-  createContext<Nullable<ReturnType<typeof getSocket>>>(null);
+const SocketContext = createContext<Nullable<Socket>>(null);
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket] = useState(getSocket());

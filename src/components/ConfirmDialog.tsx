@@ -8,7 +8,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { TriangleAlertIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';

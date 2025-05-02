@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/collapsible';
 import { useCollections } from '@/features/collections/collection.api';
 import Link from 'next/link';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 
 const SidebarCollectionsList = () => {
   const openModal = useModalStore((s) => s.openModal);

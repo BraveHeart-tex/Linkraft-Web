@@ -2,7 +2,7 @@ import { ButtonVariant } from '@/components/ui/button';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-type ShowConfirmDialogParams = {
+interface ShowConfirmDialogParams {
   title: string;
   message: string;
   primaryActionLabel: string;
@@ -12,9 +12,9 @@ type ShowConfirmDialogParams = {
   primaryButtonVariant?: ButtonVariant;
   secondaryButtonVariant?: ButtonVariant;
   alertText?: string;
-};
+}
 
-type ConfirmDialogStoreState = {
+interface ConfirmDialogStoreState {
   visible: boolean;
   title: string;
   message: string;
@@ -32,7 +32,7 @@ type ConfirmDialogStoreState = {
   primaryButtonVariant: ButtonVariant;
   secondaryButtonVariant: ButtonVariant;
   alertText: string;
-};
+}
 
 export const useConfirmDialogStore = create<
   ConfirmDialogStoreState,

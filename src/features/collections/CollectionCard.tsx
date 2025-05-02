@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { useDeleteCollection } from './collection.api';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { ErrorApiResponse } from '@/lib/api/api.types';
@@ -21,7 +21,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { CSSProperties, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
 

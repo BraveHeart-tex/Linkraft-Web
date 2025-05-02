@@ -11,11 +11,11 @@ import type {
 } from '@/features/bookmarks/bookmark.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
-import { useConfirmDialogStore } from '@/lib/stores/confirmDialogStore';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import type { ErrorApiResponse } from '@/lib/api/api.types';
 import { DateTime } from 'luxon';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 import {
   filterInfiniteBookmarks,
   useOnSettledHandler,

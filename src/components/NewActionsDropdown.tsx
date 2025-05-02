@@ -13,7 +13,7 @@ import {
   Plus,
   UploadIcon,
 } from 'lucide-react';
-import { useModalStore } from '@/lib/stores/modalStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 
 const actions = [
   { icon: UploadIcon, label: 'Import from Browser', type: 'import-bookmarks' },

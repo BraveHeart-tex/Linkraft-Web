@@ -34,4 +34,7 @@ export const API_ROUTES = {
   tags: {
     getUserTags: '/tags',
   },
+  search: {
+    getSearchResults: '/search',
+  },
 } as const;

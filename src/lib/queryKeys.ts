@@ -16,4 +16,7 @@ export const QUERY_KEYS = {
   tags: {
     list: () => ['tags', 'list'] as const,
   },
+  search: {
+    list: (query: string) => ['search', 'list', query] as const,
+  },
 };

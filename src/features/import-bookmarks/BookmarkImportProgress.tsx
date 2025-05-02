@@ -1,14 +1,14 @@
 'use client';
 
 import { Progress } from '@/components/ui/progress';
-import { useBookmarkImportStore } from '@/lib/stores/bookmark-import/useBookmarkImportStore';
+import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { cn } from '@/lib/utils';
 import { CheckCircle, Loader2 } from 'lucide-react';
 
 const BookmarkImportProgress = () => {
-  const progress = useBookmarkImportStore((s) => s.progress);
-  const status = useBookmarkImportStore((s) => s.status);
-  const importJobId = useBookmarkImportStore((s) => s.importJobId);
+  const progress = useImportBookmarkStore((s) => s.progress);
+  const status = useImportBookmarkStore((s) => s.status);
+  const importJobId = useImportBookmarkStore((s) => s.importJobId);
 
   return (
     <div

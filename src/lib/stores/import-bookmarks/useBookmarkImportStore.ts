@@ -6,7 +6,7 @@ export type BookmarkImportStatus =
   | 'completed'
   | 'failed';
 
-interface ImportStore {
+interface ImportBookmarkStore {
   importJobId: string | null;
   progress: number;
   status: BookmarkImportStatus;
@@ -15,7 +15,7 @@ interface ImportStore {
   reset: () => void;
 }
 
-export const useBookmarkImportStore = create<ImportStore>((set) => ({
+export const useImportBookmarkStore = create<ImportBookmarkStore>((set) => ({
   importJobId: null,
   progress: 0,
   status: 'pending',

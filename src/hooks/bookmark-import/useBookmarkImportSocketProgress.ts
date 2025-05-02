@@ -2,8 +2,8 @@ import { useSocket } from '@/context/SocketProvider';
 import { SOCKET_EVENTS } from '@/lib/socket';
 import {
   BookmarkImportStatus,
-  useBookmarkImportStore,
-} from '@/lib/stores/bookmark-import/useBookmarkImportStore';
+  useImportBookmarkStore,
+} from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { useEffect } from 'react';
 
 interface BookmarkImportSocketProgress {
@@ -13,9 +13,9 @@ interface BookmarkImportSocketProgress {
 }
 
 export const useBookmarkImportSocketProgress = () => {
-  const importJobId = useBookmarkImportStore((state) => state.importJobId);
-  const setProgress = useBookmarkImportStore((state) => state.setProgress);
-  const reset = useBookmarkImportStore((state) => state.reset);
+  const importJobId = useImportBookmarkStore((state) => state.importJobId);
+  const setProgress = useImportBookmarkStore((state) => state.setProgress);
+  const reset = useImportBookmarkStore((state) => state.reset);
   const socket = useSocket();
 
   useEffect(() => {

@@ -10,11 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES } from '@/features/import-bookmarks/import-bookmark.constants';
+import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useImportBookmarkFile } from './import-bookmark.api';
-import { BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES } from '@/features/import-bookmarks/import-bookmark.constants';
-import { useBookmarkImportStore } from '@/lib/stores/bookmark-import/useBookmarkImportStore';
 
 interface FileImportDialogProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ interface FileImportDialogProps {
 }
 
 const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
-  const setImportJobId = useBookmarkImportStore(
+  const setImportJobId = useImportBookmarkStore(
     (state) => state.setImportJobId
   );
   const [file, setFile] = useState<File | null>(null);

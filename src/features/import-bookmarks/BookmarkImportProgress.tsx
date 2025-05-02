@@ -20,7 +20,12 @@ const BookmarkImportProgress = () => {
         importJobId && 'opacity-100 translate-y-0'
       )}
     >
-      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+      <div
+        className={cn(
+          'flex items-center gap-2 text-sm text-muted-foreground font-medium',
+          status === 'completed' && 'text-success'
+        )}
+      >
         {status === 'processing' && (
           <>
             <Loader2 className="animate-spin h-4 w-4" />
@@ -29,7 +34,7 @@ const BookmarkImportProgress = () => {
         )}
         {status === 'completed' && (
           <>
-            <CheckCircle className="h-4 w-4 text-success" />
+            <CheckCircle className="h-4 w-4" />
             Import complete
           </>
         )}

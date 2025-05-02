@@ -36,6 +36,9 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
       setIsUploading(false);
       setProgress(0);
       setImportJobId(response.data.jobId);
+      setFile(null);
+      setErrorMessage('');
+      onOpenChange(false);
     },
   });
 

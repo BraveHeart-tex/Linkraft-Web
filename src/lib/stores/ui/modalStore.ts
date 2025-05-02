@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { Nullable } from '../../common.types';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { Collection } from '@/features/collections/collection.types';
+import { create } from 'zustand';
+import { Nullable } from '../../common.types';
 
 export type ModalType =
   | {
@@ -23,6 +23,10 @@ export type ModalType =
   | {
       type: 'edit-collection';
       payload: { collection: Collection };
+    }
+  | {
+      type: 'search';
+      payload?: undefined;
     };
 
 type ModalState = Nullable<ModalType>;

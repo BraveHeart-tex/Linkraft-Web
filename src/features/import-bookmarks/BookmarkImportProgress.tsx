@@ -43,7 +43,7 @@ const BookmarkImportProgress = () => {
         <>
           <Progress value={progress} className="h-2 rounded-full" />
           <p className="text-xs text-muted-foreground">
-            Processing {progress}% of bookmarks...
+            Processed {progress}% of bookmarks...
           </p>
         </>
       )}

@@ -1,3 +1,16 @@
+import SidebarCollectionsList from '@/components/SidebarCollectionList';
+import SidebarSearchButton from '@/components/SidebarSearchButton';
+import SidebarTagList from '@/components/SidebarTagList';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 import {
   FolderIcon,
   HomeIcon,
@@ -5,19 +18,7 @@ import {
   PinIcon,
   TrashIcon,
 } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarGroupLabel,
-} from '@/components/ui/sidebar';
 import Link from 'next/link';
-import SidebarTagList from '@/components/SidebarTagList';
-import SidebarCollectionsList from '@/components/SidebarCollectionList';
 
 const sidebarLinks = [
   {
@@ -55,6 +56,9 @@ const AppSidebar = () => {
           <SidebarGroupLabel>App</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarSearchButton />
+              </SidebarMenuItem>
               {sidebarLinks.map((link) => (
                 <SidebarMenuItem key={link.href}>
                   <SidebarMenuButton asChild>

@@ -2,6 +2,7 @@
 import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import FileImportDialog from '@/features/import-bookmarks/FileImportDialog';
+import SearchCommandDialog from '@/features/search/SearchDialog';
 import { useModalStore } from '@/lib/stores/ui/modalStore';
 
 const ModalHost = () => {
@@ -41,6 +42,10 @@ const ModalHost = () => {
 
     case 'create-collection': {
       return <CollectionFormDialog isOpen onOpenChange={closeModal} />;
+    }
+
+    case 'search': {
+      return <SearchCommandDialog isOpen onOpenChange={closeModal} />;
     }
 
     default:

@@ -68,10 +68,8 @@ const SearchCommandDialog = ({
     <CommandDialog
       open={isOpen}
       onOpenChange={onOpenChange}
-      commandProps={{
-        shouldFilter: false,
-      }}
-      dialogContentClassName="w-full max-w-2xl sm:max-w-3xl"
+      commandProps={{ shouldFilter: false }}
+      dialogContentClassName="flex flex-col w-full max-w-2xl sm:max-w-3xl max-h-[90vh]"
     >
       <div className="flex items-center border-b px-3">
         <SearchIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
@@ -83,7 +81,8 @@ const SearchCommandDialog = ({
           className="border-0 focus:ring-0 focus-visible:ring-0"
         />
       </div>
-      <CommandList className="max-h-[80vh] overflow-y-auto w-full lg:pb-12">
+
+      <CommandList className="flex-1 overflow-y-auto w-full">
         {isPending ? (
           <div className="py-6 text-center text-sm">
             <div className="flex items-center justify-center space-x-2">
@@ -119,10 +118,11 @@ const SearchCommandDialog = ({
           </>
         )}
       </CommandList>
-      {peekingItem ? (
-        <footer className="absolute bottom-0 left-0 right-0 border-t bg-background px-4 py-3 hidden lg:block">
+
+      {peekingItem && (
+        <footer className="border-t bg-background px-4 py-3 hidden lg:block">
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            {peekingItem?.type === 'bookmark' && (
+            {peekingItem.type === 'bookmark' && (
               <>
                 <ActionShortcut label="Open in new tab" keys={['⌘', '↵']} />
                 <ActionShortcut label="Copy link" keys={['⌘', 'C']} />
@@ -130,7 +130,7 @@ const SearchCommandDialog = ({
                 <ActionShortcut label="Delete" keys={['⌘', '⌫']} />
               </>
             )}
-            {peekingItem?.type === 'collection' && (
+            {peekingItem.type === 'collection' && (
               <>
                 <ActionShortcut label="Open collection" keys={['⌘', '↵']} />
                 <ActionShortcut label="Rename" keys={['⌘', 'E']} />
@@ -140,7 +140,7 @@ const SearchCommandDialog = ({
             )}
           </div>
         </footer>
-      ) : null}
+      )}
     </CommandDialog>
   );
 };

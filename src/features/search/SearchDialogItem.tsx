@@ -20,15 +20,10 @@ const getIconForType = (type: string) => {
 
 interface SearchDialogItemProps {
   result: SearchResult;
-  onSelect: (result: SearchResult) => void;
   onPeek?: (result: SearchResult) => void;
 }
 
-const SearchDialogItem = ({
-  result,
-  onSelect,
-  onPeek,
-}: SearchDialogItemProps) => {
+const SearchDialogItem = ({ result, onPeek }: SearchDialogItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(ref, (mutations) => {
@@ -44,13 +39,7 @@ const SearchDialogItem = ({
   });
 
   return (
-    <CommandItem
-      ref={ref}
-      onSelect={() => {
-        onSelect(result);
-      }}
-      className="flex items-center px-4 py-2"
-    >
+    <CommandItem ref={ref} className="flex items-center px-4 py-2">
       {getIconForType(result.type)}
       <span className="tracking-tight text-foreground line-clamp-1">
         {result.title}

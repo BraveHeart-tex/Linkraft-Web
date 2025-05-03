@@ -13,7 +13,6 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SearchIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -27,7 +26,6 @@ const SearchCommandDialog = ({
   onOpenChange,
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
-  const router = useRouter();
   const { ref, inView } = useInView();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
@@ -40,13 +38,6 @@ const SearchCommandDialog = ({
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
-
-  const handleItemSelect = (result: SearchResult) => {
-    if (result.type === 'collection') {
-      router.push(`/collections/${result.id}`);
-      onOpenChange(false);
-    }
-  };
 
   return (
     <CommandDialog
@@ -90,7 +81,6 @@ const SearchCommandDialog = ({
                     <SearchDialogItem
                       result={result}
                       key={`${result.id}-${result.type}`}
-                      onSelect={handleItemSelect}
                       onPeek={setPeekingItem}
                     />
                   ))}

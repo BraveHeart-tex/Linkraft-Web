@@ -5,14 +5,15 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
+import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useDebounce } from '@/hooks/use-debounce';
-import { BookmarkIcon, FolderIcon, HashIcon, SearchIcon } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
@@ -20,19 +21,6 @@ interface SearchCommandDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const getIconForType = (type: string) => {
-  switch (type.toLowerCase()) {
-    case 'bookmark':
-      return <BookmarkIcon className="mr-2" />;
-    case 'collection':
-      return <FolderIcon className="mr-2" />;
-    case 'tag':
-      return <HashIcon className="mr-2" />;
-    default:
-      return <SearchIcon className="mr-2" />;
-  }
-};
 
 const formatTypeName = (type: string) => {
   return type.charAt(0).toUpperCase() + type.slice(1) + 's';
@@ -42,6 +30,7 @@ const SearchCommandDialog = ({
   isOpen,
   onOpenChange,
 }: SearchCommandDialogProps) => {
+  const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
   const router = useRouter();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
@@ -64,7 +53,9 @@ const SearchCommandDialog = ({
     );
   }, [data?.pages]);
 
-  const resultTypes = Object.keys(groupedResults);
+  const resultTypes = useMemo(() => {
+    return Object.keys(groupedResults);
+  }, [groupedResults]);
 
   const handleItemSelect = (result: SearchResult) => {
     if (result.type === 'collection') {
@@ -80,6 +71,7 @@ const SearchCommandDialog = ({
       commandProps={{
         shouldFilter: false,
       }}
+      dialogContentClassName="w-full max-w-2xl sm:max-w-3xl"
     >
       <div className="flex items-center border-b px-3">
         <SearchIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
@@ -87,10 +79,11 @@ const SearchCommandDialog = ({
           placeholder="Search bookmarks, tags, collections..."
           value={query}
           onValueChange={setQuery}
+          wrapperClassName="border-b-0 w-full"
           className="border-0 focus:ring-0 focus-visible:ring-0"
         />
       </div>
-      <CommandList className="max-h-[80vh] overflow-y-auto">
+      <CommandList className="max-h-[80vh] overflow-y-auto w-full lg:pb-12">
         {isPending ? (
           <div className="py-6 text-center text-sm">
             <div className="flex items-center justify-center space-x-2">
@@ -113,16 +106,12 @@ const SearchCommandDialog = ({
                   {index > 0 && <CommandSeparator />}
                   <CommandGroup heading={formatTypeName(type)}>
                     {groupedResults[type].map((result) => (
-                      <CommandItem
+                      <SearchDialogItem
+                        result={result}
                         key={`${result.id}-${result.type}`}
-                        onSelect={() => {
-                          handleItemSelect(result);
-                        }}
-                        className="flex items-center px-4 py-2"
-                      >
-                        {getIconForType(result.type)}
-                        <span>{result.title}</span>
-                      </CommandItem>
+                        onSelect={handleItemSelect}
+                        onPeek={setPeekingItem}
+                      />
                     ))}
                   </CommandGroup>
                 </div>
@@ -130,6 +119,28 @@ const SearchCommandDialog = ({
           </>
         )}
       </CommandList>
+      {peekingItem ? (
+        <footer className="absolute bottom-0 left-0 right-0 border-t bg-background px-4 py-3 hidden lg:block">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            {peekingItem?.type === 'bookmark' && (
+              <>
+                <ActionShortcut label="Open in new tab" keys={['⌘', '↵']} />
+                <ActionShortcut label="Copy link" keys={['⌘', 'C']} />
+                <ActionShortcut label="Edit" keys={['⌘', 'E']} />
+                <ActionShortcut label="Delete" keys={['⌘', '⌫']} />
+              </>
+            )}
+            {peekingItem?.type === 'collection' && (
+              <>
+                <ActionShortcut label="Open collection" keys={['⌘', '↵']} />
+                <ActionShortcut label="Rename" keys={['⌘', 'E']} />
+                <ActionShortcut label="Delete" keys={['⌘', '⌫']} />
+                <ActionShortcut label="Add bookmark" keys={['⌘', 'B']} />
+              </>
+            )}
+          </div>
+        </footer>
+      ) : null}
     </CommandDialog>
   );
 };

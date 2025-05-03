@@ -10,9 +10,10 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useSearch } from '@/features/search/search.api';
+import { SearchResult } from '@/features/search/search.types';
 import { useDebounce } from '@/hooks/use-debounce';
-
 import { BookmarkIcon, FolderIcon, HashIcon, SearchIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 interface SearchCommandDialogProps {
@@ -41,6 +42,7 @@ const SearchCommandDialog = ({
   isOpen,
   onOpenChange,
 }: SearchCommandDialogProps) => {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
   const { data, isPending } = useSearch({ query: debouncedQuery });
@@ -63,6 +65,13 @@ const SearchCommandDialog = ({
   }, [data?.pages]);
 
   const resultTypes = Object.keys(groupedResults);
+
+  const handleItemSelect = (result: SearchResult) => {
+    if (result.type === 'collection') {
+      router.push(`/collections/${result.id}`);
+      onOpenChange(false);
+    }
+  };
 
   return (
     <CommandDialog
@@ -98,7 +107,6 @@ const SearchCommandDialog = ({
                 </div>
               </CommandEmpty>
             ) : null}
-
             {resultTypes.length > 0 &&
               resultTypes.map((type, index) => (
                 <div key={type}>
@@ -107,6 +115,9 @@ const SearchCommandDialog = ({
                     {groupedResults[type].map((result) => (
                       <CommandItem
                         key={`${result.id}-${result.type}`}
+                        onSelect={() => {
+                          handleItemSelect(result);
+                        }}
                         className="flex items-center px-4 py-2"
                       >
                         {getIconForType(result.type)}

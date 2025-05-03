@@ -120,7 +120,7 @@ const SearchCommandDialog = ({
       </CommandList>
 
       {peekingItem && (
-        <footer className="border-t bg-background px-4 py-3 hidden lg:block">
+        <footer className="border-t bg-popover px-4 py-3 hidden lg:block">
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {peekingItem.type === 'bookmark' && (
               <>

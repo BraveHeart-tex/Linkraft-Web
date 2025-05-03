@@ -6,7 +6,6 @@ import {
   CommandGroup,
   CommandInput,
   CommandList,
-  CommandSeparator,
 } from '@/components/ui/command';
 import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
@@ -15,16 +14,12 @@ import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 interface SearchCommandDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const formatTypeName = (type: string) => {
-  return type.charAt(0).toUpperCase() + type.slice(1) + 's';
-};
 
 const SearchCommandDialog = ({
   isOpen,
@@ -32,30 +27,12 @@ const SearchCommandDialog = ({
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
   const router = useRouter();
+
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
-  const { data, isPending } = useSearch({ query: debouncedQuery });
-
-  const groupedResults = useMemo(() => {
-    return (
-      data?.pages
-        .flatMap((page) => page.results)
-        .reduce(
-          (acc, result) => {
-            if (!acc[result.type]) {
-              acc[result.type] = [];
-            }
-            acc[result.type].push(result);
-            return acc;
-          },
-          {} as Record<string, (typeof data)['pages'][0]['results']>
-        ) || {}
-    );
-  }, [data?.pages]);
-
-  const resultTypes = useMemo(() => {
-    return Object.keys(groupedResults);
-  }, [groupedResults]);
+  const { data, isPending } = useSearch({
+    query: debouncedQuery,
+  });
 
   const handleItemSelect = (result: SearchResult) => {
     if (result.type === 'collection') {
@@ -92,29 +69,27 @@ const SearchCommandDialog = ({
           </div>
         ) : (
           <>
-            {resultTypes.length === 0 && !isPending ? (
+            {data?.pages.length === 0 && !isPending ? (
               <CommandEmpty>
                 <div className="py-6 text-center text-sm text-muted-foreground">
                   No results found for &quot;{query}&quot;
                 </div>
               </CommandEmpty>
             ) : null}
-            {resultTypes.length > 0 &&
-              resultTypes.map((type, index) => (
-                <div key={type}>
-                  {index > 0 && <CommandSeparator />}
-                  <CommandGroup heading={formatTypeName(type)}>
-                    {groupedResults[type].map((result) => (
-                      <SearchDialogItem
-                        result={result}
-                        key={`${result.id}-${result.type}`}
-                        onSelect={handleItemSelect}
-                        onPeek={setPeekingItem}
-                      />
-                    ))}
-                  </CommandGroup>
-                </div>
+            <CommandGroup heading="Bookmarks">
+              {data?.pages.map((page) => (
+                <React.Fragment key={page.nextCursor}>
+                  {page.results.map((result) => (
+                    <SearchDialogItem
+                      result={result}
+                      key={`${result.id}-${result.type}`}
+                      onSelect={handleItemSelect}
+                      onPeek={setPeekingItem}
+                    />
+                  ))}
+                </React.Fragment>
               ))}
+            </CommandGroup>
           </>
         )}
       </CommandList>

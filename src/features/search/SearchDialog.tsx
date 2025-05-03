@@ -29,7 +29,7 @@ const SearchCommandDialog = ({
   const { ref, inView } = useInView();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
-  const { data, isPending, fetchNextPage } = useSearch({
+  const { data, isPending, fetchNextPage, isFetchingNextPage } = useSearch({
     query: debouncedQuery,
   });
 
@@ -86,6 +86,12 @@ const SearchCommandDialog = ({
                   ))}
                 </React.Fragment>
               ))}
+              {isFetchingNextPage && (
+                <div className="py-4 text-center text-sm text-muted-foreground">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+                  <p>Loading more…</p>
+                </div>
+              )}
               <div ref={ref} className="h-1" />
             </CommandGroup>
           </>

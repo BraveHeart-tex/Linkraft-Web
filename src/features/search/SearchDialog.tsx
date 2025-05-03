@@ -14,7 +14,8 @@ import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SearchIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 interface SearchCommandDialogProps {
   isOpen: boolean;
@@ -27,12 +28,18 @@ const SearchCommandDialog = ({
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
   const router = useRouter();
-
+  const { ref, inView } = useInView();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
-  const { data, isPending } = useSearch({
+  const { data, isPending, fetchNextPage } = useSearch({
     query: debouncedQuery,
   });
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   const handleItemSelect = (result: SearchResult) => {
     if (result.type === 'collection') {
@@ -89,6 +96,7 @@ const SearchCommandDialog = ({
                   ))}
                 </React.Fragment>
               ))}
+              <div ref={ref} className="h-1" />
             </CommandGroup>
           </>
         )}

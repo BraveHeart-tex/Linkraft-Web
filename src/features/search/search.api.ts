@@ -13,10 +13,7 @@ interface UseSearchParams {
 export const useSearch = ({ query }: UseSearchParams) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.search.list(query),
-    initialPageParam: {
-      cursorId: null as string | null,
-      cursorRank: null as number | null,
-    },
+    initialPageParam: '',
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<SearchResponse>>(
@@ -24,8 +21,7 @@ export const useSearch = ({ query }: UseSearchParams) =>
           {
             params: {
               q: query,
-              cursorId: pageParam.cursorId,
-              cursorRank: pageParam.cursorRank,
+              cursor: pageParam,
             },
           }
         )
@@ -36,13 +32,5 @@ export const useSearch = ({ query }: UseSearchParams) =>
         nextCursor: response?.data?.nextCursor || null,
       };
     },
-    getNextPageParam: (lastPage) => {
-      const lastItem = lastPage.results?.[lastPage.results.length - 1];
-      if (!lastItem) return undefined;
-
-      return {
-        cursorId: lastItem.id as string | null,
-        cursorRank: lastItem.rank as number | null,
-      };
-    },
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });

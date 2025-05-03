@@ -52,7 +52,7 @@ const SearchDialogItem = ({
       className="flex items-center px-4 py-2"
     >
       {getIconForType(result.type)}
-      <span className="leading-none tracking-tight text-foreground line-clamp-1">
+      <span className="tracking-tight text-foreground line-clamp-1">
         {result.title}
       </span>
     </CommandItem>

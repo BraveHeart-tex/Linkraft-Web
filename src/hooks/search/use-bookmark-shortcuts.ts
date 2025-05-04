@@ -1,5 +1,7 @@
 import { fetchBookmarkById } from '@/features/bookmarks/bookmark.api';
+import { KEYS } from '@/features/search/search.constants';
 import { SearchResult } from '@/features/search/search.types';
+import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 import { isErrorApiResponse } from '@/lib/api/api.utils';
 import { Nullable } from '@/lib/common.types';
@@ -19,6 +21,12 @@ export const useBookmarkShortcuts = ({
 }: UseBookmarkShortcutsOptions) => {
   const isLoadingRef = useRef(false);
   const openModal = useModalStore((s) => s.openModal);
+  const { handleTrashBookmark } = useBookmarkActions();
+
+  const handleDeleteBookmark = useCallback(() => {
+    if (!peekingItem) return;
+    handleTrashBookmark(+peekingItem.id);
+  }, [handleTrashBookmark, peekingItem]);
 
   const handleOpenBookmarkUrl = useCallback(() => {
     if (!peekingItem) return;
@@ -81,21 +89,31 @@ export const useBookmarkShortcuts = ({
     }
   }, [openModal, peekingItem]);
 
-  useKeyboardShortcut({ key: 'Enter', meta: true }, handleOpenBookmarkUrl, {
+  useKeyboardShortcut({ key: KEYS.ENTER, meta: true }, handleOpenBookmarkUrl, {
     enabled,
     preventDefault: true,
     ignoreFormFields: false,
   });
 
-  useKeyboardShortcut({ key: 'L', meta: true }, handleCopyBookmarkUrl, {
+  useKeyboardShortcut({ key: KEYS.L, meta: true }, handleCopyBookmarkUrl, {
     enabled,
     preventDefault: true,
     ignoreFormFields: false,
   });
 
-  useKeyboardShortcut({ key: 'E', meta: true }, handleEditBookmark, {
+  useKeyboardShortcut({ key: KEYS.E, meta: true }, handleEditBookmark, {
     enabled,
     preventDefault: true,
     ignoreFormFields: false,
   });
+
+  useKeyboardShortcut(
+    { key: KEYS.BACKSPACE, meta: true },
+    handleDeleteBookmark,
+    {
+      enabled,
+      preventDefault: true,
+      ignoreFormFields: false,
+    }
+  );
 };

@@ -1,3 +1,4 @@
+import { KeyName } from '@/features/search/search.constants';
 import { useEffect } from 'react';
 
 interface ShortcutOptions {
@@ -20,7 +21,7 @@ interface ShortcutOptions {
 }
 
 interface ShortcutCombo {
-  key: string;
+  key: KeyName;
   ctrl?: boolean;
   shift?: boolean;
   alt?: boolean;

@@ -1,5 +1,13 @@
 'use client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
 import {
   ArchiveRestoreIcon,
   Copy,
@@ -7,14 +15,6 @@ import {
   MoreVertical,
   Trash,
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
 
 interface BookmarkActionsProps {
   bookmark: Bookmark;
@@ -28,7 +28,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     handleRestoreBookmark,
     handleTrashBookmark,
     isRestoringBookmark,
-  } = useBookmarkActions(bookmark);
+  } = useBookmarkActions();
 
   return (
     <DropdownMenu>
@@ -44,7 +44,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         {bookmark.deletedAt ? (
           <>
             <DropdownMenuItem
-              onClick={handleRestoreBookmark}
+              onClick={() => handleRestoreBookmark(bookmark)}
               disabled={isRestoringBookmark}
               aria-disabled={isRestoringBookmark}
             >
@@ -54,11 +54,11 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
           </>
         ) : (
           <>
-            <DropdownMenuItem onClick={handleEditBookmark}>
+            <DropdownMenuItem onClick={() => handleEditBookmark(bookmark)}>
               <Edit className="mr-2 size-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleCopyUrl}>
+            <DropdownMenuItem onClick={() => handleCopyUrl(bookmark)}>
               <Copy className="mr-2 size-4" />
               Copy URL
             </DropdownMenuItem>
@@ -69,8 +69,8 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
           className="text-destructive focus:text-destructive"
           onClick={
             bookmark.deletedAt
-              ? handlePermanentBookmarkDeletion
-              : handleTrashBookmark
+              ? () => handlePermanentBookmarkDeletion(bookmark)
+              : () => handleTrashBookmark(bookmark.id)
           }
         >
           <Trash className="mr-2 size-4" />

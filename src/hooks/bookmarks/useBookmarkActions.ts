@@ -5,25 +5,25 @@ import {
   useRestoreBookmark,
   useTrashBookmark,
 } from '@/features/bookmarks/bookmark.api';
+import { BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES } from '@/features/bookmarks/bookmark.constants';
 import type {
   Bookmark,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useQueryClient } from '@tanstack/react-query';
-import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import type { ErrorApiResponse } from '@/lib/api/api.types';
-import { DateTime } from 'luxon';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
 import {
   filterInfiniteBookmarks,
   useOnSettledHandler,
   useOptimisticRemoveHandler,
 } from '@/features/bookmarks/bookmark.utils';
-import { BOOKMARK_RESTORE_CONFIRM_THRESHOLD_MINUTES } from '@/features/bookmarks/bookmark.constants';
+import type { ErrorApiResponse } from '@/lib/api/api.types';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { DateTime } from 'luxon';
 
-export function useBookmarkActions(bookmark: Bookmark) {
+export function useBookmarkActions() {
   const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
 
@@ -119,7 +119,7 @@ export function useBookmarkActions(bookmark: Bookmark) {
     (state) => state.showConfirmDialog
   );
 
-  const handleCopyUrl = async () => {
+  const handleCopyUrl = async (bookmark: Bookmark) => {
     try {
       await navigator.clipboard.writeText(bookmark.url);
       showSuccessToast('URL copied to clipboard');
@@ -130,7 +130,7 @@ export function useBookmarkActions(bookmark: Bookmark) {
     }
   };
 
-  const handleTrashBookmark = () => {
+  const handleTrashBookmark = (bookmarkId: Bookmark['id']) => {
     showConfirmDialog({
       title: 'Move this bookmark to trash?',
       message: 'You can restore it from the trash at any time if needed.',
@@ -138,14 +138,14 @@ export function useBookmarkActions(bookmark: Bookmark) {
         'Bookmarks in the trash for more than 30 days will be permanently deleted.',
       onConfirm: () => {
         trashBookmark({
-          bookmarkId: bookmark.id,
+          bookmarkId,
         });
       },
       primaryActionLabel: 'Move to Trash',
     });
   };
 
-  const handlePermanentBookmarkDeletion = () => {
+  const handlePermanentBookmarkDeletion = (bookmark: Bookmark) => {
     if (!bookmark.deletedAt) return;
 
     showConfirmDialog({
@@ -163,7 +163,7 @@ export function useBookmarkActions(bookmark: Bookmark) {
     });
   };
 
-  const handleRestoreBookmark = () => {
+  const handleRestoreBookmark = (bookmark: Bookmark) => {
     if (!bookmark.deletedAt) return;
 
     const elapsedDurationMinutes = DateTime.now().diff(
@@ -191,7 +191,7 @@ export function useBookmarkActions(bookmark: Bookmark) {
     });
   };
 
-  const handleEditBookmark = () => {
+  const handleEditBookmark = (bookmark: Bookmark) => {
     openModal({
       type: 'edit-bookmark',
       payload: {

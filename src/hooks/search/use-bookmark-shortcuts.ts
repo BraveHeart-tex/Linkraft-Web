@@ -38,10 +38,10 @@ export const useBookmarkShortcuts = ({
     try {
       await navigator.clipboard.writeText(peekingItem.url);
       toast.dismiss();
-      showSuccessToast('Link copied to clipboard');
+      showSuccessToast('URL copied to clipboard');
     } catch {
       toast.dismiss();
-      showErrorToast('Failed to copy link to clipboard');
+      showErrorToast('Failed to copy URL to clipboard');
     }
   }, [peekingItem]);
 

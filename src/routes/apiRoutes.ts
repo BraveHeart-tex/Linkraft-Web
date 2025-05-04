@@ -19,6 +19,7 @@ export const API_ROUTES = {
     restoreBookmark: (bookmarkId: Bookmark['id']) =>
       `/bookmarks/${bookmarkId}/restore`,
     importBookmarks: '/import-bookmarks',
+    getById: (id: Bookmark['id']) => `/bookmarks/${id}`,
   },
   collection: {
     createCollection: '/collections',

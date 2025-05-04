@@ -1,5 +1,11 @@
 'use client';
+import { useSocket } from '@/context/SocketProvider';
+import api from '@/lib/api/api';
 import { ApiResponse, ErrorApiResponse } from '@/lib/api/api.types';
+import { safeApiCall } from '@/lib/api/safeApiCall';
+import { Nullable } from '@/lib/common.types';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { SOCKET_EVENTS } from '@/lib/socket';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useInfiniteQuery,
@@ -7,6 +13,7 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import {
   Bookmark,
   BookmarkMetadataResponse,
@@ -16,13 +23,6 @@ import {
   UpdateBookmarkDto,
   UpdateBookmarkResponse,
 } from './bookmark.types';
-import { useEffect } from 'react';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useSocket } from '@/context/SocketProvider';
-import { safeApiCall } from '@/lib/api/safeApiCall';
-import api from '@/lib/api/api';
-import { Nullable } from '@/lib/common.types';
-import { SOCKET_EVENTS } from '@/lib/socket';
 
 export const useUpdateBookmark = (
   options?: UseMutationOptions<
@@ -221,3 +221,8 @@ export const useBookmarkMetadataUpdate = (
     };
   }, [bookmarkId, onUpdate, socket]);
 };
+
+export const fetchBookmarkById = async (bookmarkId: Bookmark['id']) =>
+  safeApiCall(() =>
+    api.get<ApiResponse<Bookmark>>(API_ROUTES.bookmark.getById(bookmarkId))
+  ).then((res) => res.data);

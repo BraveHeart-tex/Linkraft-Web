@@ -11,6 +11,7 @@ import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
+import { useBookmarkShortcuts } from '@/hooks/search/use-bookmark-shortcuts';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SearchIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -32,6 +33,7 @@ const SearchCommandDialog = ({
   const { data, isPending, fetchNextPage, isFetchingNextPage } = useSearch({
     query: debouncedQuery,
   });
+  useBookmarkShortcuts({ enabled: isOpen, peekingItem });
 
   useEffect(() => {
     if (inView) {
@@ -104,17 +106,9 @@ const SearchCommandDialog = ({
             {peekingItem.type === 'bookmark' && (
               <>
                 <ActionShortcut label="Open in new tab" keys={['⌘', '↵']} />
-                <ActionShortcut label="Copy link" keys={['⌘', 'C']} />
+                <ActionShortcut label="Copy link" keys={['⌘', 'L']} />
                 <ActionShortcut label="Edit" keys={['⌘', 'E']} />
                 <ActionShortcut label="Delete" keys={['⌘', '⌫']} />
-              </>
-            )}
-            {peekingItem.type === 'collection' && (
-              <>
-                <ActionShortcut label="Open collection" keys={['⌘', '↵']} />
-                <ActionShortcut label="Rename" keys={['⌘', 'E']} />
-                <ActionShortcut label="Delete" keys={['⌘', '⌫']} />
-                <ActionShortcut label="Add bookmark" keys={['⌘', 'B']} />
               </>
             )}
           </div>

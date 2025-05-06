@@ -15,7 +15,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { TrashIcon } from 'lucide-react';
 import { ApiError } from 'next/dist/server/api-utils';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useBulkDeleteBookmarks, useTrashedBookmarks } from '../bookmark.api';
 import BookmarkCard from '../BookmarkCard';
@@ -83,6 +83,9 @@ const TrashedBookmarkList = () => {
     error,
     isRefetching,
   } = useTrashedBookmarks();
+  const allBookmarks = useMemo(() => {
+    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+  }, [data]);
 
   const { inView, ref } = useInView({
     rootMargin: '100px 0px 100px 0px',
@@ -130,15 +133,12 @@ const TrashedBookmarkList = () => {
 
   return (
     <div className="space-y-4">
-      {state.isSelectMode ? (
+      {state.isSelectMode && allBookmarks.length ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               onCheckedChange={handleCheckedChange}
-              checked={
-                state.selectedIds.size ===
-                data?.pages.flatMap((page) => page.bookmarks)?.length
-              }
+              checked={state.selectedIds.size === allBookmarks.length}
               id="selection-toggle"
               disabled={isBulkDeletingBookmarks}
             />
@@ -156,7 +156,7 @@ const TrashedBookmarkList = () => {
         </div>
       ) : null}
       <ResourceList
-        data={data?.pages.flatMap((page) => page.bookmarks)}
+        data={allBookmarks}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}

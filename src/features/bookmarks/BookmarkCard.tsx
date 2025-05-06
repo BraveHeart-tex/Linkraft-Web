@@ -79,10 +79,10 @@ const BookmarkCard = ({
     <Card
       className={cn(
         'w-full',
-        isSelected && 'outline outline-sky-500',
+        isSelected && 'border-sky-500 transition-none',
         onSelect && 'cursor-pointer'
       )}
-      onClick={handleCardClick}
+      onMouseDown={handleCardClick}
     >
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">

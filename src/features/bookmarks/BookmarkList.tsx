@@ -23,7 +23,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { LinkIcon } from 'lucide-react';
 import { ApiError } from 'next/dist/server/api-utils';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 const BookmarkList = () => {
@@ -95,6 +95,9 @@ const BookmarkList = () => {
     isLoading,
     error,
   } = useBookmarks();
+  const allBookmarks = useMemo(() => {
+    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+  }, [data]);
 
   useEffect(() => {
     if (inView) {
@@ -108,7 +111,7 @@ const BookmarkList = () => {
     if (checked) {
       dispatch({
         type: 'SELECT_ALL',
-        ids: data.pages.flatMap((page) => page.bookmarks.map((b) => b.id)),
+        ids: allBookmarks.map((b) => b.id),
       });
     } else {
       dispatch({ type: 'DESELECT_ALL' });
@@ -139,15 +142,12 @@ const BookmarkList = () => {
 
   return (
     <div className="space-y-4">
-      {state.isSelectMode ? (
+      {state.isSelectMode && allBookmarks.length ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               onCheckedChange={handleCheckedChange}
-              checked={
-                state.selectedIds.size ===
-                data?.pages.flatMap((page) => page.bookmarks)?.length
-              }
+              checked={state.selectedIds.size === allBookmarks.length}
               id="selection-toggle"
               disabled={isBulkTrashingBookmarks}
             />
@@ -163,7 +163,7 @@ const BookmarkList = () => {
         </div>
       ) : null}
       <ResourceList
-        data={data?.pages.flatMap((page) => page.bookmarks)}
+        data={allBookmarks}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}

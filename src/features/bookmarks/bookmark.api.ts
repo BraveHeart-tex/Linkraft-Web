@@ -6,6 +6,7 @@ import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { SOCKET_EVENTS } from '@/lib/socket';
+import { ToastId } from '@/lib/toast';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useInfiniteQuery,
@@ -226,3 +227,37 @@ export const fetchBookmarkById = async (bookmarkId: Bookmark['id']) =>
   safeApiCall(() =>
     api.get<ApiResponse<Bookmark>>(API_ROUTES.bookmark.getById(bookmarkId))
   ).then((res) => res.data);
+
+interface BulkDeleteBookmarksInput {
+  bookmarkIds: Bookmark['id'][];
+}
+
+interface BulkDeleteBookmarksContext {
+  previousTrashedBookmarks: InfiniteBookmarksData;
+  toastId: ToastId;
+}
+
+export const useBulkDeleteBookmarks = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    BulkDeleteBookmarksInput,
+    BulkDeleteBookmarksContext
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  BulkDeleteBookmarksInput,
+  BulkDeleteBookmarksContext
+> =>
+  useMutation({
+    mutationFn: ({ bookmarkIds }) =>
+      safeApiCall(() =>
+        api.delete(API_ROUTES.bookmark.bulkDeleteBookmarks, {
+          data: {
+            bookmarkIds,
+          },
+        })
+      ),
+    ...options,
+  });

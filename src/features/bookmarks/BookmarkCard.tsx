@@ -30,9 +30,14 @@ import BookmarkActions from './BookmarkActions';
 interface BookmarkCardProps {
   bookmark: Bookmark;
   isSelected?: boolean;
+  onSelect?: (bookmark: Bookmark) => void;
 }
 
-const BookmarkCard = ({ bookmark, isSelected }: BookmarkCardProps) => {
+const BookmarkCard = ({
+  bookmark,
+  isSelected,
+  onSelect,
+}: BookmarkCardProps) => {
   const formattedDate = formatIsoDate(bookmark.createdAt, 'DD');
 
   const domain: string = useMemo(() => {
@@ -63,10 +68,22 @@ const BookmarkCard = ({ bookmark, isSelected }: BookmarkCardProps) => {
     [bookmark.id, queryClient]
   );
 
+  const handleCardClick = () => {
+    if (!onSelect) return;
+    onSelect(bookmark);
+  };
+
   useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
   return (
-    <Card className={cn('w-full', isSelected && 'outline outline-sky-500')}>
+    <Card
+      className={cn(
+        'w-full',
+        isSelected && 'outline outline-sky-500',
+        onSelect && 'cursor-pointer'
+      )}
+      onClick={handleCardClick}
+    >
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">
           {bookmark.isMetadataPending ? (
@@ -88,7 +105,13 @@ const BookmarkCard = ({ bookmark, isSelected }: BookmarkCardProps) => {
             <h3 className="font-semibold leading-none tracking-tight text-foreground line-clamp-1 lg:line-clamp-2">
               {bookmark.title}
             </h3>
-            <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                'flex items-center gap-2',
+                onSelect && 'opacity-50 pointer-events-none'
+              )}
+              aria-disabled={!!onSelect}
+            >
               <a
                 href={bookmark.url}
                 target="_blank"
@@ -115,7 +138,10 @@ const BookmarkCard = ({ bookmark, isSelected }: BookmarkCardProps) => {
           href={bookmark.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center text-xs text-muted-foreground hover:underline"
+          className={cn(
+            'mt-2 inline-flex items-center text-xs text-muted-foreground hover:underline',
+            onSelect && 'opacity-50 pointer-events-none'
+          )}
         >
           <Globe className="mr-1 h-3 w-3" />
           {domain}

@@ -2,7 +2,7 @@ export interface Collection {
   id: number;
   name: string;
   userId: number;
-  description: string;
+  description: string | null;
   createdAt: string;
   isDeleted: boolean;
   color: string;

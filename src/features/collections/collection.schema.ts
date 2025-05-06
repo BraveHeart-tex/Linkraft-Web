@@ -8,7 +8,7 @@ export const CreateCollectionSchema = z.object({
     .string()
     .min(1, 'Name cannot be empty')
     .max(255, 'Name cannot exceed 255 characters'),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   color: z
     .string()
     .regex(colorRegex, 'Invalid color format. Use a hex code like #ffffff')

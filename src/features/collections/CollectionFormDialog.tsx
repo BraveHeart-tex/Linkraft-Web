@@ -1,10 +1,13 @@
 'use client';
-import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import ColorPicker from '@/components/ui/color-picker';
 import {
-  CreateCollectionDto,
-  CreateCollectionSchema,
-} from './collection.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -14,24 +17,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import ColorPicker from '@/components/ui/color-picker';
-import { useCreateCollection, useUpdateCollection } from './collection.api';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { Loader2Icon } from 'lucide-react';
-import { ErrorApiResponse } from '@/lib/api/api.types';
-import { useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { Collection, CollectionWithBookmarkCount } from './collection.types';
 import { Textarea } from '@/components/ui/textarea';
+import { ErrorApiResponse } from '@/lib/api/api.types';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loader2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useCreateCollection, useUpdateCollection } from './collection.api';
+import {
+  CreateCollectionDto,
+  CreateCollectionSchema,
+} from './collection.schema';
+import { Collection, CollectionWithBookmarkCount } from './collection.types';
 
 interface CollectionFormDialogProps {
   isOpen?: boolean;
@@ -60,7 +60,7 @@ const CollectionFormDialog = ({
     if (initialData) {
       form.reset({
         color: initialData.color,
-        description: initialData.description,
+        description: initialData.description || '',
         id: initialData.id,
         name: initialData.name,
       });
@@ -109,19 +109,19 @@ const CollectionFormDialog = ({
 
         queryClient.setQueryData<CollectionWithBookmarkCount[]>(
           QUERY_KEYS.collections.list(),
-          (old) => {
-            if (!old) return;
-            return old.map((oldCollection) => {
-              if (oldCollection.id === variables.id) {
-                return {
-                  ...oldCollection,
-                  ...variables,
-                };
-              }
+          (old) =>
+            old
+              ? old.map((oldCollection) => {
+                  if (oldCollection.id === variables.id) {
+                    return {
+                      ...oldCollection,
+                      ...variables,
+                    };
+                  }
 
-              return oldCollection;
-            });
-          }
+                  return oldCollection;
+                })
+              : old
         );
 
         setInternalOpen(false);

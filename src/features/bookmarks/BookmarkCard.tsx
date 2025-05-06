@@ -1,12 +1,4 @@
 'use client';
-import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
-import {
-  Bookmark,
-  BookmarkMetadataResponse,
-  InfiniteBookmarksData,
-} from '@/features/bookmarks/bookmark.types';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -14,23 +6,33 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
+import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
+import {
+  Bookmark,
+  BookmarkMetadataResponse,
+  InfiniteBookmarksData,
+} from '@/features/bookmarks/bookmark.types';
+import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
+import { formatIsoDate } from '@/lib/dateUtils';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { cn } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Calendar,
+  ExternalLink,
   Folder,
   Globe,
-  ExternalLink,
   LoaderIcon,
 } from 'lucide-react';
-import { formatIsoDate } from '@/lib/dateUtils';
-import BookmarkActions from './BookmarkActions';
 import { useCallback, useMemo } from 'react';
-import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
+import BookmarkActions from './BookmarkActions';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
+  isSelected?: boolean;
 }
 
-const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
+const BookmarkCard = ({ bookmark, isSelected }: BookmarkCardProps) => {
   const formattedDate = formatIsoDate(bookmark.createdAt, 'DD');
 
   const domain: string = useMemo(() => {
@@ -64,7 +66,7 @@ const BookmarkCard = ({ bookmark }: BookmarkCardProps) => {
   useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
   return (
-    <Card className="w-full">
+    <Card className={cn('w-full', isSelected && 'outline outline-sky-500')}>
       <CardHeader className="flex flex-row items-center gap-3 space-y-0">
         <div className="h-8 w-8 overflow-hidden">
           {bookmark.isMetadataPending ? (

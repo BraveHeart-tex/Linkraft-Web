@@ -34,10 +34,15 @@ export function useBookmarkActions() {
       successMessage: 'Bookmark moved to trash successfully.',
     });
 
-  const trashOnSettled = useOnSettledHandler([
-    QUERY_KEYS.bookmarks.list(),
-    QUERY_KEYS.bookmarks.trashed(),
-  ]);
+  const trashOnSettled = useOnSettledHandler(
+    [
+      QUERY_KEYS.bookmarks.list(),
+      QUERY_KEYS.bookmarks.trashed(),
+      QUERY_KEYS.search.list(''),
+      QUERY_KEYS.dashboard.generalStats(),
+    ],
+    { exact: false }
+  );
 
   const { mutate: trashBookmark } = useTrashBookmark({
     onMutate: trashOnMutate,

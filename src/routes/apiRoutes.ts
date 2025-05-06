@@ -13,7 +13,8 @@ export const API_ROUTES = {
     createBookmark: '/bookmarks',
     updateBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
     trashBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
-    getTrashedBookmarks: '/bookmarks/trash',
+    getTrashedBookmarks: (cursor: number) =>
+      `/bookmarks/trash?cursor=${cursor}`,
     permanentlyDeleteBookmark: (bookmarkId: Bookmark['id']) =>
       `/bookmarks/${bookmarkId}/permanent`,
     restoreBookmark: (bookmarkId: Bookmark['id']) =>

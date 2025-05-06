@@ -146,17 +146,17 @@ export const useBookmarks = () => {
       };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 };
 
 export const useTrashedBookmarks = () => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.bookmarks.trashed(),
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
-          `${API_ROUTES.bookmark.getTrashedBookmarks}`
+          `${API_ROUTES.bookmark.getTrashedBookmarks(pageParam)}`
         )
       );
 
@@ -166,7 +166,7 @@ export const useTrashedBookmarks = () => {
       };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 };
 

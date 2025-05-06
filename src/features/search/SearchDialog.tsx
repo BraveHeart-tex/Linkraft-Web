@@ -14,7 +14,7 @@ import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useBookmarkShortcuts } from '@/hooks/search/use-bookmark-shortcuts';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SearchIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 interface SearchCommandDialogProps {
@@ -34,6 +34,10 @@ const SearchCommandDialog = ({
     query: debouncedQuery,
   });
   useBookmarkShortcuts({ enabled: isOpen, peekingItem });
+
+  const isEmpty = useMemo(() => {
+    return data && data.pages.every((page) => page.results.length === 0);
+  }, [data]);
 
   useEffect(() => {
     if (inView) {
@@ -69,33 +73,34 @@ const SearchCommandDialog = ({
           </div>
         ) : (
           <>
-            {data?.pages.length === 0 && !isPending ? (
+            {isEmpty && !isPending ? (
               <CommandEmpty>
                 <div className="py-6 text-center text-sm text-muted-foreground">
-                  No results found for &quot;{query}&quot;
+                  No results found {query ? `for '${query}'` : ''}
                 </div>
               </CommandEmpty>
-            ) : null}
-            <CommandGroup heading="Bookmarks">
-              {data?.pages.map((page) => (
-                <React.Fragment key={page.nextCursor}>
-                  {page.results.map((result) => (
-                    <SearchDialogItem
-                      result={result}
-                      key={`${result.id}-${result.type}`}
-                      onPeek={setPeekingItem}
-                    />
-                  ))}
-                </React.Fragment>
-              ))}
-              {isFetchingNextPage && (
-                <div className="py-4 text-center text-sm text-muted-foreground">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
-                  <p>Loading more…</p>
-                </div>
-              )}
-              <div ref={ref} className="h-1" />
-            </CommandGroup>
+            ) : (
+              <CommandGroup heading="Bookmarks">
+                {data?.pages.map((page) => (
+                  <React.Fragment key={page.nextCursor}>
+                    {page.results.map((result) => (
+                      <SearchDialogItem
+                        result={result}
+                        key={`${result.id}-${result.type}`}
+                        onPeek={setPeekingItem}
+                      />
+                    ))}
+                  </React.Fragment>
+                ))}
+                {isFetchingNextPage && (
+                  <div className="py-4 text-center text-sm text-muted-foreground">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+                    <p>Loading more…</p>
+                  </div>
+                )}
+                <div ref={ref} className="h-1" />
+              </CommandGroup>
+            )}
           </>
         )}
       </CommandList>

@@ -110,7 +110,7 @@ const TrashedBookmarkList = () => {
   const handleDeleteSelected = () => {
     if (state.selectedIds.size === 0) return;
     showConfirmDialog({
-      title: `Are you sure you want to ${state.selectedIds.size} bookmark${state.selectedIds.size > 1 ? 's' : ''}`,
+      title: `Are you sure you want to permanently ${state.selectedIds.size} bookmark${state.selectedIds.size > 1 ? 's' : ''}?`,
       message: `This action cannot be undone, and the bookmark${state.selectedIds.size > 1 ? 's' : ''} will be permanently deleted`,
       onConfirm: () => {
         bulkDeleteBookmarks({

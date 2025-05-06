@@ -261,3 +261,28 @@ export const useBulkDeleteBookmarks = (
       ),
     ...options,
   });
+
+export const useBulkTrashBookmarks = (
+  options?: UseMutationOptions<
+    ApiResponse<null>,
+    unknown,
+    BulkDeleteBookmarksInput,
+    BulkDeleteBookmarksContext
+  >
+): UseMutationResult<
+  ApiResponse<null>,
+  unknown,
+  BulkDeleteBookmarksInput,
+  BulkDeleteBookmarksContext
+> =>
+  useMutation({
+    mutationFn: ({ bookmarkIds }) =>
+      safeApiCall(() =>
+        api.delete(API_ROUTES.bookmark.bulkTrashBookmarks, {
+          data: {
+            bookmarkIds,
+          },
+        })
+      ),
+    ...options,
+  });

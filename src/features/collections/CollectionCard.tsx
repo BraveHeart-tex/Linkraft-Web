@@ -1,29 +1,29 @@
 'use client';
-import { Card, CardContent } from '@/components/ui/card';
-import { Collection, CollectionWithBookmarkCount } from './collection.types';
-import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
-import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
-import { formatIsoDate } from '@/lib/dateUtils';
-import UserAvatar from '../users/UserAvatar';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
-import { useDeleteCollection } from './collection.api';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { ErrorApiResponse } from '@/lib/api/api.types';
-import { useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { CSSProperties, useMemo } from 'react';
-import { UserWithoutPasswordHash } from '../auth/auth.types';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
+import { ErrorApiResponse } from '@/lib/api/api.types';
+import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
+import { formatIsoDate } from '@/lib/dateUtils';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { CSSProperties, useMemo } from 'react';
+import { UserWithoutPasswordHash } from '../auth/auth.types';
+import UserAvatar from '../users/UserAvatar';
+import { useDeleteCollection } from './collection.api';
+import { Collection, CollectionWithBookmarkCount } from './collection.types';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -131,6 +131,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
 
   const handleEditCollection = (event: React.MouseEvent) => {
     event.stopPropagation();
+
     openModal({
       type: 'edit-collection',
       payload: {

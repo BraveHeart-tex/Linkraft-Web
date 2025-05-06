@@ -24,7 +24,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2Icon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCreateCollection, useUpdateCollection } from './collection.api';
 import {
@@ -44,8 +44,6 @@ const CollectionFormDialog = ({
   onOpenChange,
   initialData,
 }: CollectionFormDialogProps) => {
-  const [internalOpen, setInternalOpen] = useState(isOpen);
-
   const queryClient = useQueryClient();
   const form = useForm<CreateCollectionDto>({
     resolver: zodResolver(CreateCollectionSchema),
@@ -124,7 +122,7 @@ const CollectionFormDialog = ({
               : old
         );
 
-        setInternalOpen(false);
+        onOpenChange?.(false);
         form.reset(variables);
 
         return { previousCollections, toastId };
@@ -151,12 +149,7 @@ const CollectionFormDialog = ({
   const isLoading = isCreatingCollection || isUpdatingCollection;
   const isUpdateMode = form.watch('id');
 
-  useEffect(() => {
-    setInternalOpen(isOpen);
-  }, [isOpen]);
-
   const handleOpenChange = (open: boolean) => {
-    setInternalOpen(open);
     onOpenChange?.(open);
     if (!open) form.reset();
   };
@@ -173,7 +166,7 @@ const CollectionFormDialog = ({
   };
 
   return (
-    <Dialog open={internalOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>

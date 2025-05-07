@@ -1,10 +1,10 @@
-import api from '@/lib/api/api';
+import { ApiResponse } from '@/lib/api/api.types';
+import { api } from '@/lib/api/apiClient';
+import { safeApiCall } from '@/lib/api/safeApiCall';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { useQuery } from '@tanstack/react-query';
-import { ApiResponse } from '@/lib/api/api.types';
-import { QUERY_KEYS } from '@/lib/queryKeys';
 import { SessionValidationResult } from '../auth/auth.types';
-import { safeApiCall } from '@/lib/api/safeApiCall';
 
 export const useCurrentUser = () =>
   useQuery({

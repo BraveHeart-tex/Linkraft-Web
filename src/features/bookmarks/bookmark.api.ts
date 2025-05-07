@@ -1,7 +1,7 @@
 'use client';
 import { useSocket } from '@/context/SocketProvider';
-import api from '@/lib/api/api';
 import { ApiResponse, ErrorApiResponse } from '@/lib/api/api.types';
+import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';

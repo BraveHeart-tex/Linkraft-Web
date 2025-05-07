@@ -31,6 +31,8 @@ export const API_ROUTES = {
       `/collections/${collectionId}`,
     updateCollection: (collectionId: Collection['id']) =>
       `/collections/${collectionId}`,
+    getAccessibleCollectionById: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}`,
   },
   dashboard: {
     getGeneralStats: '/stats',

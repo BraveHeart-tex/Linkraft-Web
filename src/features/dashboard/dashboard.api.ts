@@ -1,6 +1,6 @@
 import { GeneralStats } from '@/features/dashboard/dashboard.types';
-import api from '@/lib/api/api';
 import { ApiResponse } from '@/lib/api/api.types';
+import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { API_ROUTES } from '@/routes/apiRoutes';

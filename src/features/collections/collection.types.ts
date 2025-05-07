@@ -1,3 +1,5 @@
+import { Bookmark } from '@/features/bookmarks/bookmark.types';
+
 export interface Collection {
   id: number;
   name: string;
@@ -10,4 +12,8 @@ export interface Collection {
 
 export type CollectionWithBookmarkCount = Collection & {
   bookmarkCount: number;
+};
+
+export type CollectionWithBookmarks = Collection & {
+  bookmarks: Bookmark[];
 };

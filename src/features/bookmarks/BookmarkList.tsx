@@ -23,8 +23,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { LinkIcon } from 'lucide-react';
 import { ApiError } from 'next/dist/server/api-utils';
-import { useEffect, useMemo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useMemo } from 'react';
 
 const BookmarkList = () => {
   const queryClient = useQueryClient();
@@ -83,9 +82,7 @@ const BookmarkList = () => {
         ]);
       },
     });
-  const { inView, ref } = useInView({
-    rootMargin: '100px 0px 100px 0px',
-  });
+
   const {
     data,
     fetchNextPage,
@@ -98,12 +95,6 @@ const BookmarkList = () => {
   const allBookmarks = useMemo(() => {
     return data?.pages.flatMap((page) => page.bookmarks) ?? [];
   }, [data]);
-
-  useEffect(() => {
-    if (inView) {
-      fetchNextPage();
-    }
-  }, [fetchNextPage, inView]);
 
   const handleCheckedChange = (checked: boolean) => {
     if (!data) return;
@@ -164,6 +155,9 @@ const BookmarkList = () => {
       ) : null}
       <ResourceList
         data={allBookmarks}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}
@@ -175,7 +169,6 @@ const BookmarkList = () => {
           />
         )}
         renderSkeleton={() => <BookmarkCardSkeleton />}
-        keyExtractor={(item) => item?.id?.toString?.()}
         emptyMessage="No bookmarks found — add one to get started."
         emptyAction={{
           element: <AddBookmarkButton />,
@@ -183,22 +176,7 @@ const BookmarkList = () => {
         emptyIcon={<LinkIcon className="h-10 w-10 stroke-muted-foreground" />}
         errorTitle="Couldn't load bookmarks"
         containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
-      >
-        <div className="flex items-center justify-center w-full col-span-full">
-          <Button
-            ref={ref}
-            variant="outline"
-            onClick={() => fetchNextPage()}
-            disabled={!hasNextPage || isFetchingNextPage}
-          >
-            {isFetchingNextPage
-              ? 'Loading more...'
-              : hasNextPage
-                ? 'Load Newer'
-                : 'Nothing more to load'}
-          </Button>
-        </div>
-      </ResourceList>
+      />
     </div>
   );
 };

@@ -3,8 +3,9 @@
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Nullable } from '@/lib/common.types';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 type EmptyAction =
   | {
@@ -27,7 +28,7 @@ function isCustomAction(
 }
 
 export interface ResourceListProps<T> {
-  data?: T[];
+  data: T[];
   isLoading?: boolean;
   error?: Nullable<Error | string>;
   onRetry?: () => void;
@@ -41,6 +42,9 @@ export interface ResourceListProps<T> {
   containerClasses?: string;
   className?: string;
   children?: React.ReactNode;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
 
 const ResourceList = <T,>({
@@ -50,14 +54,49 @@ const ResourceList = <T,>({
   onRetry,
   renderItem,
   renderSkeleton,
-  keyExtractor = (_, index) => index.toString(),
   emptyMessage = 'No items found',
   containerClasses,
   emptyIcon,
   emptyAction,
   errorTitle = 'Error loading items',
   children,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
 }: ResourceListProps<T>) => {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: data?.length || 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 5,
+  });
+
+  const items = virtualizer.getVirtualItems();
+
+  useEffect(() => {
+    const [lastItem] = [...virtualizer.getVirtualItems()].reverse();
+
+    if (!lastItem) {
+      return;
+    }
+
+    if (
+      lastItem.index >= data.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage?.();
+    }
+  }, [
+    data.length,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    virtualizer.getVirtualItems(),
+  ]);
+
   if (isLoading) {
     return (
       <div className={containerClasses}>
@@ -142,14 +181,42 @@ const ResourceList = <T,>({
   }
 
   return (
-    <div className={containerClasses}>
-      {data.map((item, index) => (
-        <React.Fragment key={keyExtractor(item, index)}>
-          {renderItem(item, index)}
-        </React.Fragment>
-      ))}
-      {children}
-    </div>
+    <>
+      <div
+        ref={parentRef}
+        className="relative overflow-auto h-[calc(100vh-180px)]"
+      >
+        <div
+          style={{
+            height: virtualizer.getTotalSize(),
+            width: '100%',
+            position: 'relative',
+          }}
+          className={containerClasses}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${items[0]?.start ?? 0}px)`,
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => (
+              <div
+                key={virtualItem.key}
+                data-index={virtualItem.index}
+                ref={virtualizer.measureElement}
+              >
+                {renderItem(data[virtualItem.index], virtualItem.index)}
+              </div>
+            ))}
+            {children}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

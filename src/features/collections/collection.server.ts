@@ -35,13 +35,22 @@ export const getAccessibleCollectionById = async (
   } catch (error) {
     console.error('getAccessibleCollectionById error', error);
 
-    if (
-      isErrorApiResponse(error) &&
-      error.status === StatusCodes.UNAUTHORIZED
-    ) {
-      redirect('/sign-in');
+    if (isErrorApiResponse(error)) {
+      const status = error.status;
+
+      if (status === StatusCodes.UNAUTHORIZED) {
+        redirect('/sign-in');
+      }
+
+      if (status >= 500 && status < 600) {
+        console.error('Internal server error while fetching collection');
+        throw new Error(
+          'Unexpected error occurred while fetching the collection'
+        );
+      }
     }
 
+    console.error('Unexpected error while fetching collection');
     return null;
   }
 };

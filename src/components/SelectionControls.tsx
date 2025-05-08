@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useSelection } from '@/context/SelectionContext';
 import { PencilIcon } from 'lucide-react';
 

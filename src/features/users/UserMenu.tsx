@@ -1,21 +1,21 @@
 'use client';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useCurrentUser } from './users.api';
-import { Button, buttonVariants } from '@/components/ui/button';
+} from '@/components/ui/DropdownMenu';
+import { ErrorApiResponse } from '@/lib/api/api.types';
+import { showErrorToast } from '@/lib/toast';
+import { cn } from '@/lib/utils';
 import { CogIcon, LogOutIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
-import { showErrorToast } from '@/lib/toast';
-import { ErrorApiResponse } from '@/lib/api/api.types';
 import UserAvatar from './UserAvatar';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { useCurrentUser } from './users.api';
 
 const UserMenu = () => {
   const router = useRouter();

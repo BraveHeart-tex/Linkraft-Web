@@ -2,7 +2,7 @@ import AppSidebar from '@/components/AppSidebar';
 import AppSidebarHeader from '@/components/AppSidebarHeader';
 import GlobalShortcuts from '@/components/GlobalShortcuts';
 import ModalHost from '@/components/Modalhost';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar';
 import SocketProvider from '@/context/SocketProvider';
 import BookmarkImportProgress from '@/features/import-bookmarks/BookmarkImportProgress';
 import { ImportSocketClient } from '@/features/import-bookmarks/BookmarkImportSocketClient';

@@ -1,5 +1,5 @@
-import { Separator } from '@/components/ui/separator';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/Separator';
+import { SidebarTrigger } from '@/components/ui/Sidebar';
 import UserMenu from '@/features/users/UserMenu';
 import ColorModeToggle from './ColorModeToggle';
 import NewActionsDropdown from './NewActionsDropdown';

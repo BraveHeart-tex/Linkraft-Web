@@ -6,13 +6,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/AlertDialog';
+import { Button } from '@/components/ui/Button';
+import { Nullable } from '@/lib/common.types';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { TriangleAlertIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Nullable } from '@/lib/common.types';
+import { Alert, AlertDescription, AlertTitle } from './ui/Alert';
 
 const ConfirmDialog = () => {
   const {

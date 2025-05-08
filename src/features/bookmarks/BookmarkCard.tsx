@@ -1,11 +1,11 @@
 'use client';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from '@/components/ui/card';
+} from '@/components/ui/Card';
 import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
 import {
   Bookmark,

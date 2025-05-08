@@ -1,8 +1,7 @@
 'use client';
-import { useForm } from 'react-hook-form';
-import { SignUpDto, SignUpSchema } from './auth.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
+import GoogleIcon from '@/components/GoogleIcon';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
 import {
   Form,
   FormControl,
@@ -10,17 +9,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { ErrorApiResponse } from '@/lib/api/api.types';
+import { showErrorToast } from '@/lib/toast';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import GoogleIcon from '@/components/GoogleIcon';
-import { useSignUp } from './auth.api';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { showErrorToast } from '@/lib/toast';
-import { ErrorApiResponse } from '@/lib/api/api.types';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useSignUp } from './auth.api';
+import { SignUpDto, SignUpSchema } from './auth.schema';
 
 const SignUpForm = () => {
   const router = useRouter();

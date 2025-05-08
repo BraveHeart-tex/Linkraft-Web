@@ -1,5 +1,5 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import { generateAvatarFallback } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface UserAvatarProps {
   profilePicture: string | undefined;

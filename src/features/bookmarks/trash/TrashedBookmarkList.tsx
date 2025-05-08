@@ -1,8 +1,8 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import ResourceList from '@/components/ui/resource-list';
+import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
+import { Label } from '@/components/ui/Label';
+import ResourceList from '@/components/ui/ResourceList';
 import { useSelection } from '@/context/SelectionContext';
 import {
   Bookmark,

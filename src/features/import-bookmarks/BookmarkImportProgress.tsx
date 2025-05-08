@@ -1,6 +1,5 @@
 'use client';
-
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@/components/ui/Progress';
 import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { cn } from '@/lib/utils';
 import { CheckCircle, Loader2 } from 'lucide-react';

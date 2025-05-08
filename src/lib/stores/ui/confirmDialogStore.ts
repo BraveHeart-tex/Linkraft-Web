@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@/components/ui/button';
+import { ButtonVariant } from '@/components/ui/Button';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 

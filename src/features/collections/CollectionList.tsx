@@ -1,7 +1,7 @@
 'use client';
 import CollectionCardSkeleton from '@/components/CollectionCardSkeleton';
-import { Button } from '@/components/ui/button';
-import ResourceList from '@/components/ui/resource-list';
+import { Button } from '@/components/ui/Button';
+import ResourceList from '@/components/ui/ResourceList';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
 import { useModalStore } from '@/lib/stores/ui/modalStore';

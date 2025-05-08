@@ -2,7 +2,7 @@ import { fetchBookmarkById } from '@/features/bookmarks/bookmark.api';
 import { KEYS } from '@/features/search/search.constants';
 import { SearchResult } from '@/features/search/search.types';
 import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
-import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
+import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 import { isErrorApiResponse } from '@/lib/api/api.utils';
 import { Nullable } from '@/lib/common.types';
 import { useModalStore } from '@/lib/stores/ui/modalStore';

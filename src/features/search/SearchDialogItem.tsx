@@ -1,7 +1,7 @@
 'use client';
-import { CommandItem } from '@/components/ui/command';
+import { CommandItem } from '@/components/ui/Command';
 import { SearchResult } from '@/features/search/search.types';
-import { useMutationObserver } from '@/hooks/use-mutation-observer';
+import { useMutationObserver } from '@/hooks/useMutationObserver';
 import { BookmarkIcon, FolderIcon, HashIcon, SearchIcon } from 'lucide-react';
 import { useRef } from 'react';
 

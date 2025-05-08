@@ -1,12 +1,12 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/DropdownMenu';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
 import { ErrorApiResponse } from '@/lib/api/api.types';

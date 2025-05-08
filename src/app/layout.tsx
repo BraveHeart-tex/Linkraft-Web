@@ -1,11 +1,11 @@
+import ConfirmDialog from '@/components/ConfirmDialog';
+import { Toaster } from '@/components/ui/Sonner';
+import { ThemeProvider } from '@/components/ui/ThemeProvider';
+import QueryClientProviders from '@/providers/QueryClientProviders';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import QueryClientProviders from '@/providers/QueryClientProviders';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from '@/components/ui/theme-provider';
-import ConfirmDialog from '@/components/ConfirmDialog';
 
 const inter = Inter({
   subsets: ['latin'],

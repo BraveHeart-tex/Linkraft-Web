@@ -1,21 +1,21 @@
 'use client';
 import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuBadge,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/Collapsible';
+import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-} from '@/components/ui/sidebar';
-import Link from 'next/link';
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/Sidebar';
 import { useTags } from '@/features/tags/tag.api';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 
 const SidebarTagList = () => {
   const { data: tags } = useTags();

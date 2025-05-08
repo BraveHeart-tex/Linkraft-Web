@@ -1,11 +1,5 @@
 'use client';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from './ui/dropdown-menu';
-import { Button } from './ui/button';
+import { useModalStore } from '@/lib/stores/ui/modalStore';
 import {
   ChevronDown,
   FolderIcon,
@@ -13,7 +7,13 @@ import {
   Plus,
   UploadIcon,
 } from 'lucide-react';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { Button } from './ui/Button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/DropdownMenu';
 
 const actions = [
   { icon: UploadIcon, label: 'Import from Browser', type: 'import-bookmarks' },

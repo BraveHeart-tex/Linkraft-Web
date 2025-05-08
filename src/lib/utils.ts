@@ -1,4 +1,4 @@
-import { SelectOption } from '@/components/ui/multi-select';
+import { SelectOption } from '@/components/ui/MultiSelect';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

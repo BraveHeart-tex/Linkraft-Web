@@ -1,6 +1,6 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import CircularProgress from '@/components/ui/circular-progress';
+import { Button } from '@/components/ui/Button';
+import CircularProgress from '@/components/ui/CircularProgress';
 import {
   Dialog,
   DialogClose,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog';
 import { BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES } from '@/features/import-bookmarks/import-bookmark.constants';
 import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { useState } from 'react';

@@ -1,5 +1,5 @@
 'use client';
-import { SidebarMenuButton } from '@/components/ui/sidebar';
+import { SidebarMenuButton } from '@/components/ui/Sidebar';
 import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { SearchIcon } from 'lucide-react';
 

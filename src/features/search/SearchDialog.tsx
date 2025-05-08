@@ -6,13 +6,13 @@ import {
   CommandGroup,
   CommandInput,
   CommandList,
-} from '@/components/ui/command';
+} from '@/components/ui/Command';
 import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
-import { useBookmarkShortcuts } from '@/hooks/search/use-bookmark-shortcuts';
-import { useDebounce } from '@/hooks/use-debounce';
+import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
+import { useDebounce } from '@/hooks/useDebounce';
 import { SearchIcon } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';

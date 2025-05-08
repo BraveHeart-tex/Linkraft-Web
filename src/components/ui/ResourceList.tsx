@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
-import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Nullable } from '@/lib/common.types';
+import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
+import React from 'react';
 
 type EmptyAction =
   | {

@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/DropdownMenu';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
 import {

@@ -1,22 +1,22 @@
 'use client';
-import { ChevronDown, PlusIcon } from 'lucide-react';
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuBadge,
-  SidebarGroupLabel,
-} from '@/components/ui/sidebar';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+} from '@/components/ui/Collapsible';
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/Sidebar';
 import { useCollections } from '@/features/collections/collection.api';
-import Link from 'next/link';
 import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { ChevronDown, PlusIcon } from 'lucide-react';
+import Link from 'next/link';
 
 const SidebarCollectionsList = () => {
   const openModal = useModalStore((s) => s.openModal);

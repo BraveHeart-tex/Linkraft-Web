@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { LucideIcon } from 'lucide-react';
 
 export interface DashboardMetricCardProps {

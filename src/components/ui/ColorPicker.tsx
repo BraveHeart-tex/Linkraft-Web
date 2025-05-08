@@ -1,24 +1,24 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
-import { HexColorPicker } from 'react-colorful';
-import { Pipette } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/components/ui/Popover';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/components/ui/Tooltip';
+import { cn } from '@/lib/utils';
+import { Pipette } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { HexColorPicker } from 'react-colorful';
 
 interface ColorPickerProps {
   color: string;

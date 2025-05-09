@@ -3,10 +3,9 @@
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Nullable } from '@/lib/common.types';
-import { cn } from '@/lib/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 type EmptyAction =
   | {
@@ -48,6 +47,9 @@ export interface ResourceListProps<T> {
   fetchNextPage?: () => void;
 }
 
+// TODO: Make this dynamic with useMedia for responsiveness
+const itemsPerRow = 3;
+
 const ResourceList = <T,>({
   data,
   isLoading = false,
@@ -65,12 +67,21 @@ const ResourceList = <T,>({
   isFetchingNextPage,
   fetchNextPage,
 }: ResourceListProps<T>) => {
+  const rows = useMemo(() => {
+    if (!data?.length) return [];
+    const chunked: T[][] = [];
+    for (let i = 0; i < data.length; i += itemsPerRow) {
+      chunked.push(data.slice(i, i + itemsPerRow));
+    }
+    return chunked;
+  }, [data]);
+
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
-    count: data?.length || 0,
+    count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
+    estimateSize: () => 220,
     overscan: 5,
   });
 
@@ -78,26 +89,14 @@ const ResourceList = <T,>({
 
   useEffect(() => {
     if (!data?.length) return;
-    const lastItem = items[items.length - 1];
 
-    if (!lastItem) {
-      return;
-    }
-
-    if (
-      lastItem.index >= data.length - 1 &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
+    const lastRow = items[items.length - 1];
+    if (!lastRow) return;
+    const lastIndex = lastRow.index * itemsPerRow + itemsPerRow - 1;
+    if (lastIndex >= data.length - 1 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage?.();
     }
-  }, [
-    data?.length,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    virtualizer.getVirtualItems(),
-  ]);
+  }, [items, data?.length, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (isLoading) {
     return (
@@ -194,26 +193,26 @@ const ResourceList = <T,>({
             width: '100%',
             position: 'relative',
           }}
-          className={cn(
-            'grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4',
-            containerClasses
-          )}
         >
-          {virtualizer.getVirtualItems().map((virtualRow) => (
-            <div
-              key={virtualRow.key}
-              ref={virtualizer.measureElement}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                transform: `translateY(${virtualRow.start}px)`,
-                width: '100%',
-              }}
-            >
-              {renderItem(data[virtualRow.index], virtualRow.index)}
-            </div>
-          ))}
+          {items.map((virtualRow) => {
+            const row = rows[virtualRow.index];
+            return (
+              <div
+                key={virtualRow.key}
+                ref={virtualizer.measureElement}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  transform: `translateY(${virtualRow.start}px)`,
+                  width: '100%',
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4"
+              >
+                {row.map((row) => renderItem(row, virtualRow.index))}
+              </div>
+            );
+          })}
           {children}
         </div>
       </div>

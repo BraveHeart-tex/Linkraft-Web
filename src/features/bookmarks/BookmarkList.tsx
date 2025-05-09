@@ -163,6 +163,7 @@ const BookmarkList = () => {
         onRetry={refetch}
         renderItem={(item) => (
           <BookmarkCard
+            key={`bookmark-${item.id}`}
             bookmark={item}
             isSelected={state.selectedIds.has(item.id)}
             onSelect={state.isSelectMode ? handleBookmarkSelect : undefined}

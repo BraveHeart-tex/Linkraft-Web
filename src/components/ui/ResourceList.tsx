@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
+import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { Nullable } from '@/lib/common.types';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
@@ -45,10 +46,8 @@ export interface ResourceListProps<T> {
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
+  estimateSize?: number;
 }
-
-// TODO: Make this dynamic with useMedia for responsiveness
-const itemsPerRow = 3;
 
 const ResourceList = <T,>({
   data,
@@ -66,7 +65,9 @@ const ResourceList = <T,>({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
+  estimateSize = 220,
 }: ResourceListProps<T>) => {
+  const itemsPerRow = useResponsiveColumns();
   const rows = useMemo(() => {
     if (!data?.length) return [];
     const chunked: T[][] = [];
@@ -74,14 +75,14 @@ const ResourceList = <T,>({
       chunked.push(data.slice(i, i + itemsPerRow));
     }
     return chunked;
-  }, [data]);
+  }, [data, itemsPerRow]);
 
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 220,
+    estimateSize: () => estimateSize,
     overscan: 5,
   });
 
@@ -96,7 +97,14 @@ const ResourceList = <T,>({
     if (lastIndex >= data.length - 1 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage?.();
     }
-  }, [items, data?.length, fetchNextPage, hasNextPage, isFetchingNextPage]);
+  }, [
+    items,
+    data?.length,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    itemsPerRow,
+  ]);
 
   if (isLoading) {
     return (
@@ -200,6 +208,7 @@ const ResourceList = <T,>({
               <div
                 key={virtualRow.key}
                 ref={virtualizer.measureElement}
+                data-index={virtualRow.index}
                 style={{
                   position: 'absolute',
                   top: 0,

@@ -29,7 +29,5 @@ export const useResponsiveColumns = (): number => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  console.log(columns);
-
   return columns;
 };

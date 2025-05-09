@@ -28,6 +28,10 @@ export type Timestamped<T> = T & {
   updatedAt: Date;
 };
 
+export type NestedValueOf<T> = T extends object
+  ? ValueOf<{ [K in keyof T]: NestedValueOf<T[K]> }>
+  : T;
+
 // Without<T, K>: remove keys from a type
 export type Without<T, K extends keyof T> = Omit<T, K>;
 

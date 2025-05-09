@@ -77,7 +77,7 @@ const ResourceList = <T,>({
 
   useEffect(() => {
     if (!data?.length) return;
-    const [lastItem] = [...virtualizer.getVirtualItems()].reverse();
+    const lastItem = items[items.length - 1];
 
     if (!lastItem) {
       return;

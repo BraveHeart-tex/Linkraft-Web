@@ -15,15 +15,14 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { TrashIcon } from 'lucide-react';
 import { ApiError } from 'next/dist/server/api-utils';
-import { useEffect, useMemo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useMemo } from 'react';
 import { useBulkDeleteBookmarks, useTrashedBookmarks } from '../bookmark.api';
 import BookmarkCard from '../BookmarkCard';
 import BookmarkCardSkeleton from '../BookmarkCardSkeleton';
 
 const TrashedBookmarkList = () => {
   const queryClient = useQueryClient();
-  const { dispatch, state } = useSelection();
+  const { dispatch, state: selectionState } = useSelection();
   const { mutate: bulkDeleteBookmarks, isPending: isBulkDeletingBookmarks } =
     useBulkDeleteBookmarks({
       onMutate(variables) {
@@ -33,7 +32,7 @@ const TrashedBookmarkList = () => {
           );
 
         const toastId = showSuccessToast(
-          `Bookmark${state.selectedIds.size > 1 ? 's' : ''} deleted successfully`
+          `Bookmark${selectionState.selectedIds.size > 1 ? 's' : ''} deleted successfully`
         );
 
         if (!previousTrashedBookmarks) return;
@@ -59,7 +58,7 @@ const TrashedBookmarkList = () => {
           context?.previousTrashedBookmarks
         );
         showErrorToast(
-          `An error occurred while deleting the bookmark${state.selectedIds.size > 1 ? 's' : ''}`,
+          `An error occurred while deleting the bookmark${selectionState.selectedIds.size > 1 ? 's' : ''}`,
           {
             description: (error as ApiError).message,
             id: context?.toastId,
@@ -83,19 +82,10 @@ const TrashedBookmarkList = () => {
     error,
     isRefetching,
   } = useTrashedBookmarks();
+
   const allBookmarks = useMemo(() => {
     return data?.pages.flatMap((page) => page.bookmarks) ?? [];
   }, [data]);
-
-  const { inView, ref } = useInView({
-    rootMargin: '100px 0px 100px 0px',
-  });
-
-  useEffect(() => {
-    if (inView) {
-      fetchNextPage();
-    }
-  }, [fetchNextPage, inView]);
 
   const handleCheckedChange = (checked: boolean) => {
     if (!data) return;
@@ -111,13 +101,13 @@ const TrashedBookmarkList = () => {
   };
 
   const handleDeleteSelected = () => {
-    if (state.selectedIds.size === 0) return;
+    if (selectionState.selectedIds.size === 0) return;
     showConfirmDialog({
-      title: `Are you sure you want to permanently ${state.selectedIds.size} bookmark${state.selectedIds.size > 1 ? 's' : ''}?`,
-      message: `This action cannot be undone, and the bookmark${state.selectedIds.size > 1 ? 's' : ''} will be permanently deleted`,
+      title: `Are you sure you want to permanently ${selectionState.selectedIds.size} bookmark${selectionState.selectedIds.size > 1 ? 's' : ''}?`,
+      message: `This action cannot be undone, and the bookmark${selectionState.selectedIds.size > 1 ? 's' : ''} will be permanently deleted`,
       onConfirm: () => {
         bulkDeleteBookmarks({
-          bookmarkIds: Array.from(state.selectedIds),
+          bookmarkIds: Array.from(selectionState.selectedIds),
         });
       },
       primaryActionLabel: 'Yes, Delete forever',
@@ -127,26 +117,30 @@ const TrashedBookmarkList = () => {
 
   const handleBookmarkSelect = (bookmark: Bookmark) =>
     dispatch({
-      type: !state.selectedIds.has(bookmark.id) ? 'SELECT' : 'DESELECT',
+      type: !selectionState.selectedIds.has(bookmark.id)
+        ? 'SELECT'
+        : 'DESELECT',
       id: bookmark.id,
     });
 
   return (
     <div className="space-y-4">
-      {state.isSelectMode && allBookmarks.length ? (
+      {selectionState.isSelectMode && allBookmarks.length ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               onCheckedChange={handleCheckedChange}
-              checked={state.selectedIds.size === allBookmarks.length}
+              checked={selectionState.selectedIds.size === allBookmarks.length}
               id="selection-toggle"
               disabled={isBulkDeletingBookmarks}
             />
-            <Label htmlFor="selection-toggle">{`${state.selectedIds.size || 'None'} selected`}</Label>
+            <Label htmlFor="selection-toggle">{`${selectionState.selectedIds.size || 'None'} selected`}</Label>
           </div>
           <Button
             variant="destructive"
-            disabled={state.selectedIds.size === 0 || isBulkDeletingBookmarks}
+            disabled={
+              selectionState.selectedIds.size === 0 || isBulkDeletingBookmarks
+            }
             onClick={handleDeleteSelected}
           >
             {isBulkDeletingBookmarks
@@ -156,15 +150,24 @@ const TrashedBookmarkList = () => {
         </div>
       ) : null}
       <ResourceList
+        listParentClasses={
+          selectionState.isSelectMode ? 'h-[calc(100vh-230px)]' : ''
+        }
         data={allBookmarks}
         isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+        isFetchingNextPage={isFetchingNextPage}
         error={error}
         onRetry={refetch}
         renderItem={(item) => (
           <BookmarkCard
+            key={`bookmark-${item.id}`}
             bookmark={item}
-            isSelected={state.selectedIds.has(item.id)}
-            onSelect={state.isSelectMode ? handleBookmarkSelect : undefined}
+            isSelected={selectionState.selectedIds.has(item.id)}
+            onSelect={
+              selectionState.isSelectMode ? handleBookmarkSelect : undefined
+            }
           />
         )}
         renderSkeleton={() => <BookmarkCardSkeleton />}
@@ -178,22 +181,7 @@ const TrashedBookmarkList = () => {
         emptyIcon={<TrashIcon className="h-10 w-10 stroke-muted-foreground" />}
         errorTitle="Couldn't load trashed bookmarks"
         containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
-      >
-        <div className="flex items-center justify-center w-full col-span-full">
-          <Button
-            ref={ref}
-            variant="outline"
-            onClick={() => fetchNextPage()}
-            disabled={!hasNextPage || isFetchingNextPage}
-          >
-            {isFetchingNextPage
-              ? 'Loading more...'
-              : hasNextPage
-                ? 'Load Newer'
-                : 'Nothing more to load'}
-          </Button>
-        </div>
-      </ResourceList>
+      />
     </div>
   );
 };

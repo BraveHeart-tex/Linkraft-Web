@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { Nullable } from '@/lib/common.types';
+import { cn } from '@/lib/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -28,6 +29,8 @@ function isCustomAction(
   return 'element' in action;
 }
 
+const VIRTUAL_ROW_GAP_PX = 16 as const;
+
 export interface ResourceListProps<T> {
   data?: T[];
   isLoading?: boolean;
@@ -42,11 +45,11 @@ export interface ResourceListProps<T> {
   errorTitle?: string;
   containerClasses?: string;
   className?: string;
-  children?: React.ReactNode;
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
   estimateSize?: number;
+  listParentClasses?: string;
 }
 
 const ResourceList = <T,>({
@@ -61,11 +64,11 @@ const ResourceList = <T,>({
   emptyIcon,
   emptyAction,
   errorTitle = 'Error loading items',
-  children,
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
   estimateSize = 220,
+  listParentClasses,
 }: ResourceListProps<T>) => {
   const itemsPerRow = useResponsiveColumns();
   const rows = useMemo(() => {
@@ -82,7 +85,7 @@ const ResourceList = <T,>({
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => estimateSize,
+    estimateSize: () => estimateSize + VIRTUAL_ROW_GAP_PX,
     overscan: 5,
   });
 
@@ -190,42 +193,43 @@ const ResourceList = <T,>({
   }
 
   return (
-    <>
+    <div
+      ref={parentRef}
+      className={cn(
+        'relative overflow-auto h-[calc(100vh-180px)]',
+        listParentClasses
+      )}
+    >
       <div
-        ref={parentRef}
-        className="relative overflow-auto h-[calc(100vh-180px)]"
+        style={{
+          height: virtualizer.getTotalSize(),
+          width: '100%',
+          position: 'relative',
+        }}
       >
-        <div
-          style={{
-            height: virtualizer.getTotalSize(),
-            width: '100%',
-            position: 'relative',
-          }}
-        >
-          {items.map((virtualRow) => {
-            const row = rows[virtualRow.index];
-            return (
-              <div
-                key={virtualRow.key}
-                ref={virtualizer.measureElement}
-                data-index={virtualRow.index}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  transform: `translateY(${virtualRow.start}px)`,
-                  width: '100%',
-                }}
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4"
-              >
-                {row.map((row) => renderItem(row, virtualRow.index))}
-              </div>
-            );
-          })}
-          {children}
-        </div>
+        {items.map((virtualRow) => {
+          const row = rows[virtualRow.index];
+          return (
+            <div
+              key={virtualRow.key}
+              ref={virtualizer.measureElement}
+              data-index={virtualRow.index}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                transform: `translateY(${virtualRow.start}px)`,
+                width: '100%',
+                paddingBottom: VIRTUAL_ROW_GAP_PX,
+              }}
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+            >
+              {row.map((row) => renderItem(row, virtualRow.index))}
+            </div>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -28,7 +28,7 @@ import { useMemo } from 'react';
 const BookmarkList = () => {
   const queryClient = useQueryClient();
   const showConfirmDialog = useConfirmDialogStore((s) => s.showConfirmDialog);
-  const { dispatch, state } = useSelection();
+  const { dispatch, state: selectionState } = useSelection();
   const { mutate: bulkTrashBookmarks, isPending: isBulkTrashingBookmarks } =
     useBulkTrashBookmarks({
       onMutate(variables) {
@@ -38,7 +38,7 @@ const BookmarkList = () => {
           );
 
         const toastId = showSuccessToast(
-          `Bookmark${state.selectedIds.size > 1 ? 's' : ''} moved to trash successfully`
+          `Bookmark${selectionState.selectedIds.size > 1 ? 's' : ''} moved to trash successfully`
         );
 
         if (!previousTrashedBookmarks) return;
@@ -64,7 +64,7 @@ const BookmarkList = () => {
           context?.previousTrashedBookmarks
         );
         showErrorToast(
-          `An error occurred while moving the bookmark${state.selectedIds.size > 1 ? 's' : ''} to trash`,
+          `An error occurred while moving the bookmark${selectionState.selectedIds.size > 1 ? 's' : ''} to trash`,
           {
             description: (error as ApiError).message,
             id: context?.toastId,
@@ -110,15 +110,15 @@ const BookmarkList = () => {
   };
 
   const handleDeleteSelected = () => {
-    if (state.selectedIds.size === 0) return;
+    if (selectionState.selectedIds.size === 0) return;
     showConfirmDialog({
-      title: `Are you sure you want to move ${state.selectedIds.size} bookmark${state.selectedIds.size > 1 ? 's' : ''} to trash?`,
+      title: `Are you sure you want to move ${selectionState.selectedIds.size} bookmark${selectionState.selectedIds.size > 1 ? 's' : ''} to trash?`,
       message: 'You can restore it from the trash at any time if needed.',
       alertText:
         'Bookmarks in the trash for more than 30 days will be permanently deleted.',
       onConfirm: () => {
         bulkTrashBookmarks({
-          bookmarkIds: Array.from(state.selectedIds),
+          bookmarkIds: Array.from(selectionState.selectedIds),
         });
       },
       primaryActionLabel: 'Move to Trash',
@@ -127,26 +127,28 @@ const BookmarkList = () => {
 
   const handleBookmarkSelect = (bookmark: Bookmark) =>
     dispatch({
-      type: state.selectedIds.has(bookmark.id) ? 'DESELECT' : 'SELECT',
+      type: selectionState.selectedIds.has(bookmark.id) ? 'DESELECT' : 'SELECT',
       id: bookmark.id,
     });
 
   return (
     <div className="space-y-4">
-      {state.isSelectMode && allBookmarks.length ? (
+      {selectionState.isSelectMode && allBookmarks.length ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               onCheckedChange={handleCheckedChange}
-              checked={state.selectedIds.size === allBookmarks.length}
+              checked={selectionState.selectedIds.size === allBookmarks.length}
               id="selection-toggle"
               disabled={isBulkTrashingBookmarks}
             />
-            <Label htmlFor="selection-toggle">{`${state.selectedIds.size || 'None'} selected`}</Label>
+            <Label htmlFor="selection-toggle">{`${selectionState.selectedIds.size || 'None'} selected`}</Label>
           </div>
           <Button
             variant="destructive"
-            disabled={state.selectedIds.size === 0 || isBulkTrashingBookmarks}
+            disabled={
+              selectionState.selectedIds.size === 0 || isBulkTrashingBookmarks
+            }
             onClick={handleDeleteSelected}
           >
             {isBulkTrashingBookmarks ? 'Moving to Trash...' : 'Move to Trash'}
@@ -154,6 +156,9 @@ const BookmarkList = () => {
         </div>
       ) : null}
       <ResourceList
+        listParentClasses={
+          selectionState.isSelectMode ? 'h-[calc(100vh-230px)]' : ''
+        }
         data={allBookmarks}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
@@ -165,8 +170,10 @@ const BookmarkList = () => {
           <BookmarkCard
             key={`bookmark-${item.id}`}
             bookmark={item}
-            isSelected={state.selectedIds.has(item.id)}
-            onSelect={state.isSelectMode ? handleBookmarkSelect : undefined}
+            isSelected={selectionState.selectedIds.has(item.id)}
+            onSelect={
+              selectionState.isSelectMode ? handleBookmarkSelect : undefined
+            }
           />
         )}
         renderSkeleton={() => <BookmarkCardSkeleton />}

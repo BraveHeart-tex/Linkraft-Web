@@ -28,7 +28,7 @@ function isCustomAction(
 }
 
 export interface ResourceListProps<T> {
-  data: T[];
+  data?: T[];
   isLoading?: boolean;
   error?: Nullable<Error | string>;
   onRetry?: () => void;
@@ -76,6 +76,7 @@ const ResourceList = <T,>({
   const items = virtualizer.getVirtualItems();
 
   useEffect(() => {
+    if (!data?.length) return;
     const [lastItem] = [...virtualizer.getVirtualItems()].reverse();
 
     if (!lastItem) {
@@ -90,7 +91,7 @@ const ResourceList = <T,>({
       fetchNextPage?.();
     }
   }, [
-    data.length,
+    data?.length,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

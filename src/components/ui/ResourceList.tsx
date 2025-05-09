@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Nullable } from '@/lib/common.types';
+import { cn } from '@/lib/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { AlertCircle, BoxIcon, RefreshCw } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
@@ -193,28 +194,27 @@ const ResourceList = <T,>({
             width: '100%',
             position: 'relative',
           }}
-          className={containerClasses}
+          className={cn(
+            'grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4',
+            containerClasses
+          )}
         >
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              transform: `translateY(${items[0]?.start ?? 0}px)`,
-            }}
-          >
-            {virtualizer.getVirtualItems().map((virtualItem) => (
-              <div
-                key={virtualItem.key}
-                data-index={virtualItem.index}
-                ref={virtualizer.measureElement}
-              >
-                {renderItem(data[virtualItem.index], virtualItem.index)}
-              </div>
-            ))}
-            {children}
-          </div>
+          {virtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.key}
+              ref={virtualizer.measureElement}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                transform: `translateY(${virtualRow.start}px)`,
+                width: '100%',
+              }}
+            >
+              {renderItem(data[virtualRow.index], virtualRow.index)}
+            </div>
+          ))}
+          {children}
         </div>
       </div>
     </>

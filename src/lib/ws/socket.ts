@@ -53,14 +53,14 @@ export class SocketClient {
     event: K,
     handler: (payload: SocketEventPayloads[K]) => void
   ) {
-    this.instance.on(event, handler);
+    this.instance.on(event as string, handler);
   }
 
   off<K extends SocketEvent>(
     event: K,
     handler: (payload: SocketEventPayloads[K]) => void
   ) {
-    this.instance.off(event, handler);
+    this.instance.off(event as string, handler);
   }
 
   emit<K extends SocketEvent>(event: K, payload: SocketEventPayloads[K]) {

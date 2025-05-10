@@ -7,8 +7,8 @@ interface ShowConfirmDialogParams {
   message: string;
   primaryActionLabel: string;
   secondaryActionLabel?: string;
-  onConfirm: () => void;
-  onDeny?: () => void;
+  onConfirm: () => void | Promise<unknown>;
+  onDeny?: () => void | Promise<unknown>;
   primaryButtonVariant?: ButtonVariant;
   secondaryButtonVariant?: ButtonVariant;
   alertText?: string;
@@ -21,10 +21,11 @@ interface ConfirmDialogStoreState {
   primaryActionLabel: string;
   secondaryActionLabel: string;
   loading: boolean;
-  onConfirm: () => void;
-  onDeny: () => void;
+  onConfirm: () => void | Promise<unknown>;
+  onDeny: () => void | Promise<unknown>;
   onConfirmResult: unknown;
   onDenyResult: unknown;
+  cleanupTimeoutId: ReturnType<typeof setTimeout> | null;
   callPrimaryAction: () => void;
   callSecondaryAction: () => void;
   showConfirmDialog: (params: ShowConfirmDialogParams) => void;
@@ -45,12 +46,13 @@ export const useConfirmDialogStore = create<
       message: '',
       primaryActionLabel: '',
       secondaryActionLabel: '',
+      loading: false,
       onConfirmResult: null,
       onDenyResult: null,
-      loading: false,
       primaryButtonVariant: 'default',
       secondaryButtonVariant: 'outline',
       alertText: '',
+      cleanupTimeoutId: null,
 
       onConfirm: () => {},
       onDeny: () => {},
@@ -59,40 +61,55 @@ export const useConfirmDialogStore = create<
         const { onConfirm } = get();
         if (!onConfirm) return;
 
-        set((state) => ({ ...state, loading: true }));
-        const actionResult = await onConfirm();
+        set({ loading: true });
 
-        set((state) => ({
-          ...state,
-          visible: false,
-          loading: false,
-          primaryActionResult: actionResult,
-        }));
+        try {
+          const result = await onConfirm();
+          set({
+            visible: false,
+            loading: false,
+            onConfirmResult: result,
+          });
+        } catch (err) {
+          console.error('[ConfirmDialog] Primary action error:', err);
+          set({ loading: false });
+        }
       },
+
       callSecondaryAction: async () => {
         const { onDeny } = get();
         if (!onDeny) return;
-        const actionResult = await onDeny();
 
-        set((state) => ({
-          ...state,
-          visible: false,
-          secondaryActionResult: actionResult,
-        }));
+        try {
+          const result = await onDeny();
+          set({
+            visible: false,
+            onDenyResult: result,
+          });
+        } catch (err) {
+          console.error('[ConfirmDialog] Secondary action error:', err);
+        }
       },
+
       showConfirmDialog: ({
         title,
         message,
         primaryActionLabel,
         onConfirm,
-        onDeny,
-        secondaryActionLabel,
+        onDeny = () => {},
+        secondaryActionLabel = '',
         primaryButtonVariant = 'default',
         secondaryButtonVariant = 'outline',
-        alertText,
+        alertText = '',
       }) => {
-        set((state) => ({
-          ...state,
+        const { cleanupTimeoutId } = get();
+
+        if (cleanupTimeoutId) {
+          clearTimeout(cleanupTimeoutId);
+          set({ cleanupTimeoutId: null });
+        }
+
+        set({
           visible: true,
           title,
           message,
@@ -100,14 +117,23 @@ export const useConfirmDialogStore = create<
           secondaryActionLabel,
           onConfirm,
           onDeny,
+          loading: false,
+          onConfirmResult: null,
+          onDenyResult: null,
           primaryButtonVariant,
           secondaryButtonVariant,
           alertText,
-        }));
+        });
       },
+
       cleanUp: () => {
-        set((state) => ({
-          ...state,
+        const { cleanupTimeoutId } = get();
+
+        if (cleanupTimeoutId) {
+          clearTimeout(cleanupTimeoutId);
+        }
+
+        set({
           visible: false,
           onConfirm: () => {},
           onDeny: () => {},
@@ -116,18 +142,20 @@ export const useConfirmDialogStore = create<
           loading: false,
           primaryButtonVariant: 'default',
           secondaryButtonVariant: 'outline',
-        }));
+        });
 
-        setTimeout(() => {
-          set((state) => ({
-            ...state,
+        const timeoutId = setTimeout(() => {
+          set({
             title: '',
             message: '',
             primaryActionLabel: '',
             secondaryActionLabel: '',
             alertText: '',
-          }));
+            cleanupTimeoutId: null,
+          });
         }, 100);
+
+        set({ cleanupTimeoutId: timeoutId });
       },
     }),
     {

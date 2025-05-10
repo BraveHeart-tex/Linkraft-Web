@@ -5,8 +5,20 @@ export const useSocketClient = () => {
   const socketClient = useMemo(() => getSocketClient(), []);
 
   useEffect(() => {
+    const socketClient = getSocketClient();
     socketClient.connect();
-  }, [socketClient]);
+
+    const handleUnload = () => {
+      socketClient.disconnect();
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      handleUnload();
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
 
   return socketClient;
 };

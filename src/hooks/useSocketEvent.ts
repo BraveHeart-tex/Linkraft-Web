@@ -9,6 +9,8 @@ export const useSocketEvent = <K extends SocketEvent>(
   const socket = useSocketClient();
 
   useEffect(() => {
+    if (!socket) return;
+
     socket.on(event, handler);
     return () => {
       socket.off(event, handler);

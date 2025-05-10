@@ -5,7 +5,9 @@ import {
   useImportBookmarkStore,
 } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+
+const IMPORT_BOOKMARK_RESET_WAIT_MS = 2000;
 
 export const useBookmarkImportSocketProgress = () => {
   const importJobId = useImportBookmarkStore((state) => state.importJobId);
@@ -13,6 +15,7 @@ export const useBookmarkImportSocketProgress = () => {
   const reset = useImportBookmarkStore((state) => state.reset);
   const queryClient = useQueryClient();
   const socket = useSocketClient();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!importJobId || !socket) return;
@@ -39,19 +42,25 @@ export const useBookmarkImportSocketProgress = () => {
           }),
         ]);
 
-        setTimeout(() => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = setTimeout(() => {
           reset();
-          socket.emit('import:unsubscribe', { importJobId });
-        }, 2000);
+          timeoutRef.current = null;
+        }, IMPORT_BOOKMARK_RESET_WAIT_MS);
       }
     };
 
-    socket.emit('import:subscribe', { importJobId });
     socket.on('import:progress', handleProgress);
 
     return () => {
-      socket.emit('import:unsubscribe', { importJobId });
       socket.off('import:progress', handleProgress);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     };
   }, [importJobId, setProgress, reset, queryClient, socket]);
 };

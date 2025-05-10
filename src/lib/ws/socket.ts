@@ -40,7 +40,7 @@ export class SocketClient {
   }
 
   disconnect() {
-    this.socket?.disconnect();
+    if (this.socket) this.socket.disconnect();
     this.socket = null;
   }
 

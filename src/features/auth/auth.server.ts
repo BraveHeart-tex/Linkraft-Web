@@ -6,8 +6,9 @@ import { cookies } from 'next/headers';
 import { SessionValidationResult } from './auth.types';
 
 export const getCurrentUser = async (): Promise<SessionValidationResult> => {
+  const cookieStore = await cookies();
+
   try {
-    const cookieStore = await cookies();
     const response = await retryingApi.get<
       ApiResponse<SessionValidationResult>
     >(API_ROUTES.auth.getCurrentUser, {

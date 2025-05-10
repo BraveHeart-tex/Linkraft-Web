@@ -17,9 +17,8 @@ import { redirect } from 'next/navigation';
 export const getAccessibleCollectionById = async (
   collectionId: Collection['id']
 ): Promise<Nullable<CollectionWithBookmarks>> => {
+  const cookieStore = await cookies();
   try {
-    const cookieStore = await cookies();
-
     const response = await safeApiCall(() =>
       retryingApi.get<ApiResponse<CollectionWithBookmarks>>(
         API_ROUTES.collection.getAccessibleCollectionById(collectionId),

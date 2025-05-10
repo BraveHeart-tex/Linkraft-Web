@@ -6,17 +6,9 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/Card';
-import { useBookmarkMetadataUpdate } from '@/features/bookmarks/bookmark.api';
-import {
-  Bookmark,
-  BookmarkMetadataResponse,
-  InfiniteBookmarksData,
-} from '@/features/bookmarks/bookmark.types';
-import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
+import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { formatIsoDate } from '@/lib/dateUtils';
-import { QUERY_KEYS } from '@/lib/queryKeys';
 import { cn } from '@/lib/utils';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Calendar,
   ExternalLink,
@@ -24,7 +16,7 @@ import {
   Globe,
   LoaderIcon,
 } from 'lucide-react';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import BookmarkActions from './BookmarkActions';
 
 interface BookmarkCardProps {
@@ -45,32 +37,10 @@ const BookmarkCard = memo(
       }
     }, [bookmark.url]);
 
-    const queryClient = useQueryClient();
-
-    const handleBookmarkUpdate = useCallback(
-      (metadata: BookmarkMetadataResponse) => {
-        queryClient.setQueryData<InfiniteBookmarksData>(
-          QUERY_KEYS.bookmarks.list(),
-          (old) =>
-            old
-              ? updatePaginatedBookmark(old, bookmark.id, (b) => ({
-                  ...b,
-                  title: metadata.title || b.title,
-                  faviconUrl: metadata?.faviconUrl || b.faviconUrl,
-                  isMetadataPending: false,
-                }))
-              : old
-        );
-      },
-      [bookmark.id, queryClient]
-    );
-
     const handleCardClick = () => {
       if (!onSelect) return;
       onSelect(bookmark);
     };
-
-    useBookmarkMetadataUpdate(bookmark.id, handleBookmarkUpdate);
 
     return (
       <Card

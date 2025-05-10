@@ -13,9 +13,13 @@ import {
   Bookmark,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
-import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
+import {
+  filterInfiniteBookmarks,
+  updatePaginatedBookmark,
+} from '@/features/bookmarks/bookmark.utils';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
+import { useBookmarkMetadataUpdates } from '@/hooks/bookmarks/useBookmarkMetadataUpdates';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { useModalStore } from '@/lib/stores/ui/modalStore';
@@ -83,6 +87,23 @@ const BookmarkList = () => {
       },
     });
 
+  useBookmarkMetadataUpdates((data) => {
+    console.log('data', data);
+
+    queryClient.setQueryData<InfiniteBookmarksData>(
+      QUERY_KEYS.bookmarks.list(),
+      (old) =>
+        old
+          ? updatePaginatedBookmark(old, data.bookmarkId, (b) => ({
+              ...b,
+              title: data.title || b.title,
+              faviconUrl: data?.faviconUrl || b.faviconUrl,
+              isMetadataPending: false,
+            }))
+          : old
+    );
+  });
+
   const {
     data,
     fetchNextPage,
@@ -133,7 +154,7 @@ const BookmarkList = () => {
 
   return (
     <div className="space-y-4">
-      {selectionState.isSelectMode && allBookmarks.length ? (
+      {selectionState.isSelectMode && allBookmarks.length > 0 ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox

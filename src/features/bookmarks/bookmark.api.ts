@@ -1,11 +1,9 @@
 'use client';
-import { useSocket } from '@/context/SocketProvider';
 import { ApiResponse, ErrorApiResponse } from '@/lib/api/api.types';
 import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { SOCKET_EVENTS } from '@/lib/socket';
 import { ToastId } from '@/lib/toast';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
@@ -14,10 +12,8 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import {
   Bookmark,
-  BookmarkMetadataResponse,
   CreateBookmarkDto,
   GetBookmarksResponse,
   InfiniteBookmarksData,
@@ -198,30 +194,6 @@ export const useRestoreBookmark = (
       ),
     ...options,
   });
-
-export const useBookmarkMetadataUpdate = (
-  bookmarkId: number,
-  onUpdate: (metadata: BookmarkMetadataResponse) => void
-) => {
-  const socket = useSocket();
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.emit(SOCKET_EVENTS.BOOKMARK.SUBSCRIBE, { bookmarkId });
-    const event = SOCKET_EVENTS.BOOKMARK.UPDATE;
-    const onMetadataUpdate = (data: BookmarkMetadataResponse) => {
-      if (data.bookmarkId === bookmarkId) {
-        onUpdate(data);
-      }
-    };
-    socket.on(event, onMetadataUpdate);
-
-    return () => {
-      socket.off(event, onMetadataUpdate);
-    };
-  }, [bookmarkId, onUpdate, socket]);
-};
 
 export const fetchBookmarkById = async (bookmarkId: Bookmark['id']) =>
   safeApiCall(() =>

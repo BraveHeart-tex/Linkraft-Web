@@ -81,8 +81,8 @@ const BookmarkFormDialog = ({
             ? tags.map((tag) => tag.id)
             : [],
         tags:
-          Array.isArray(tags) && tags.length > 0
-            ? tags.map((tag) => ({
+          Array.isArray(initialData.tags) && initialData.tags.length > 0
+            ? initialData.tags.map((tag) => ({
                 __isNew__: false,
                 label: tag.name,
                 value: tag.id.toString(),

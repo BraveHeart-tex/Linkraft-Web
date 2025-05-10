@@ -1,6 +1,5 @@
-import { useSocket } from '@/context/SocketProvider';
+import { useSocketClient } from '@/hooks/useSocketClient';
 import { QUERY_KEYS } from '@/lib/queryKeys';
-import { SOCKET_EVENTS } from '@/lib/socket';
 import {
   BookmarkImportStatus,
   useImportBookmarkStore,
@@ -8,28 +7,21 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-interface BookmarkImportSocketProgress {
-  importJobId: string;
-  progress: number;
-  status: BookmarkImportStatus;
-}
-
 export const useBookmarkImportSocketProgress = () => {
   const importJobId = useImportBookmarkStore((state) => state.importJobId);
   const setProgress = useImportBookmarkStore((state) => state.setProgress);
   const reset = useImportBookmarkStore((state) => state.reset);
-  const socket = useSocket();
   const queryClient = useQueryClient();
+  const socket = useSocketClient();
 
   useEffect(() => {
-    if (!importJobId) return;
-    if (!socket) return;
+    if (!importJobId || !socket) return;
 
-    socket.emit(SOCKET_EVENTS.IMPORT.SUBSCRIBE, {
-      importJobId,
-    });
-
-    const handleProgress = async (data: BookmarkImportSocketProgress) => {
+    const handleProgress = async (data: {
+      importJobId: string;
+      progress: number;
+      status: BookmarkImportStatus;
+    }) => {
       if (data.importJobId !== importJobId) return;
 
       setProgress(data.progress, data.status);
@@ -46,22 +38,20 @@ export const useBookmarkImportSocketProgress = () => {
             queryKey: QUERY_KEYS.collections.list(),
           }),
         ]);
+
         setTimeout(() => {
           reset();
-          socket.emit(SOCKET_EVENTS.IMPORT.UNSUBSCRIBE, {
-            importJobId,
-          });
+          socket.emit('import:unsubscribe', { importJobId });
         }, 2000);
       }
     };
 
-    socket.on(SOCKET_EVENTS.IMPORT.PROGRESS, handleProgress);
+    socket.emit('import:subscribe', { importJobId });
+    socket.on('import:progress', handleProgress);
 
     return () => {
-      socket.emit(SOCKET_EVENTS.IMPORT.UNSUBSCRIBE, {
-        importJobId,
-      });
-      socket.off(SOCKET_EVENTS.IMPORT.PROGRESS, handleProgress);
+      socket.emit('import:unsubscribe', { importJobId });
+      socket.off('import:progress', handleProgress);
     };
-  }, [importJobId, reset, setProgress, socket]);
+  }, [importJobId, setProgress, reset, queryClient, socket]);
 };

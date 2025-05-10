@@ -22,6 +22,8 @@ interface SearchCommandDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const SEARCH_QUERY_DEBOUNCE_WAIT_MS = 300;
+
 const SearchCommandDialog = ({
   isOpen,
   onOpenChange,
@@ -29,7 +31,7 @@ const SearchCommandDialog = ({
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
   const { ref, inView } = useInView();
   const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
   const { data, isPending, fetchNextPage, isFetchingNextPage } = useSearch({
     query: debouncedQuery,
   });

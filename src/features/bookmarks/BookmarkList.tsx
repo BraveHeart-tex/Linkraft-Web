@@ -154,7 +154,7 @@ const BookmarkList = () => {
 
   return (
     <div className="space-y-4">
-      {selectionState.isSelectMode && allBookmarks.length ? (
+      {selectionState.isSelectMode && allBookmarks.length > 0 ? (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox

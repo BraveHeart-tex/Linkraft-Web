@@ -1,8 +1,13 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'favicon-cdn.bora-karaca.workers.dev',
+      },
+    ],
   },
 };
 

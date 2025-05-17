@@ -16,6 +16,7 @@ import {
   Globe,
   LoaderIcon,
 } from 'lucide-react';
+import Image from 'next/image';
 import { memo, useMemo } from 'react';
 import BookmarkActions from './BookmarkActions';
 
@@ -56,9 +57,11 @@ const BookmarkCard = memo(
             {bookmark.isMetadataPending ? (
               <LoaderIcon className="text-muted-foreground animate-spin" />
             ) : (
-              <img
+              <Image
                 src={bookmark.faviconUrl || '/globe.svg'}
                 alt={`${bookmark.title} favicon`}
+                width={32}
+                height={32}
                 className="h-full w-full object-cover rounded-md"
                 loading="lazy"
                 onError={(e) => {

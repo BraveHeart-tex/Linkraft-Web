@@ -62,7 +62,7 @@ const BookmarkCard = memo(
                 alt={`${bookmark.title} favicon`}
                 width={32}
                 height={32}
-                className="h-full w-full object-cover rounded-md"
+                className="h-full w-full object-cover rounded-md dark:bg-card-foreground"
                 loading="lazy"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/globe.svg';

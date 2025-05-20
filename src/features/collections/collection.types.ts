@@ -16,4 +16,5 @@ export type CollectionWithBookmarkCount = Collection & {
 
 export type CollectionWithBookmarks = Collection & {
   bookmarks: Bookmark[];
+  nextBookmarkCursor: Bookmark['id'] | null;
 };

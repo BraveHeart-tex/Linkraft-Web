@@ -113,7 +113,7 @@ const ResourceList = <T,>({
     return (
       <div className={containerClasses}>
         {renderSkeleton ? (
-          Array.from({ length: 3 }).map((_, index) => (
+          Array.from({ length: 3 }, (_, index) => (
             <React.Fragment key={`skeleton-${index}`}>
               {renderSkeleton()}
             </React.Fragment>

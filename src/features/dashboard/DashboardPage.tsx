@@ -1,4 +1,5 @@
 'use client';
+import { useGeneralStats } from '@/features/dashboard/dashboard.api';
 import {
   FolderIcon,
   HashIcon,
@@ -9,7 +10,6 @@ import {
 } from 'lucide-react';
 import DashboardMetricCard from './DashboardMetricCard';
 import DashboardMetricCardSkeleton from './DashboardMetricCardSkeleton';
-import { useGeneralStats } from '@/features/dashboard/dashboard.api';
 
 interface DashboardStatItem {
   icon: LucideIcon;
@@ -62,7 +62,8 @@ const DashboardPage = () => {
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {isPending
-            ? Array.from({ length: dashboardSummaryData.length }).map(
+            ? Array.from(
+                { length: dashboardSummaryData.length },
                 (_, index) => <DashboardMetricCardSkeleton key={index} />
               )
             : dashboardSummaryData.map((item) => (

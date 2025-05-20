@@ -1,5 +1,5 @@
-import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import { getAccessibleCollectionById } from '@/features/collections/collection.server';
+import CollectionBookmarksList from '@/features/collections/CollectionBookmarksList';
 import { FolderIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -32,11 +32,7 @@ const CollectionDetailsPage = async ({
             </div>
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4">
-          {collection.bookmarks.map((bookmark) => (
-            <BookmarkCard bookmark={bookmark} key={bookmark.id} />
-          ))}
-        </div>
+        <CollectionBookmarksList collection={collection} />
       </div>
     </main>
   );

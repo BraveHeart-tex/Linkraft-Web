@@ -201,6 +201,7 @@ const ResourceList = <T,>({
       )}
     >
       <div
+        suppressHydrationWarning
         style={{
           height: virtualizer.getTotalSize(),
           width: '100%',

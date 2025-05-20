@@ -1,6 +1,4 @@
-import SidebarCollectionsList from '@/components/SidebarCollectionList';
 import SidebarSearchButton from '@/components/SidebarSearchButton';
-import SidebarTagList from '@/components/SidebarTagList';
 import {
   Sidebar,
   SidebarContent,
@@ -72,8 +70,6 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarCollectionsList />
-        <SidebarTagList />
       </SidebarContent>
     </Sidebar>
   );

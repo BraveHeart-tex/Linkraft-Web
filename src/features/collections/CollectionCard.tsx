@@ -19,7 +19,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, memo, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
 import UserAvatar from '../users/UserAvatar';
 import { useDeleteCollection } from './collection.api';
@@ -29,7 +29,7 @@ interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
 }
 
-const CollectionCard = ({ collection }: CollectionCardProps) => {
+const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   const queryClient = useQueryClient();
 
   const user = useMemo(() => {
@@ -203,6 +203,8 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+CollectionCard.displayName = 'CollectionCard';
 
 export default CollectionCard;

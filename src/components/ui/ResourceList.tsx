@@ -86,7 +86,7 @@ const ResourceList = <T,>({
     count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => estimateSize + VIRTUAL_ROW_GAP_PX,
-    overscan: 5,
+    overscan: 3,
   });
 
   const items = virtualizer.getVirtualItems();

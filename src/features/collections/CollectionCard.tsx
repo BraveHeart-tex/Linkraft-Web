@@ -147,7 +147,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
 
   return (
     <Card
-      className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-all"
+      className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-shadow"
       style={generatedCardStyles}
       onClick={handleClick}
     >

@@ -3,7 +3,7 @@ import { CommandItem } from '@/components/ui/Command';
 import { SearchResult } from '@/features/search/search.types';
 import { useMutationObserver } from '@/hooks/useMutationObserver';
 import { BookmarkIcon, FolderIcon, HashIcon, SearchIcon } from 'lucide-react';
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 
 const getIconForType = (type: string) => {
   switch (type.toLowerCase()) {
@@ -23,7 +23,7 @@ interface SearchDialogItemProps {
   onPeek?: (result: SearchResult) => void;
 }
 
-const SearchDialogItem = ({ result, onPeek }: SearchDialogItemProps) => {
+const SearchDialogItem = memo(({ result, onPeek }: SearchDialogItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(ref, (mutations) => {
@@ -39,13 +39,15 @@ const SearchDialogItem = ({ result, onPeek }: SearchDialogItemProps) => {
   });
 
   return (
-    <CommandItem ref={ref} className="flex items-center px-4 py-2">
+    <CommandItem ref={ref} className="flex items-center px-4 py-2 rounded-none">
       {getIconForType(result.type)}
       <span className="tracking-tight text-foreground line-clamp-1">
         {result.title}
       </span>
     </CommandItem>
   );
-};
+});
+
+SearchDialogItem.displayName = 'SearchDialogItem';
 
 export default SearchDialogItem;

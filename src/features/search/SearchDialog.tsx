@@ -2,8 +2,6 @@
 
 import {
   CommandDialog,
-  CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandList,
 } from '@/components/ui/Command';
@@ -13,8 +11,8 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { SearchIcon } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 interface SearchCommandDialogProps {
@@ -29,7 +27,7 @@ const SearchCommandDialog = ({
   onOpenChange,
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
-  const { ref, inView } = useInView();
+  const { ref: sentinelRef, inView } = useInView();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
   const { data, isPending, fetchNextPage, isFetchingNextPage } = useSearch({
@@ -40,6 +38,21 @@ const SearchCommandDialog = ({
   const isEmpty = useMemo(() => {
     return data && data.pages.every((page) => page.results.length === 0);
   }, [data]);
+
+  const allResults = useMemo(() => {
+    return data?.pages.flatMap((page) => page.results) ?? [];
+  }, [data]);
+
+  // Hack to make sure the virtualizer works with the CommandList
+  const [parentRef, setParentRef] = useState(null as HTMLDivElement | null);
+
+  const virtualizer = useVirtualizer({
+    count: allResults.length,
+    getScrollElement: () => parentRef,
+    estimateSize: () => 44,
+    overscan: 5,
+    enabled: isOpen,
+  });
 
   useEffect(() => {
     if (inView) {
@@ -55,7 +68,6 @@ const SearchCommandDialog = ({
       dialogContentClassName="flex flex-col w-full max-w-2xl sm:max-w-3xl max-h-[90vh]"
     >
       <div className="flex items-center border-b px-3">
-        <SearchIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <CommandInput
           placeholder="Search bookmarks, tags, collections..."
           value={query}
@@ -65,7 +77,10 @@ const SearchCommandDialog = ({
         />
       </div>
 
-      <CommandList className="flex-1 overflow-y-auto w-full">
+      <CommandList
+        ref={setParentRef}
+        className="flex-1 overflow-y-auto w-full max-h-[300px]"
+      >
         {isPending ? (
           <div className="py-6 text-center text-sm">
             <div className="flex items-center justify-center space-x-2">
@@ -76,32 +91,50 @@ const SearchCommandDialog = ({
         ) : (
           <>
             {isEmpty && !isPending ? (
-              <CommandEmpty>
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  No results found {query ? `for '${query}'` : ''}
-                </div>
-              </CommandEmpty>
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                No results found {query ? `for '${query}'` : ''}
+              </div>
             ) : (
-              <CommandGroup heading="Bookmarks">
-                {data?.pages.map((page) => (
-                  <React.Fragment key={page.nextCursor}>
-                    {page.results.map((result) => (
+              <div
+                style={{
+                  height: virtualizer.getTotalSize(),
+                  position: 'relative',
+                }}
+              >
+                {virtualizer.getVirtualItems().map((virtualRow) => {
+                  const result = allResults[virtualRow.index];
+                  return (
+                    <article
+                      key={result.id}
+                      ref={
+                        virtualRow.index === allResults.length - 1
+                          ? sentinelRef
+                          : null
+                      }
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: `${virtualRow.size}px`,
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                      className="border-b last:border-b-0"
+                    >
                       <SearchDialogItem
                         result={result}
-                        key={`${result.id}-${result.type}`}
                         onPeek={setPeekingItem}
                       />
-                    ))}
-                  </React.Fragment>
-                ))}
+                    </article>
+                  );
+                })}
                 {isFetchingNextPage && (
-                  <div className="py-4 text-center text-sm text-muted-foreground">
+                  <div className="py-4 text-center text-sm text-muted-foreground absolute bottom-0 left-0 right-0">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
                     <p>Loading more…</p>
                   </div>
                 )}
-                <div ref={ref} className="h-1" />
-              </CommandGroup>
+              </div>
             )}
           </>
         )}

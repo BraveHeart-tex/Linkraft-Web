@@ -9,6 +9,8 @@ export const QUERY_KEYS = {
   },
   collections: {
     list: () => ['collections', 'list'] as const,
+    listBookmarks: (collectionId: number) =>
+      ['collections', 'listBookmarks', collectionId] as const,
   },
   dashboard: {
     generalStats: () => ['dashboard', 'generalStats'] as const,

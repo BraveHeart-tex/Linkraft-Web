@@ -1,7 +1,7 @@
 'use client';
 import { KEYS } from '@/features/search/search.constants';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 
 const GlobalShortcuts = () => {
   const openModal = useModalStore((s) => s.openModal);
@@ -10,7 +10,7 @@ const GlobalShortcuts = () => {
   useKeyboardShortcut(
     { key: KEYS.K, meta: true },
     () => {
-      openModal({ type: 'search' });
+      openModal({ type: MODAL_TYPES.SEARCH });
     },
     { preventDefault: true, enabled: !modal }
   );

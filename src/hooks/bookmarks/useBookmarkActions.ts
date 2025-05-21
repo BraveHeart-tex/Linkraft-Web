@@ -18,7 +18,7 @@ import {
 import type { ErrorApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
@@ -198,7 +198,7 @@ export function useBookmarkActions() {
 
   const handleEditBookmark = (bookmark: Bookmark) => {
     openModal({
-      type: 'edit-bookmark',
+      type: MODAL_TYPES.EDIT_BOOKMARK,
       payload: {
         bookmark,
       },

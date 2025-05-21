@@ -5,7 +5,7 @@ import { useBookmarkActions } from '@/hooks/bookmarks/useBookmarkActions';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 import { isErrorApiResponse } from '@/lib/api/api.utils';
 import { Nullable } from '@/lib/common.types';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useCallback, useRef } from 'react';
 import { toast } from 'sonner';
@@ -60,7 +60,7 @@ export const useBookmarkShortcuts = ({
       }
 
       openModal({
-        type: 'edit-bookmark',
+        type: MODAL_TYPES.EDIT_BOOKMARK,
         payload: { bookmark },
       });
     } catch (error) {

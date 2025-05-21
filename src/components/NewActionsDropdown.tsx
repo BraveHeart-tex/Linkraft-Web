@@ -1,5 +1,5 @@
 'use client';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import {
   ChevronDown,
   FolderIcon,
@@ -16,9 +16,17 @@ import {
 } from './ui/DropdownMenu';
 
 const actions = [
-  { icon: UploadIcon, label: 'Import from Browser', type: 'import-bookmarks' },
-  { icon: LinkIcon, label: 'New Bookmark', type: 'create-bookmark' },
-  { icon: FolderIcon, label: 'New Collection', type: 'create-collection' },
+  {
+    icon: UploadIcon,
+    label: 'Import from Browser',
+    type: MODAL_TYPES.IMPORT_BOOKMARKS,
+  },
+  { icon: LinkIcon, label: 'New Bookmark', type: MODAL_TYPES.CREATE_BOOKMARK },
+  {
+    icon: FolderIcon,
+    label: 'New Collection',
+    type: MODAL_TYPES.CREATE_COLLECTION,
+  },
 ] as const;
 
 const NewActionsDropdown = () => {

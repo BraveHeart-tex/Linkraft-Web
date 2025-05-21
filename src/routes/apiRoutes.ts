@@ -9,7 +9,14 @@ export const API_ROUTES = {
     getCurrentUser: '/auth/me',
   },
   bookmark: {
-    getBookmarks: (cursor: number) => `/bookmarks?cursor=${cursor}`,
+    getBookmarks: ({
+      nextCursor,
+      collectionId,
+    }: {
+      nextCursor: number;
+      collectionId?: Collection['id'];
+    }) =>
+      `/bookmarks?cursor=${nextCursor}${collectionId ? `&collectionId=${collectionId}` : ''}`,
     createBookmark: '/bookmarks',
     updateBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
     trashBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,

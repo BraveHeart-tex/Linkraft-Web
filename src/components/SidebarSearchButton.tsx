@@ -1,6 +1,6 @@
 'use client';
 import { SidebarMenuButton } from '@/components/ui/Sidebar';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { SearchIcon } from 'lucide-react';
 
 const SidebarSearchButton = () => {
@@ -8,7 +8,7 @@ const SidebarSearchButton = () => {
 
   const handleSearchClick = () => {
     openModal({
-      type: 'search',
+      type: MODAL_TYPES.SEARCH,
     });
   };
 

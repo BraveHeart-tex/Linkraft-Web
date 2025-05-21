@@ -1,10 +1,15 @@
-import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
+import {
+  Bookmark,
+  GetBookmarksResponse,
+  InfiniteBookmarksData,
+} from '@/features/bookmarks/bookmark.types';
 import { ApiResponse } from '@/lib/api/api.types';
 import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
+  useInfiniteQuery,
   useMutation,
   UseMutationOptions,
   UseMutationResult,
@@ -111,3 +116,39 @@ export const useUpdateCollection = (
     },
     ...options,
   });
+
+export const useCollectionBookmarks = (
+  collectionId: Collection['id'],
+  initialBookmarks: Bookmark[],
+  initialNextCursor?: number | null
+) => {
+  return useInfiniteQuery({
+    queryKey: QUERY_KEYS.collections.listBookmarks(collectionId),
+    queryFn: async ({ pageParam }) => {
+      const response = await safeApiCall(() =>
+        api.get<ApiResponse<GetBookmarksResponse>>(
+          `${API_ROUTES.bookmark.getBookmarks({
+            nextCursor: pageParam,
+            collectionId: collectionId,
+          })}`
+        )
+      );
+
+      return {
+        bookmarks: response.data?.items || [],
+        nextCursor: response.data?.nextCursor,
+      };
+    },
+    initialData: {
+      pages: [
+        {
+          bookmarks: initialBookmarks,
+          nextCursor: initialNextCursor,
+        },
+      ],
+      pageParams: [initialNextCursor ?? 0],
+    },
+    initialPageParam: initialNextCursor ?? 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
+  });
+};

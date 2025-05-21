@@ -14,7 +14,7 @@ import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
@@ -133,7 +133,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
     event.stopPropagation();
 
     openModal({
-      type: 'edit-collection',
+      type: MODAL_TYPES.EDIT_COLLECTION,
       payload: {
         collection,
       },

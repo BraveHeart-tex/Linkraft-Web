@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import ResourceList from '@/components/ui/ResourceList';
 import { useCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { FolderIcon } from 'lucide-react';
 
 const CollectionList = () => {
@@ -13,7 +13,7 @@ const CollectionList = () => {
 
   const handleAddCollection = () => {
     openModal({
-      type: 'create-collection',
+      type: MODAL_TYPES.CREATE_COLLECTION,
     });
   };
 

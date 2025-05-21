@@ -1,11 +1,12 @@
 'use client';
-import { Button } from '@/components/ui/Button';
 import ResourceList from '@/components/ui/ResourceList';
+import AddBookmarkButton from '@/features/bookmarks/AddBookmarkButton';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
+import { useCollectionBookmarks } from '@/features/collections/collection.api';
 import { CollectionWithBookmarks } from '@/features/collections/collection.types';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { LinkIcon } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface CollectionBookmarksListProps {
   collection: CollectionWithBookmarks;
@@ -14,16 +15,27 @@ interface CollectionBookmarksListProps {
 const CollectionBookmarksList = ({
   collection,
 }: CollectionBookmarksListProps) => {
-  const hasNextPage = false;
-  const isFetchingNextPage = false;
-  const isLoading = false;
-  const error = null;
-  const fetchNextPage = () => {};
-  const refetch = () => {};
+  const {
+    data,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isLoading,
+    error,
+    refetch,
+  } = useCollectionBookmarks(
+    collection.id,
+    collection.bookmarks,
+    collection.nextBookmarkCursor
+  );
+
+  const allBookmarks = useMemo(() => {
+    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+  }, [data]);
 
   return (
     <ResourceList
-      data={collection.bookmarks}
+      data={allBookmarks}
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       fetchNextPage={fetchNextPage}
@@ -34,33 +46,20 @@ const CollectionBookmarksList = ({
         <BookmarkCard key={`bookmark-${item.id}`} bookmark={item} />
       )}
       renderSkeleton={() => <BookmarkCardSkeleton />}
-      emptyMessage="No bookmarks found — add one to get started."
+      emptyMessage="No bookmarks found for this collection — add one to get started."
       emptyAction={{
-        element: <AddBookmarkButton />,
+        element: (
+          <AddBookmarkButton
+            modalPayload={{
+              forCollectionId: collection.id,
+            }}
+          />
+        ),
       }}
       emptyIcon={<LinkIcon className="h-10 w-10 stroke-muted-foreground" />}
       errorTitle="Couldn't load bookmarks"
       containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
     />
-  );
-};
-
-const AddBookmarkButton = () => {
-  const openModal = useModalStore((s) => s.openModal);
-  const handleAddBookmark = () => {
-    openModal({
-      type: 'create-bookmark',
-    });
-  };
-  return (
-    <Button
-      size="sm"
-      variant="outline"
-      className="mt-4"
-      onClick={handleAddBookmark}
-    >
-      Add Bookmark
-    </Button>
   );
 };
 

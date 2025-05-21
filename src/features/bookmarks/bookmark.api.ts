@@ -132,7 +132,7 @@ export const useBookmarks = () => {
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
-          `${API_ROUTES.bookmark.getBookmarks(pageParam)}`
+          `${API_ROUTES.bookmark.getBookmarks({ nextCursor: pageParam })}`
         )
       );
 

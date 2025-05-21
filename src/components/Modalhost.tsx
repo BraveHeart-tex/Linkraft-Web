@@ -3,7 +3,7 @@ import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
 import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import FileImportDialog from '@/features/import-bookmarks/FileImportDialog';
 import SearchCommandDialog from '@/features/search/SearchDialog';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 
 const ModalHost = () => {
   const modal = useModalStore((s) => s.modal);
@@ -12,7 +12,7 @@ const ModalHost = () => {
   if (!modal) return null;
 
   switch (modal.type) {
-    case 'edit-bookmark': {
+    case MODAL_TYPES.EDIT_BOOKMARK: {
       return (
         <BookmarkFormDialog
           isOpen
@@ -22,7 +22,7 @@ const ModalHost = () => {
       );
     }
 
-    case 'edit-collection': {
+    case MODAL_TYPES.EDIT_COLLECTION: {
       return (
         <CollectionFormDialog
           isOpen
@@ -32,19 +32,19 @@ const ModalHost = () => {
       );
     }
 
-    case 'create-bookmark': {
+    case MODAL_TYPES.CREATE_BOOKMARK: {
       return <BookmarkFormDialog isOpen onOpenChange={closeModal} />;
     }
 
-    case 'import-bookmarks': {
+    case MODAL_TYPES.IMPORT_BOOKMARKS: {
       return <FileImportDialog isOpen onOpenChange={closeModal} />;
     }
 
-    case 'create-collection': {
+    case MODAL_TYPES.CREATE_COLLECTION: {
       return <CollectionFormDialog isOpen onOpenChange={closeModal} />;
     }
 
-    case 'search': {
+    case MODAL_TYPES.SEARCH: {
       return <SearchCommandDialog isOpen onOpenChange={closeModal} />;
     }
 

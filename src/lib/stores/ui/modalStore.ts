@@ -3,29 +3,38 @@ import { Collection } from '@/features/collections/collection.types';
 import { create } from 'zustand';
 import { Nullable } from '../../common.types';
 
+export const MODAL_TYPES = {
+  EDIT_BOOKMARK: 'edit-bookmark',
+  CREATE_COLLECTION: 'create-collection',
+  IMPORT_BOOKMARKS: 'import-bookmarks',
+  CREATE_BOOKMARK: 'create-bookmark',
+  EDIT_COLLECTION: 'edit-collection',
+  SEARCH: 'search',
+} as const;
+
 export type ModalType =
   | {
-      type: 'edit-bookmark';
+      type: typeof MODAL_TYPES.EDIT_BOOKMARK;
       payload: { bookmark: Bookmark };
     }
   | {
-      type: 'create-collection';
+      type: typeof MODAL_TYPES.CREATE_COLLECTION;
       payload?: undefined;
     }
   | {
-      type: 'import-bookmarks';
+      type: typeof MODAL_TYPES.IMPORT_BOOKMARKS;
       payload?: undefined;
     }
   | {
-      type: 'create-bookmark';
-      payload?: undefined;
+      type: typeof MODAL_TYPES.CREATE_BOOKMARK;
+      payload?: { forCollectionId?: Collection['id'] };
     }
   | {
-      type: 'edit-collection';
+      type: typeof MODAL_TYPES.EDIT_COLLECTION;
       payload: { collection: Collection };
     }
   | {
-      type: 'search';
+      type: typeof MODAL_TYPES.SEARCH;
       payload?: undefined;
     };
 

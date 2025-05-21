@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
 import ResourceList from '@/components/ui/ResourceList';
 import { useSelection } from '@/context/SelectionContext';
+import AddBookmarkButton from '@/features/bookmarks/AddBookmarkButton';
 import {
   useBookmarks,
   useBulkTrashBookmarks,
@@ -22,7 +23,6 @@ import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
 import { useBookmarkMetadataUpdates } from '@/hooks/bookmarks/useBookmarkMetadataUpdates';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
-import { useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { LinkIcon } from 'lucide-react';
@@ -207,25 +207,6 @@ const BookmarkList = () => {
         containerClasses="grid gap-4 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4"
       />
     </div>
-  );
-};
-
-const AddBookmarkButton = () => {
-  const openModal = useModalStore((s) => s.openModal);
-  const handleAddBookmark = () => {
-    openModal({
-      type: 'create-bookmark',
-    });
-  };
-  return (
-    <Button
-      size="sm"
-      variant="outline"
-      className="mt-4"
-      onClick={handleAddBookmark}
-    >
-      Add Bookmark
-    </Button>
   );
 };
 

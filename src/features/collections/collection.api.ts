@@ -14,10 +14,13 @@ import {
   UseMutationOptions,
   UseMutationResult,
   useQuery,
-  UseQueryOptions,
 } from '@tanstack/react-query';
 import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
-import { Collection, CollectionWithBookmarkCount } from './collection.types';
+import {
+  Collection,
+  CollectionWithBookmarkCount,
+  GetCollectionsResponse,
+} from './collection.types';
 
 export const useCreateCollection = (
   options?: UseMutationOptions<
@@ -38,24 +41,39 @@ export const useCreateCollection = (
     ...options,
   });
 
-export const useCollections = (
-  options?: Omit<
-    UseQueryOptions<CollectionWithBookmarkCount[], Error>,
-    'queryKey'
-  >
-) =>
+// FIXME: Gets's all the owned collections, but no pagination
+export const useCollections = () =>
   useQuery({
     queryFn: async () => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<CollectionWithBookmarkCount[]>>(
-          API_ROUTES.collection.getUserCollections
+          // TODO: Will remove this later
+          '/collections'
         )
       );
 
       return response.data || [];
     },
     queryKey: QUERY_KEYS.collections.list(),
-    ...options,
+  });
+
+export const usePaginatedCollections = () =>
+  useInfiniteQuery({
+    queryKey: QUERY_KEYS.collections.list(),
+    queryFn: async ({ pageParam }) => {
+      const response = await safeApiCall(() =>
+        api.get<ApiResponse<GetCollectionsResponse>>(
+          API_ROUTES.collection.getUserCollections(pageParam)
+        )
+      );
+
+      return {
+        collections: response.data?.items || [],
+        nextCursor: response.data?.nextCursor,
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 
 interface UseDeleteCollectionContext {

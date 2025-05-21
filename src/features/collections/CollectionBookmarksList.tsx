@@ -1,5 +1,5 @@
 'use client';
-import ResourceList from '@/components/ui/ResourceList';
+import VirtualizedResourceList from '@/components/ui/VirtualizedResourceList';
 import AddBookmarkButton from '@/features/bookmarks/AddBookmarkButton';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
@@ -34,7 +34,7 @@ const CollectionBookmarksList = ({
   }, [data]);
 
   return (
-    <ResourceList
+    <VirtualizedResourceList
       data={allBookmarks}
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}

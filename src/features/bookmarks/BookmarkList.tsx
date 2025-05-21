@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
-import ResourceList from '@/components/ui/ResourceList';
+import VirtualizedResourceList from '@/components/ui/VirtualizedResourceList';
 import { useSelection } from '@/context/SelectionContext';
 import AddBookmarkButton from '@/features/bookmarks/AddBookmarkButton';
 import {
@@ -88,8 +88,6 @@ const BookmarkList = () => {
     });
 
   useBookmarkMetadataUpdates((data) => {
-    console.log('data', data);
-
     queryClient.setQueryData<InfiniteBookmarksData>(
       QUERY_KEYS.bookmarks.list(),
       (old) =>
@@ -176,7 +174,7 @@ const BookmarkList = () => {
           </Button>
         </div>
       ) : null}
-      <ResourceList
+      <VirtualizedResourceList
         listParentClasses={
           selectionState.isSelectMode ? 'h-[calc(100vh-230px)]' : ''
         }
@@ -197,7 +195,7 @@ const BookmarkList = () => {
             }
           />
         )}
-        renderSkeleton={() => <BookmarkCardSkeleton />}
+        renderSkeleton={BookmarkCardSkeleton}
         emptyMessage="No bookmarks found — add one to get started."
         emptyAction={{
           element: <AddBookmarkButton />,

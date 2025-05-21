@@ -1,4 +1,5 @@
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import { PaginatedResponse } from '@/lib/api/api.types';
 
 export interface Collection {
   id: number;
@@ -18,3 +19,6 @@ export type CollectionWithBookmarks = Collection & {
   bookmarks: Bookmark[];
   nextBookmarkCursor: Bookmark['id'] | null;
 };
+
+export type GetCollectionsResponse =
+  PaginatedResponse<CollectionWithBookmarkCount>;

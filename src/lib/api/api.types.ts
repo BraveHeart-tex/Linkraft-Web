@@ -25,3 +25,8 @@ export interface ErrorApiResponse {
 export type ApiResponse<T> = SuccessApiResponse<T> | ErrorApiResponse;
 
 export type AxiosApiError = AxiosError<ApiResponse<SignInResponse>>;
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  nextCursor: number | null;
+}

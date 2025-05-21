@@ -31,7 +31,7 @@ function isCustomAction(
 
 const VIRTUAL_ROW_GAP_PX = 16 as const;
 
-export interface ResourceListProps<T> {
+export interface VirtualizedResourceListProps<T> {
   data?: T[];
   isLoading?: boolean;
   error?: Nullable<Error | string>;
@@ -52,7 +52,7 @@ export interface ResourceListProps<T> {
   listParentClasses?: string;
 }
 
-const ResourceList = <T,>({
+const VirtualizedResourceList = <T,>({
   data,
   isLoading = false,
   error = null,
@@ -69,7 +69,7 @@ const ResourceList = <T,>({
   fetchNextPage,
   estimateSize = 220,
   listParentClasses,
-}: ResourceListProps<T>) => {
+}: VirtualizedResourceListProps<T>) => {
   const itemsPerRow = useResponsiveColumns();
   const rows = useMemo(() => {
     if (!data?.length) return [];
@@ -234,4 +234,4 @@ const ResourceList = <T,>({
   );
 };
 
-export default ResourceList;
+export default VirtualizedResourceList;

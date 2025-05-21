@@ -1,9 +1,10 @@
-import { z } from 'zod';
-import { createBookmarkSchema } from './bookmark.schema';
-import { Collection } from '../collections/collection.types';
-import { Tag } from '../tags/tag.types';
+import { PaginatedResponse } from '@/lib/api/api.types';
 import { Nullable } from '@/lib/common.types';
 import { InfiniteData } from '@tanstack/react-query';
+import { z } from 'zod';
+import { Collection } from '../collections/collection.types';
+import { Tag } from '../tags/tag.types';
+import { createBookmarkSchema } from './bookmark.schema';
 
 export interface Bookmark {
   id: number;
@@ -37,10 +38,7 @@ export interface UpdateBookmarkResponse {
   createdTags: Tag[];
 }
 
-export interface GetBookmarksResponse {
-  items: Bookmark[];
-  nextCursor: Nullable<number>;
-}
+export type GetBookmarksResponse = PaginatedResponse<Bookmark>;
 
 export type PaginatedBookmarksPage = {
   bookmarks: Bookmark[];

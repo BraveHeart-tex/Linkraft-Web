@@ -33,7 +33,8 @@ export const API_ROUTES = {
   },
   collection: {
     createCollection: '/collections',
-    getUserCollections: '/collections',
+    getUserCollections: (nextCursor: number) =>
+      `/collections?cursor=${nextCursor}`,
     deleteCollection: (collectionId: Collection['id']) =>
       `/collections/${collectionId}`,
     updateCollection: (collectionId: Collection['id']) =>

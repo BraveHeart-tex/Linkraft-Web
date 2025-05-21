@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Label } from '@/components/ui/Label';
-import ResourceList from '@/components/ui/ResourceList';
+import VirtualizedResourceList from '@/components/ui/VirtualizedResourceList';
 import { useSelection } from '@/context/SelectionContext';
 import {
   Bookmark,
@@ -149,7 +149,7 @@ const TrashedBookmarkList = () => {
           </Button>
         </div>
       ) : null}
-      <ResourceList
+      <VirtualizedResourceList
         listParentClasses={
           selectionState.isSelectMode ? 'h-[calc(100vh-230px)]' : ''
         }

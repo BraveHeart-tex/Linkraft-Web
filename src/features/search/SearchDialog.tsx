@@ -1,17 +1,12 @@
 'use client';
 
-import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-} from '@/components/ui/Command';
+import { CommandDialog, CommandInput } from '@/components/ui/Command';
 import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
-import SearchDialogItem from '@/features/search/SearchDialogItem';
+import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -43,17 +38,6 @@ const SearchCommandDialog = ({
     return data?.pages.flatMap((page) => page.results) ?? [];
   }, [data]);
 
-  // Hack to make sure the virtualizer works with the CommandList
-  const [parentRef, setParentRef] = useState(null as HTMLDivElement | null);
-
-  const virtualizer = useVirtualizer({
-    count: allResults.length,
-    getScrollElement: () => parentRef,
-    estimateSize: () => 44,
-    overscan: 5,
-    enabled: isOpen,
-  });
-
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -77,68 +61,14 @@ const SearchCommandDialog = ({
         />
       </div>
 
-      <CommandList
-        ref={setParentRef}
-        className="flex-1 overflow-y-auto w-full max-h-[300px]"
-      >
-        {isPending ? (
-          <div className="py-6 text-center text-sm">
-            <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-              <p>Searching...</p>
-            </div>
-          </div>
-        ) : (
-          <>
-            {isEmpty && !isPending ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                No results found {query ? `for '${query}'` : ''}
-              </div>
-            ) : (
-              <div
-                style={{
-                  height: virtualizer.getTotalSize(),
-                  position: 'relative',
-                }}
-              >
-                {virtualizer.getVirtualItems().map((virtualRow) => {
-                  const result = allResults[virtualRow.index];
-                  return (
-                    <article
-                      key={result.id}
-                      ref={
-                        virtualRow.index === allResults.length - 1
-                          ? sentinelRef
-                          : null
-                      }
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      className="border-b last:border-b-0"
-                    >
-                      <SearchDialogItem
-                        result={result}
-                        onPeek={setPeekingItem}
-                      />
-                    </article>
-                  );
-                })}
-                {isFetchingNextPage && (
-                  <div className="py-4 text-center text-sm text-muted-foreground absolute bottom-0 left-0 right-0">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
-                    <p>Loading more…</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </CommandList>
+      <SearchResultsList
+        results={allResults}
+        isEmpty={!!isEmpty}
+        isFetchingNextPage={isFetchingNextPage}
+        isPending={isPending}
+        onItemPeek={setPeekingItem}
+        sentinelRef={sentinelRef}
+      />
 
       {peekingItem && (
         <footer className="border-t bg-popover px-4 py-3 hidden lg:block">

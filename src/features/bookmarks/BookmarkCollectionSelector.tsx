@@ -19,6 +19,8 @@ import {
 import { SEARCH_QUERY_DEBOUNCE_WAIT_MS } from '@/features/search/search.constants';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Nullable } from '@/lib/common.types';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { useQueryClient } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RefCallBack } from 'react-hook-form';
@@ -38,7 +40,7 @@ const BookmarkCollectionSelector = ({
   const [query, setQuery] = useState<string>('');
   const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
   const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    usePaginatedCollections(debouncedQuery);
+    usePaginatedCollections(debouncedQuery, isOpen);
 
   const allCollections = useMemo(() => {
     return data?.pages.flatMap((page) => page.collections) ?? [];
@@ -59,6 +61,16 @@ const BookmarkCollectionSelector = ({
     },
     [onSelect]
   );
+
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!isOpen) {
+      queryClient.removeQueries({
+        queryKey: QUERY_KEYS.collections.list(),
+        exact: false,
+      });
+    }
+  }, [isOpen, queryClient]);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen} modal>

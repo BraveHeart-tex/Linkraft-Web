@@ -40,7 +40,7 @@ export const useCreateCollection = (
     ...options,
   });
 
-export const usePaginatedCollections = (query?: string) =>
+export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.list(query),
     queryFn: async ({ pageParam }) => {
@@ -55,6 +55,7 @@ export const usePaginatedCollections = (query?: string) =>
         nextCursor: response.data?.nextCursor,
       };
     },
+    enabled: enabled !== undefined ? enabled : true,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });

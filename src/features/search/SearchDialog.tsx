@@ -8,7 +8,7 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 interface SearchCommandDialogProps {
@@ -43,6 +43,14 @@ const SearchCommandDialog = ({
     fetchNextPage();
   }, [fetchNextPage, hasNextPage, isSentinelInView, isFetchingNextPage]);
 
+  const handleItemPeek = useCallback(
+    (item: SearchResult) => {
+      if (peekingItem?.id === item.id) return;
+      setPeekingItem(item);
+    },
+    [peekingItem?.id]
+  );
+
   return (
     <CommandDialog
       open={isOpen}
@@ -65,7 +73,7 @@ const SearchCommandDialog = ({
         isEmpty={!!isEmpty}
         isFetchingNextPage={isFetchingNextPage}
         isPending={isPending}
-        onItemPeek={setPeekingItem}
+        onItemPeek={handleItemPeek}
         sentinelRef={sentinelRef}
       />
 

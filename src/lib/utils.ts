@@ -44,3 +44,7 @@ export const parseTags = (
 
   return { existingTagIds, newTags };
 };
+
+export const bytesToMib = (bytes: number): number => {
+  return bytes / (1024 * 1024);
+};

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/Dialog';
 import { BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES } from '@/features/import-bookmarks/import-bookmark.constants';
 import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
+import { bytesToMib } from '@/lib/utils';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useImportBookmarkFile } from './import-bookmark.api';
@@ -58,7 +59,7 @@ const FileImportDialog = ({ isOpen, onOpenChange }: FileImportDialogProps) => {
     onDrop,
     onDropRejected: () => {
       setErrorMessage(
-        'Invalid file type or file is too large. Please upload a valid HTML file (max 5MB).'
+        `Invalid file type or file is too large. Please upload a valid HTML file (max ${bytesToMib(BOOKMARK_IMPORT_MAX_FILE_SIZE_BYTES)}MB).`
       );
     },
   });

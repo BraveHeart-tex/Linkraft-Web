@@ -57,13 +57,13 @@ export const useCollections = () =>
     queryKey: QUERY_KEYS.collections.list(),
   });
 
-export const usePaginatedCollections = () =>
+export const usePaginatedCollections = (query?: string) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.list(),
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(
-          API_ROUTES.collection.getUserCollections(pageParam)
+          API_ROUTES.collection.getUserCollections(pageParam, query)
         )
       );
 

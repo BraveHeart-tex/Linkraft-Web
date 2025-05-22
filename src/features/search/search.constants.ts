@@ -43,3 +43,5 @@ export const KEYS = {
 } as const;
 
 export type KeyName = (typeof KEYS)[keyof typeof KEYS];
+
+export const SEARCH_QUERY_DEBOUNCE_WAIT_MS = 300;

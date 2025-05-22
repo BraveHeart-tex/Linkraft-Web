@@ -3,6 +3,7 @@
 import { CommandDialog, CommandInput } from '@/components/ui/Command';
 import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
+import { SEARCH_QUERY_DEBOUNCE_WAIT_MS } from '@/features/search/search.constants';
 import { SearchResult } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
@@ -15,19 +16,18 @@ interface SearchCommandDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const SEARCH_QUERY_DEBOUNCE_WAIT_MS = 300;
-
 const SearchCommandDialog = ({
   isOpen,
   onOpenChange,
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
-  const { ref: sentinelRef, inView } = useInView();
+  const { ref: sentinelRef, inView: isSentinelInView } = useInView();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
-  const { data, isPending, fetchNextPage, isFetchingNextPage } = useSearch({
-    query: debouncedQuery,
-  });
+  const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useSearch({
+      query: debouncedQuery,
+    });
   useBookmarkShortcuts({ enabled: isOpen, peekingItem });
 
   const isEmpty = useMemo(() => {
@@ -39,10 +39,9 @@ const SearchCommandDialog = ({
   }, [data]);
 
   useEffect(() => {
-    if (inView) {
-      fetchNextPage();
-    }
-  }, [fetchNextPage, inView]);
+    if (!isSentinelInView || !hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isSentinelInView, isFetchingNextPage]);
 
   return (
     <CommandDialog

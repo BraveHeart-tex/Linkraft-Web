@@ -8,7 +8,10 @@ export const QUERY_KEYS = {
     trashed: () => ['bookmarks', 'trashed'] as const,
   },
   collections: {
-    list: () => ['collections', 'list'] as const,
+    list: (query?: string) =>
+      query
+        ? (['collections', 'list', query] as const)
+        : (['collections', 'list'] as const),
     listBookmarks: (collectionId: number) =>
       ['collections', 'listBookmarks', collectionId] as const,
   },

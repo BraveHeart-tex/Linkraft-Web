@@ -7,7 +7,7 @@ import {
   CardHeader,
 } from '@/components/ui/Card';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
-import BookmarkActions from '@/features/bookmarks/BookmarkActions';
+import BookmarkActions from '@/features/bookmarks/BookmarkCardActions';
 import BookmarkFavicon from '@/features/bookmarks/BookmarkFavicon';
 import { formatIsoDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/utils';

@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { useSelection } from '@/context/SelectionContext';
-import { PencilIcon } from 'lucide-react';
+import { CheckSquare } from 'lucide-react';
 
 const SelectionControls = () => {
   const { dispatch, state } = useSelection();
@@ -16,7 +16,7 @@ const SelectionControls = () => {
         variant={state.isSelectMode ? 'secondary' : 'ghost'}
         onClick={handleToggleSelectMode}
       >
-        <PencilIcon />
+        <CheckSquare />
       </Button>
     </div>
   );

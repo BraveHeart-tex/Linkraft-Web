@@ -1,5 +1,6 @@
 import { getAccessibleCollectionById } from '@/features/collections/collection.server';
 import CollectionBookmarksList from '@/features/collections/CollectionBookmarksList';
+import CollectionPageActions from '@/features/collections/CollectionPageActions';
 import { FolderIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -19,10 +20,10 @@ const CollectionDetailsPage = async ({
   return (
     <main className="space-y-8">
       <div className="space-y-4">
-        <div>
+        <div className="flex items-center justify-between gap-8">
           <div className="flex items-center gap-2">
             <FolderIcon className="size-7" />
-            <div className="">
+            <div>
               <h1 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
                 {collection.name}
               </h1>
@@ -31,6 +32,7 @@ const CollectionDetailsPage = async ({
               </p>
             </div>
           </div>
+          <CollectionPageActions collectionId={collection.id} />
         </div>
         <CollectionBookmarksList collection={collection} />
       </div>

@@ -7,6 +7,7 @@ import { ApiResponse } from '@/lib/api/api.types';
 import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { QUERY_KEYS } from '@/lib/queryKeys';
+import { ToastId } from '@/lib/toast';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useInfiniteQuery,
@@ -61,7 +62,8 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
   });
 
 interface UseDeleteCollectionContext {
-  previousCollections: CollectionWithBookmarkCount[];
+  toastId?: ToastId;
+  previousCollections?: CollectionWithBookmarkCount[];
   previousBookmarks?: InfiniteBookmarksData;
 }
 

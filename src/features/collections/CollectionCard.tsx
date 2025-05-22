@@ -1,14 +1,8 @@
 'use client';
-import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
+import CollectionActions from '@/features/collections/CollectionActions';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
 import { formatIsoDate } from '@/lib/dateUtils';
@@ -17,7 +11,7 @@ import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
-import { CalendarIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
+import { CalendarIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { CSSProperties, memo, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
@@ -31,14 +25,17 @@ interface CollectionCardProps {
 
 const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   const queryClient = useQueryClient();
+  const showConfirmDialog = useConfirmDialogStore(
+    (state) => state.showConfirmDialog
+  );
+  const openModal = useModalStore((s) => s.openModal);
+  const router = useRouter();
 
   const user = useMemo(() => {
     return queryClient.getQueryData<UserWithoutPasswordHash>(
       QUERY_KEYS.auth.currentUser()
     );
   }, [queryClient]);
-
-  const openModal = useModalStore((s) => s.openModal);
 
   const { mutate: deleteCollection } = useDeleteCollection({
     async onMutate() {
@@ -100,10 +97,6 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       });
     },
   });
-  const showConfirmDialog = useConfirmDialogStore(
-    (state) => state.showConfirmDialog
-  );
-  const router = useRouter();
 
   const generatedCardStyles: CSSProperties = useMemo(() => {
     return {
@@ -125,7 +118,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       primaryActionLabel: 'Delete',
       primaryButtonVariant: 'destructive',
       alertText:
-        'Deleting this collection will permanently remove all its contents and revoke access for everyone',
+        'Deleting this collection will permanently remove all its contents',
     });
   };
 
@@ -156,32 +149,10 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
           <h3 className="scroll-m-20 text-lg sm:text-xl font-semibold tracking-tight overflow-hidden truncate">
             {collection.name}
           </h3>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <EllipsisIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="grid w-max space-y-2 py-2"
-              align="end"
-            >
-              <DropdownMenuItem
-                className="justify-start"
-                onClick={handleEditCollection}
-                asChild
-              >
-                <Button variant="ghost">Edit Collection Info</Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleDeleteCollection}
-                className="text-destructive justify-start"
-                asChild
-              >
-                <Button variant="ghost">Delete Collection</Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CollectionActions
+            onEdit={handleEditCollection}
+            onDelete={handleDeleteCollection}
+          />
         </div>
         <div className="flex items-center w-full justify-between gap-8">
           <UserAvatar

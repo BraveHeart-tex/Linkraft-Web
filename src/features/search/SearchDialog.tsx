@@ -8,8 +8,7 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useMemo, useState } from 'react';
 
 interface SearchCommandDialogProps {
   isOpen: boolean;
@@ -21,12 +20,13 @@ const SearchCommandDialog = ({
   onOpenChange,
 }: SearchCommandDialogProps) => {
   const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
-  const { ref: sentinelRef, inView: isSentinelInView } = useInView();
+
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
   const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useSearch({
       query: debouncedQuery,
+      enabled: isOpen,
     });
   useBookmarkShortcuts({ enabled: isOpen, peekingItem });
 
@@ -37,11 +37,6 @@ const SearchCommandDialog = ({
   const allResults = useMemo(() => {
     return data?.pages.flatMap((page) => page.results) ?? [];
   }, [data]);
-
-  useEffect(() => {
-    if (!isSentinelInView || !hasNextPage || isFetchingNextPage) return;
-    fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isSentinelInView, isFetchingNextPage]);
 
   const handleItemPeek = useCallback(
     (item: SearchResult) => {
@@ -74,7 +69,8 @@ const SearchCommandDialog = ({
         isFetchingNextPage={isFetchingNextPage}
         isPending={isPending}
         onItemPeek={handleItemPeek}
-        sentinelRef={sentinelRef}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
       />
 
       {peekingItem && (

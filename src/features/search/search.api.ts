@@ -8,9 +8,10 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface UseSearchParams {
   query: string;
+  enabled?: boolean;
 }
 
-export const useSearch = ({ query }: UseSearchParams) =>
+export const useSearch = ({ query, enabled }: UseSearchParams) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.search.list(query),
     initialPageParam: '',
@@ -32,5 +33,6 @@ export const useSearch = ({ query }: UseSearchParams) =>
         nextCursor: response?.data?.nextCursor || null,
       };
     },
+    enabled: enabled !== undefined ? enabled : true,
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });

@@ -1,17 +1,19 @@
 'use client';
+import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { CommandList } from 'cmdk';
-import { memo, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 interface SearchResultsListProps {
   results: SearchResult[];
   isPending: boolean;
   isEmpty: boolean;
-  sentinelRef: (node?: Element | null) => void;
   onItemPeek: (item: SearchResult) => void;
   isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: ReturnType<typeof useSearch>['fetchNextPage'];
 }
 
 const SearchResultsList = memo(
@@ -19,9 +21,10 @@ const SearchResultsList = memo(
     results,
     isPending,
     isEmpty,
-    sentinelRef,
     onItemPeek,
     isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   }: SearchResultsListProps) => {
     const parentRef = useRef<HTMLDivElement>(null);
     const virtualizer = useVirtualizer({
@@ -30,6 +33,23 @@ const SearchResultsList = memo(
       estimateSize: () => 44,
       overscan: 5,
     });
+
+    const items = virtualizer.getVirtualItems();
+
+    useEffect(() => {
+      if (results.length === 0) return;
+
+      const lastResult = items[items.length - 1];
+      if (!lastResult) return;
+
+      if (
+        lastResult.index >= results.length - 1 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    }, [items, results, hasNextPage, fetchNextPage, isFetchingNextPage]);
 
     return (
       <CommandList
@@ -61,11 +81,6 @@ const SearchResultsList = memo(
                   return (
                     <article
                       key={result.id}
-                      ref={
-                        virtualRow.index === results.length - 1
-                          ? sentinelRef
-                          : null
-                      }
                       style={{
                         position: 'absolute',
                         top: 0,

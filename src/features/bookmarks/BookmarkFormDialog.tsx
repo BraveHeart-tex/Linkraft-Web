@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import { ComboBox, ComboboxOption } from '@/components/ui/Combobox';
 import {
   Dialog,
   DialogClose,
@@ -25,6 +24,7 @@ import {
   useUpdateBookmark,
 } from '@/features/bookmarks/bookmark.api';
 import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
+import BookmarkCollectionSelector from '@/features/bookmarks/BookmarkCollectionSelector';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
@@ -34,8 +34,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { StatusCodes } from 'http-status-codes';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { useCollections } from '../collections/collection.api';
-import { CollectionWithBookmarkCount } from '../collections/collection.types';
 import { useTags } from '../tags/tag.api';
 import { Tag } from '../tags/tag.types';
 import { createBookmarkSchema } from './bookmark.schema';
@@ -92,7 +90,14 @@ const BookmarkFormDialog = ({
     }
   }, [form, initialData, tags]);
 
-  const { data: collections } = useCollections();
+  const tagOptions = useMemo(() => {
+    return tags?.map((tag) => ({
+      label: tag.name,
+      value: tag.id.toString(),
+      __isNew__: false,
+    }));
+  }, [tags]);
+
   const queryClient = useQueryClient();
   const { mutate: updateBookmark, isPending: isUpdatingBookmark } =
     useUpdateBookmark({
@@ -150,27 +155,28 @@ const BookmarkFormDialog = ({
           })),
         ]);
 
-        if (variables.collectionId !== initialData?.collection?.id) {
-          queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-            QUERY_KEYS.collections.list(),
-            (collections) =>
-              collections?.map((collection) => {
-                if (collection.id === variables.collectionId) {
-                  return {
-                    ...collection,
-                    bookmarkCount: collection.bookmarkCount + 1,
-                  };
-                }
-                if (collection.id === initialData?.collection?.id) {
-                  return {
-                    ...collection,
-                    bookmarkCount: collection.bookmarkCount - 1,
-                  };
-                }
-                return collection;
-              })
-          );
-        }
+        // FIXME: Make sure this uses the infinite query data structure
+        // if (variables.collectionId !== initialData?.collection?.id) {
+        //   queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        //     QUERY_KEYS.collections.list(),
+        //     (collections) =>
+        //       collections?.map((collection) => {
+        //         if (collection.id === variables.collectionId) {
+        //           return {
+        //             ...collection,
+        //             bookmarkCount: collection.bookmarkCount + 1,
+        //           };
+        //         }
+        //         if (collection.id === initialData?.collection?.id) {
+        //           return {
+        //             ...collection,
+        //             bookmarkCount: collection.bookmarkCount - 1,
+        //           };
+        //         }
+        //         return collection;
+        //       })
+        //   );
+        // }
 
         showSuccessToast('Bookmark updated successfully');
         form.reset();
@@ -284,16 +290,6 @@ const BookmarkFormDialog = ({
       },
     });
 
-  const collectionOptions: ComboboxOption[] = useMemo(() => {
-    return [
-      { label: 'Select an option', value: null },
-      ...(collections || []).map<ComboboxOption>((collection) => ({
-        label: collection.name,
-        value: collection.id,
-      })),
-    ];
-  }, [collections]);
-
   const onSubmit = (values: CreateBookmarkDto) => {
     const { existingTagIds, newTags } = parseTags(values.tags);
     if (!values.id) {
@@ -355,13 +351,10 @@ const BookmarkFormDialog = ({
                   <FormItem>
                     <FormLabel>Collection</FormLabel>
                     <FormControl>
-                      <ComboBox
-                        options={collectionOptions}
-                        onValueChange={(value) => {
-                          field.onChange(value === null ? null : +value);
-                        }}
-                        value={field.value}
-                        ref={field.ref}
+                      <BookmarkCollectionSelector
+                        selectedCollectionId={field.value}
+                        triggerRef={field.ref}
+                        onSelect={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -400,11 +393,7 @@ const BookmarkFormDialog = ({
                         field.onChange([...(field.value || []), newOption]);
                       }}
                       noOptionsMessage="No tags found"
-                      options={tags?.map((tag) => ({
-                        label: tag.name,
-                        value: tag.id.toString(),
-                        __isNew__: false,
-                      }))}
+                      options={tagOptions}
                     />
                   </FormControl>
                   <FormMessage />

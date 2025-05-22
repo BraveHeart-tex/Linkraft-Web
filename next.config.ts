@@ -1,3 +1,4 @@
+import { env } from '@/env';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -5,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'favicon-cdn.bora-karaca.workers.dev',
+        hostname: new URL(env.NEXT_PUBLIC_IMAGE_CDN_URL).hostname,
       },
     ],
   },

@@ -13,7 +13,6 @@ import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
-  useQuery,
 } from '@tanstack/react-query';
 import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
 import {
@@ -41,25 +40,9 @@ export const useCreateCollection = (
     ...options,
   });
 
-// FIXME: Gets's all the owned collections, but no pagination
-export const useCollections = () =>
-  useQuery({
-    queryFn: async () => {
-      const response = await safeApiCall(() =>
-        api.get<ApiResponse<CollectionWithBookmarkCount[]>>(
-          // TODO: Will remove this later
-          '/collections'
-        )
-      );
-
-      return response.data || [];
-    },
-    queryKey: QUERY_KEYS.collections.list(),
-  });
-
 export const usePaginatedCollections = (query?: string) =>
   useInfiniteQuery({
-    queryKey: QUERY_KEYS.collections.list(),
+    queryKey: QUERY_KEYS.collections.list(query),
     queryFn: async ({ pageParam }) => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(

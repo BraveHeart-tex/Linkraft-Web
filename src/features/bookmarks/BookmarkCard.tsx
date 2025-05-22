@@ -7,18 +7,12 @@ import {
   CardHeader,
 } from '@/components/ui/Card';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
+import BookmarkActions from '@/features/bookmarks/BookmarkActions';
+import BookmarkFavicon from '@/features/bookmarks/BookmarkFavicon';
 import { formatIsoDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/utils';
-import {
-  Calendar,
-  ExternalLink,
-  Folder,
-  Globe,
-  LoaderIcon,
-} from 'lucide-react';
-import Image from 'next/image';
+import { Calendar, ExternalLink, Folder, Globe } from 'lucide-react';
 import { memo, useMemo } from 'react';
-import BookmarkActions from './BookmarkActions';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -53,23 +47,11 @@ const BookmarkCard = memo(
         onMouseDown={handleCardClick}
       >
         <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-          <div className="h-8 w-8 overflow-hidden">
-            {bookmark.isMetadataPending ? (
-              <LoaderIcon className="text-muted-foreground animate-spin" />
-            ) : (
-              <Image
-                src={bookmark.faviconUrl || '/globe.svg'}
-                alt={`${bookmark.title} favicon`}
-                width={32}
-                height={32}
-                className="h-full w-full object-cover rounded-md dark:bg-card-foreground"
-                loading="lazy"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/globe.svg';
-                }}
-              />
-            )}
-          </div>
+          <BookmarkFavicon
+            alt={`${domain} favicon`}
+            faviconUrl={bookmark.faviconUrl}
+            isMetadataPending={bookmark.isMetadataPending}
+          />
           <div className="flex-1 space-y-1 overflow-hidden">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold leading-none tracking-tight text-foreground line-clamp-1 lg:line-clamp-2">

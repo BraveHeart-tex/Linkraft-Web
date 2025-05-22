@@ -9,7 +9,6 @@ import { memo, useEffect, useRef } from 'react';
 interface SearchResultsListProps {
   results: SearchResult[];
   isPending: boolean;
-  isEmpty: boolean;
   onItemPeek: (item: SearchResult) => void;
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
@@ -20,7 +19,6 @@ const SearchResultsList = memo(
   ({
     results,
     isPending,
-    isEmpty,
     onItemPeek,
     isFetchingNextPage,
     hasNextPage,
@@ -65,7 +63,7 @@ const SearchResultsList = memo(
           </div>
         ) : (
           <>
-            {isEmpty && !isPending ? (
+            {results.length === 0 && !isPending ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
                 No results found
               </div>

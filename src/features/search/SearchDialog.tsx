@@ -8,7 +8,9 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useCallback, useMemo, useState } from 'react';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface SearchCommandDialogProps {
   isOpen: boolean;
@@ -30,9 +32,16 @@ const SearchCommandDialog = ({
     });
   useBookmarkShortcuts({ enabled: isOpen, peekingItem });
 
-  const isEmpty = useMemo(() => {
-    return data && data.pages.every((page) => page.results.length === 0);
-  }, [data]);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({
+        queryKey: QUERY_KEYS.search.list(),
+        exact: false,
+      });
+    };
+  }, [queryClient]);
 
   const allResults = useMemo(() => {
     return data?.pages.flatMap((page) => page.results) ?? [];
@@ -65,7 +74,6 @@ const SearchCommandDialog = ({
 
       <SearchResultsList
         results={allResults}
-        isEmpty={!!isEmpty}
         isFetchingNextPage={isFetchingNextPage}
         isPending={isPending}
         onItemPeek={handleItemPeek}

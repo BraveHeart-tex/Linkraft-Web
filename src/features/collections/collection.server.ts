@@ -10,6 +10,7 @@ import { retryingApi } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
 import { API_ROUTES } from '@/routes/apiRoutes';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { StatusCodes } from 'http-status-codes';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -38,7 +39,7 @@ export const getAccessibleCollectionById = async (
       const status = error.status;
 
       if (status === StatusCodes.UNAUTHORIZED) {
-        redirect('/sign-in');
+        redirect(APP_ROUTES.signIn);
       }
 
       if (status >= 500 && status < 600) {

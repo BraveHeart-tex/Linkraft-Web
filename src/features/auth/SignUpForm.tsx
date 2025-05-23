@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/Input';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { showErrorToast } from '@/lib/toast';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
@@ -30,7 +31,7 @@ const SignUpForm = () => {
     },
     onSuccess(data) {
       toast.success(data.message);
-      router.push('/');
+      router.push(APP_ROUTES.home);
     },
   });
 

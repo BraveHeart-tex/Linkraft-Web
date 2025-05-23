@@ -2,6 +2,7 @@ import SelectionControls from '@/components/SelectionControls';
 import { SelectionProvider } from '@/context/SelectionContext';
 import { getCurrentUser } from '@/features/auth/auth.server';
 import TrashedBookmarkList from '@/features/bookmarks/trash/TrashedBookmarkList';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { TrashIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
@@ -9,7 +10,7 @@ const TrashPage = async () => {
   const requestValidationResult = await getCurrentUser();
 
   if (!requestValidationResult?.user) {
-    redirect('/sign-in');
+    redirect(APP_ROUTES.signIn);
   }
 
   return (

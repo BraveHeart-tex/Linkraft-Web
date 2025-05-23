@@ -10,6 +10,7 @@ import {
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { showErrorToast } from '@/lib/toast';
 import { cn } from '@/lib/utils';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { CogIcon, LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,7 +24,7 @@ const UserMenu = () => {
 
   const { mutate: signOut, isPending } = useSignOut({
     onSuccess() {
-      router.push('/sign-in');
+      router.push(APP_ROUTES.signIn);
     },
     onError(error) {
       showErrorToast((error as ErrorApiResponse)?.message);

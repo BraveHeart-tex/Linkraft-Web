@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/Input';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
@@ -29,7 +30,7 @@ const SignInForm = () => {
   const { mutate: signIn, isPending } = useSignIn({
     onSuccess(data) {
       showSuccessToast(data.message);
-      router.push('/');
+      router.push(APP_ROUTES.home);
       queryClient.setQueryData(QUERY_KEYS.auth.currentUser(), data.data?.user);
     },
     onError(error) {

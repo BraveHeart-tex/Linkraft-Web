@@ -9,6 +9,7 @@ import {
   showLoadingToast,
   showSuccessToast,
 } from '@/lib/toast';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { ApiError } from 'next/dist/server/api-utils';
 import { useRouter } from 'next/navigation';
 
@@ -31,7 +32,7 @@ const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
         showSuccessToast('Collection deleted successfully', {
           id: context.toastId,
         });
-        router.push('/collections');
+        router.push(APP_ROUTES.collections);
       },
       onError(error, _variables, context) {
         showErrorToast('An error occurred while deleting the collection', {

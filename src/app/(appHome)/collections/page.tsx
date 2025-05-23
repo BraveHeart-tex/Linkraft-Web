@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/features/auth/auth.server';
 import CollectionList from '@/features/collections/CollectionList';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { FolderIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
@@ -7,7 +8,7 @@ const CollectionsPage = async () => {
   const requestValidationResult = await getCurrentUser();
 
   if (!requestValidationResult?.user) {
-    redirect('/sign-in');
+    redirect(APP_ROUTES.signIn);
   }
 
   return (

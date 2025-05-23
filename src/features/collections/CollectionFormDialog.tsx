@@ -31,7 +31,11 @@ import {
   CreateCollectionDto,
   CreateCollectionSchema,
 } from './collection.schema';
-import { Collection, CollectionWithBookmarkCount } from './collection.types';
+import {
+  Collection,
+  CollectionWithBookmarkCount,
+  InfiniteCollectionsData,
+} from './collection.types';
 
 interface CollectionFormDialogProps {
   isOpen?: boolean;
@@ -69,9 +73,24 @@ const CollectionFormDialog = ({
     useCreateCollection({
       onSuccess(data) {
         if (!data?.data) return;
-        queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        queryClient.setQueryData<InfiniteCollectionsData>(
           QUERY_KEYS.collections.list(),
-          (old) => (old ? [...old, { ...data.data, bookmarkCount: 0 }] : old)
+          (old) =>
+            old
+              ? {
+                  ...old,
+                  pages: [
+                    {
+                      ...old.pages[0],
+                      collections: [
+                        { ...data.data, bookmarkCount: 0 },
+                        ...(old.pages[0]?.collections || []),
+                      ],
+                    },
+                    ...old.pages.slice(1),
+                  ],
+                }
+              : old
         );
         showSuccessToast('Collection created successfully');
         onOpenChange?.(false);

@@ -3,6 +3,7 @@ import { useDeleteCollection } from '@/features/collections/collection.api';
 import { Collection } from '@/features/collections/collection.types';
 import CollectionActions from '@/features/collections/CollectionActions';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
+import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import {
   showErrorToast,
   showLoadingToast,
@@ -11,11 +12,12 @@ import {
 import { ApiError } from 'next/dist/server/api-utils';
 import { useRouter } from 'next/navigation';
 
-interface CollectionPageActions {
-  collectionId: Collection['id'];
+interface CollectionPageActionsProps {
+  collection: Collection;
 }
 
-const CollectionPageActions = ({ collectionId }: CollectionPageActions) => {
+const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
+  const openModal = useModalStore((state) => state.openModal);
   const router = useRouter();
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
@@ -45,7 +47,7 @@ const CollectionPageActions = ({ collectionId }: CollectionPageActions) => {
       title: 'Delete Collection',
       message: 'Are you sure you want to delete this collection?',
       async onConfirm() {
-        deleteCollection({ collectionId });
+        deleteCollection({ collectionId: collection.id });
       },
       primaryActionLabel: 'Delete',
       primaryButtonVariant: 'destructive',
@@ -56,6 +58,13 @@ const CollectionPageActions = ({ collectionId }: CollectionPageActions) => {
 
   const handleEdit = () => {
     if (isDeletingCollection) return;
+    openModal({
+      type: MODAL_TYPES.EDIT_COLLECTION,
+      payload: {
+        collection,
+        onUpdate: () => router.refresh(),
+      },
+    });
   };
 
   return <CollectionActions onDelete={handleDelete} onEdit={handleEdit} />;

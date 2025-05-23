@@ -27,7 +27,8 @@ const CollectionActions = ({ onEdit, onDelete }: CollectionActionsProps) => {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={onDelete}
-          className="text-destructive justify-start"
+          variant="destructive"
+          className="justify-start"
           asChild
         >
           <Button variant="ghost">Delete Collection</Button>

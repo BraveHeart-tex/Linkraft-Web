@@ -1,6 +1,7 @@
 import { getAccessibleCollectionById } from '@/features/collections/collection.server';
 import CollectionBookmarksList from '@/features/collections/CollectionBookmarksList';
 import CollectionPageActions from '@/features/collections/CollectionPageActions';
+import { excludeKey } from '@/lib/objectUtils';
 import { FolderIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
@@ -32,7 +33,9 @@ const CollectionDetailsPage = async ({
               </p>
             </div>
           </div>
-          <CollectionPageActions collectionId={collection.id} />
+          <CollectionPageActions
+            collection={excludeKey(collection, 'bookmarks')}
+          />
         </div>
         <CollectionBookmarksList collection={collection} />
       </div>

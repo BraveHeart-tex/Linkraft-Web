@@ -131,6 +131,7 @@ const CollectionFormDialog = ({
         return { previousCollections, toastId };
       },
       onSuccess() {
+        onOpenChange?.(false);
         onUpdate?.();
       },
       onError(error, _variables, context) {

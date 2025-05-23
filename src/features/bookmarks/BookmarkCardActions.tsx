@@ -66,7 +66,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
+          variant="destructive"
           onClick={
             bookmark.deletedAt
               ? () => handlePermanentBookmarkDeletion(bookmark)

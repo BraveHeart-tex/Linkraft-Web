@@ -10,6 +10,7 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { APP_ROUTES } from '@/routes/appRoutes';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -135,7 +136,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
 
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    router.push(`/collections/${collection.id}`);
+    router.push(APP_ROUTES.collection(collection.id));
   };
 
   return (

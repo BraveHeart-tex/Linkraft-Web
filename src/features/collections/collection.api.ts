@@ -6,6 +6,7 @@ import {
 import { ApiResponse } from '@/lib/api/api.types';
 import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
+import { InfiniteDataPage } from '@/lib/query/infinite/types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { ToastId } from '@/lib/toast';
 import { API_ROUTES } from '@/routes/apiRoutes';
@@ -45,7 +46,9 @@ export const useCreateCollection = (
 export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.list(query),
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({
+      pageParam,
+    }): Promise<InfiniteDataPage<CollectionWithBookmarkCount, number>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(
           API_ROUTES.collection.getUserCollections(pageParam, query)
@@ -53,8 +56,8 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
       );
 
       return {
-        collections: response.data?.items || [],
-        nextCursor: response.data?.nextCursor,
+        items: response.data?.items || [],
+        nextCursor: response.data?.nextCursor || undefined,
       };
     },
     enabled: enabled !== undefined ? enabled : true,
@@ -129,7 +132,9 @@ export const useCollectionBookmarks = (
 ) => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.listBookmarks(collectionId),
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({
+      pageParam,
+    }): Promise<InfiniteDataPage<Bookmark, number>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getBookmarks({
@@ -140,14 +145,14 @@ export const useCollectionBookmarks = (
       );
 
       return {
-        bookmarks: response.data?.items || [],
-        nextCursor: response.data?.nextCursor,
+        items: response.data?.items || [],
+        nextCursor: response.data?.nextCursor || undefined,
       };
     },
     initialData: {
       pages: [
         {
-          bookmarks: initialBookmarks,
+          items: initialBookmarks,
           nextCursor: initialNextCursor,
         },
       ],

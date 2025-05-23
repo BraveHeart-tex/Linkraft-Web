@@ -19,6 +19,7 @@ import {
 import { SEARCH_QUERY_DEBOUNCE_WAIT_MS } from '@/features/search/search.constants';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Nullable } from '@/lib/common.types';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -43,7 +44,7 @@ const BookmarkCollectionSelector = ({
     usePaginatedCollections(debouncedQuery, isOpen);
 
   const allCollections = useMemo(() => {
-    return data?.pages.flatMap((page) => page.collections) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   const selectedCollection: CollectionWithBookmarkCount | null = useMemo(() => {

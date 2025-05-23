@@ -9,6 +9,7 @@ import {
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
 import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
@@ -84,7 +85,7 @@ const TrashedBookmarkList = () => {
   } = useTrashedBookmarks();
 
   const allBookmarks = useMemo(() => {
-    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   const handleCheckedChange = (checked: boolean) => {
@@ -93,7 +94,7 @@ const TrashedBookmarkList = () => {
     if (checked) {
       dispatch({
         type: 'SELECT_ALL',
-        ids: data.pages.flatMap((page) => page.bookmarks.map((b) => b.id)),
+        ids: allBookmarks.map((bookmark) => bookmark.id),
       });
     } else {
       dispatch({ type: 'DESELECT_ALL' });

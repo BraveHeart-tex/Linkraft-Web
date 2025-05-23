@@ -8,6 +8,7 @@ import { SearchResult } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
 import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -44,7 +45,7 @@ const SearchCommandDialog = ({
   }, [queryClient]);
 
   const allResults = useMemo(() => {
-    return data?.pages.flatMap((page) => page.results) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   const handleItemPeek = useCallback(

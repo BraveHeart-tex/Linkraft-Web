@@ -5,6 +5,7 @@ import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
 import { useCollectionBookmarks } from '@/features/collections/collection.api';
 import { CollectionWithBookmarks } from '@/features/collections/collection.types';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { LinkIcon } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -30,7 +31,7 @@ const CollectionBookmarksList = ({
   );
 
   const allBookmarks = useMemo(() => {
-    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   return (

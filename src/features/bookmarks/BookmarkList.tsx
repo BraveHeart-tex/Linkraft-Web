@@ -21,6 +21,7 @@ import {
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
 import { useBookmarkMetadataUpdates } from '@/hooks/bookmarks/useBookmarkMetadataUpdates';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
@@ -112,7 +113,7 @@ const BookmarkList = () => {
     error,
   } = useBookmarks();
   const allBookmarks = useMemo(() => {
-    return data?.pages.flatMap((page) => page.bookmarks) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   const handleCheckedChange = (checked: boolean) => {

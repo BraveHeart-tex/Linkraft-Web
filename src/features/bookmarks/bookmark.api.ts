@@ -3,6 +3,7 @@ import { ApiResponse, ErrorApiResponse } from '@/lib/api/api.types';
 import { api } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
+import { InfiniteDataPage } from '@/lib/query/infinite/types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { ToastId } from '@/lib/toast';
 import { API_ROUTES } from '@/routes/apiRoutes';
@@ -129,7 +130,9 @@ export const usePermanentlyDeleteBookmark = (
 export const useBookmarks = () => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.bookmarks.list(),
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({
+      pageParam,
+    }): Promise<InfiniteDataPage<Bookmark, number>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getBookmarks({ nextCursor: pageParam })}`
@@ -137,8 +140,8 @@ export const useBookmarks = () => {
       );
 
       return {
-        bookmarks: response?.data?.items || [],
-        nextCursor: response?.data?.nextCursor,
+        items: response?.data?.items || [],
+        nextCursor: response?.data?.nextCursor || undefined,
       };
     },
     initialPageParam: 0,
@@ -149,7 +152,9 @@ export const useBookmarks = () => {
 export const useTrashedBookmarks = () => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.bookmarks.trashed(),
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({
+      pageParam,
+    }): Promise<InfiniteDataPage<Bookmark, number>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getTrashedBookmarks(pageParam)}`
@@ -157,8 +162,8 @@ export const useTrashedBookmarks = () => {
       );
 
       return {
-        bookmarks: response.data?.items || [],
-        nextCursor: response?.data?.nextCursor,
+        items: response.data?.items || [],
+        nextCursor: response?.data?.nextCursor || undefined,
       };
     },
     initialPageParam: 0,

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import VirtualizedResourceList from '@/components/ui/VirtualizedResourceList';
 import { usePaginatedCollections } from '@/features/collections/collection.api';
 import CollectionCard from '@/features/collections/CollectionCard';
+import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { FolderIcon } from 'lucide-react';
 import { useMemo } from 'react';
@@ -20,7 +21,7 @@ const CollectionList = () => {
   } = usePaginatedCollections();
 
   const allCollections = useMemo(() => {
-    return data?.pages.flatMap((page) => page.collections) ?? [];
+    return flattenInfiniteData(data);
   }, [data]);
 
   const openModal = useModalStore((state) => state.openModal);

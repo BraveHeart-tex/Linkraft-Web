@@ -28,6 +28,7 @@ const ModalHost = () => {
           isOpen
           onOpenChange={closeModal}
           initialData={modal.payload.collection}
+          onUpdate={modal.payload.onUpdate}
         />
       );
     }

@@ -116,17 +116,15 @@ const BookmarkFormDialog = ({
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.list(),
           (old) =>
-            old
-              ? updatePaginatedBookmark(old, variables.id, (b) => ({
-                  ...b,
-                  url: variables.url ?? b.url,
-                  title: isPendingMetadata
-                    ? 'Fetching Title'
-                    : (variables.title ?? b.title),
-                  description: variables.description ?? b.description,
-                  isMetadataPending: isPendingMetadata,
-                }))
-              : old
+            updatePaginatedBookmark(old, variables.id, (b) => ({
+              ...b,
+              url: variables.url ?? b.url,
+              title: isPendingMetadata
+                ? 'Fetching Title'
+                : (variables.title ?? b.title),
+              description: variables.description ?? b.description,
+              isMetadataPending: isPendingMetadata,
+            }))
         );
 
         return { previousBookmarks };

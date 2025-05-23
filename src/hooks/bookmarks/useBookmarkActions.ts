@@ -12,9 +12,9 @@ import type {
 } from '@/features/bookmarks/bookmark.types';
 import {
   filterInfiniteBookmarks,
-  useOnSettledHandler,
   useOptimisticRemoveHandler,
 } from '@/features/bookmarks/bookmark.utils';
+import { useOnSettledHandler } from '@/hooks/queryUtils/useOnSettledHandler';
 import type { ErrorApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';

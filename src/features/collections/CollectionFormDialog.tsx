@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { updatePaginatedCollection } from '@/features/collections/collection.utils';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
@@ -31,22 +32,20 @@ import {
   CreateCollectionDto,
   CreateCollectionSchema,
 } from './collection.schema';
-import {
-  Collection,
-  CollectionWithBookmarkCount,
-  InfiniteCollectionsData,
-} from './collection.types';
+import { Collection, InfiniteCollectionsData } from './collection.types';
 
 interface CollectionFormDialogProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   initialData?: Collection;
+  onUpdate?: () => void;
 }
 
 const CollectionFormDialog = ({
   isOpen,
   onOpenChange,
   initialData,
+  onUpdate,
 }: CollectionFormDialogProps) => {
   const queryClient = useQueryClient();
   const form = useForm<CreateCollectionDto>({
@@ -118,33 +117,29 @@ const CollectionFormDialog = ({
           queryKey: QUERY_KEYS.collections.list(),
         });
 
-        const previousCollections = queryClient.getQueryData<
-          CollectionWithBookmarkCount[]
-        >(QUERY_KEYS.collections.list());
+        const previousCollections =
+          queryClient.getQueryData<InfiniteCollectionsData>(
+            QUERY_KEYS.collections.list()
+          );
 
         if (!previousCollections) return;
 
-        queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        queryClient.setQueryData<InfiniteCollectionsData>(
           QUERY_KEYS.collections.list(),
-          (old) =>
-            old
-              ? old.map((oldCollection) => {
-                  if (oldCollection.id === variables.id) {
-                    return {
-                      ...oldCollection,
-                      ...variables,
-                    };
-                  }
-
-                  return oldCollection;
-                })
-              : old
+          (oldData) =>
+            updatePaginatedCollection(oldData, variables.id, (collection) => ({
+              ...collection,
+              ...variables,
+            }))
         );
 
         onOpenChange?.(false);
         form.reset(variables);
 
         return { previousCollections, toastId };
+      },
+      onSuccess() {
+        onUpdate?.();
       },
       onError(error, _variables, context) {
         const apiError = error as ErrorApiResponse;

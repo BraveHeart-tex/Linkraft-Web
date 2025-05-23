@@ -18,8 +18,11 @@ import {
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
-import { updatePaginatedCollection } from '@/features/collections/collection.utils';
 import { ErrorApiResponse } from '@/lib/api/api.types';
+import {
+  addItemToInfiniteQueryData,
+  updateItemInInfiniteQueryData,
+} from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -75,21 +78,7 @@ const CollectionFormDialog = ({
         queryClient.setQueryData<InfiniteCollectionsData>(
           QUERY_KEYS.collections.list(),
           (old) =>
-            old
-              ? {
-                  ...old,
-                  pages: [
-                    {
-                      ...old.pages[0],
-                      collections: [
-                        { ...data.data, bookmarkCount: 0 },
-                        ...(old.pages[0]?.collections || []),
-                      ],
-                    },
-                    ...old.pages.slice(1),
-                  ],
-                }
-              : old
+            addItemToInfiniteQueryData(old, { ...data.data, bookmarkCount: 0 })
         );
         showSuccessToast('Collection created successfully');
         onOpenChange?.(false);
@@ -127,10 +116,13 @@ const CollectionFormDialog = ({
         queryClient.setQueryData<InfiniteCollectionsData>(
           QUERY_KEYS.collections.list(),
           (oldData) =>
-            updatePaginatedCollection(oldData, variables.id, (collection) => ({
-              ...collection,
-              ...variables,
-            }))
+            updateItemInInfiniteQueryData(oldData, {
+              match: (item) => item.id === variables.id,
+              update: (item) => ({
+                ...item,
+                ...variables,
+              }),
+            })
         );
 
         onOpenChange?.(false);

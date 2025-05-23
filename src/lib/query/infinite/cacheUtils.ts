@@ -1,6 +1,21 @@
 import { InfiniteQueryData } from '@/lib/query/infinite/types';
 
-export const addItemToInfiniteQueryData = () => {};
+export const addItemToInfiniteQueryData = <T>(
+  data: InfiniteQueryData<T> | undefined,
+  newItem: T
+): InfiniteQueryData<T> | undefined => {
+  if (!data) return data;
+  return {
+    ...data,
+    pages: [
+      {
+        ...data.pages[0],
+        items: [newItem, ...(data.pages[0]?.items || [])],
+      },
+      ...data.pages.slice(1),
+    ],
+  };
+};
 
 export const removeItemFromInfiniteQueryData = <T>(
   data: InfiniteQueryData<T> | undefined,

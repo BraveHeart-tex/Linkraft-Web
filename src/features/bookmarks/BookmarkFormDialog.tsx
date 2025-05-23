@@ -24,8 +24,13 @@ import {
   useUpdateBookmark,
 } from '@/features/bookmarks/bookmark.api';
 import BookmarkCollectionSelector from '@/features/bookmarks/BookmarkCollectionSelector';
+import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
-import { updateItemInInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
+import {
+  addItemToInfiniteQueryData,
+  updateItemInInfiniteQueryData,
+} from '@/lib/query/infinite/cacheUtils';
+import { InfiniteQueryData } from '@/lib/query/infinite/types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { parseTags } from '@/lib/utils';
@@ -157,28 +162,23 @@ const BookmarkFormDialog = ({
           })),
         ]);
 
-        // FIXME: Make sure this uses the infinite query data structure
-        // if (variables.collectionId !== initialData?.collection?.id) {
-        //   queryClient.setQueryData<CollectionWithBookmarkCount[]>(
-        //     QUERY_KEYS.collections.list(),
-        //     (collections) =>
-        //       collections?.map((collection) => {
-        //         if (collection.id === variables.collectionId) {
-        //           return {
-        //             ...collection,
-        //             bookmarkCount: collection.bookmarkCount + 1,
-        //           };
-        //         }
-        //         if (collection.id === initialData?.collection?.id) {
-        //           return {
-        //             ...collection,
-        //             bookmarkCount: collection.bookmarkCount - 1,
-        //           };
-        //         }
-        //         return collection;
-        //       })
-        //   );
-        // }
+        if (variables.collectionId !== initialData?.collection?.id) {
+          const addedId = variables.collectionId;
+          const removedId = initialData?.collection?.id;
+
+          queryClient.setQueryData<
+            InfiniteQueryData<CollectionWithBookmarkCount>
+          >(QUERY_KEYS.collections.list(), (collections) =>
+            updateItemInInfiniteQueryData(collections, {
+              match: (item) => item.id === addedId || item.id === removedId,
+              update: (item) => ({
+                ...item,
+                bookmarkCount:
+                  item.bookmarkCount + (item.id === addedId ? 1 : -1),
+              }),
+            })
+          );
+        }
 
         showSuccessToast('Bookmark updated successfully');
         form.reset();
@@ -236,21 +236,7 @@ const BookmarkFormDialog = ({
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.list(),
           (previousBookmarksData) =>
-            previousBookmarksData
-              ? {
-                  ...previousBookmarksData,
-                  pages: [
-                    {
-                      ...previousBookmarksData.pages[0],
-                      items: [
-                        response.data,
-                        ...(previousBookmarksData.pages[0]?.items || []),
-                      ],
-                    },
-                    ...previousBookmarksData.pages.slice(1),
-                  ],
-                }
-              : previousBookmarksData
+            addItemToInfiniteQueryData(previousBookmarksData, response.data)
         );
         showSuccessToast('Bookmark created successfully');
         onOpenChange(false);

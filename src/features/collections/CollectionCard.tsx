@@ -17,7 +17,7 @@ import { CSSProperties, memo, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
 import UserAvatar from '../users/UserAvatar';
 import { useDeleteCollection } from './collection.api';
-import { Collection, CollectionWithBookmarkCount } from './collection.types';
+import { Collection, InfiniteCollectionsData } from './collection.types';
 
 interface CollectionCardProps {
   collection: Collection & { bookmarkCount: number };
@@ -45,9 +45,10 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
         queryKey: QUERY_KEYS.collections.list(),
       });
 
-      const previousCollections = queryClient.getQueryData<
-        CollectionWithBookmarkCount[]
-      >(QUERY_KEYS.collections.list());
+      const previousCollections =
+        queryClient.getQueryData<InfiniteCollectionsData>(
+          QUERY_KEYS.collections.list()
+        );
 
       if (!previousCollections) return;
 
@@ -55,12 +56,13 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
         QUERY_KEYS.bookmarks.list()
       );
 
-      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+      queryClient.setQueryData<InfiniteCollectionsData>(
         QUERY_KEYS.collections.list(),
         (old) =>
-          old
-            ? old.filter((oldCollection) => oldCollection.id !== collection.id)
-            : old
+          removeItemFromInfiniteQueryData(
+            old,
+            (item) => item.id !== collection.id
+          )
       );
 
       queryClient.setQueryData<InfiniteBookmarksData>(

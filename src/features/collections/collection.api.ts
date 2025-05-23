@@ -67,7 +67,7 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
 
 interface UseDeleteCollectionContext {
   toastId?: ToastId;
-  previousCollections?: CollectionWithBookmarkCount[];
+  previousCollections?: InfiniteCollectionsData;
   previousBookmarks?: InfiniteBookmarksData;
 }
 

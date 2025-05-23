@@ -52,10 +52,10 @@ const SearchResultsList = memo(
     return (
       <CommandList
         ref={parentRef}
-        className="flex-1 overflow-y-auto w-full max-h-[300px]"
+        className="flex-1 overflow-y-auto w-full max-h-[300px] h-[300px]"
       >
         {isPending ? (
-          <div className="py-6 text-center text-sm">
+          <div className="py-6 text-center text-sm h-[300px] flex items-center justify-center">
             <div className="flex items-center justify-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
               <p>Searching...</p>
@@ -64,7 +64,7 @@ const SearchResultsList = memo(
         ) : (
           <>
             {results.length === 0 && !isPending ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
+              <div className="py-6 text-center text-sm text-muted-foreground h-[300px] flex items-center justify-center">
                 No results found
               </div>
             ) : (

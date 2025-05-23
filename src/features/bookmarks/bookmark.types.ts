@@ -1,6 +1,6 @@
 import { PaginatedResponse } from '@/lib/api/api.types';
 import { Nullable } from '@/lib/common.types';
-import { InfiniteData } from '@tanstack/react-query';
+import { InfiniteQueryData } from '@/lib/query/infinite/types';
 import { z } from 'zod';
 import { Collection } from '../collections/collection.types';
 import { Tag } from '../tags/tag.types';
@@ -40,12 +40,7 @@ export interface UpdateBookmarkResponse {
 
 export type GetBookmarksResponse = PaginatedResponse<Bookmark>;
 
-export type PaginatedBookmarksPage = {
-  bookmarks: Bookmark[];
-  nextCursor: number | null | undefined;
-};
-
-export type InfiniteBookmarksData = InfiniteData<PaginatedBookmarksPage>;
+export type InfiniteBookmarksData = InfiniteQueryData<Bookmark>;
 
 export interface BookmarkMetadataResponse {
   bookmarkId: Bookmark['id'];

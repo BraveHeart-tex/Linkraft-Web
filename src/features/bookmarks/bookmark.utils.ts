@@ -3,6 +3,7 @@ import {
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
+import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { showErrorToast, showSuccessToast, ToastId } from '@/lib/toast';
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 
@@ -10,23 +11,6 @@ interface BookmarkMutateContext {
   previousBookmarks: InfiniteBookmarksData | undefined;
   toastId: ToastId;
 }
-
-export const updatePaginatedBookmark = (
-  data: InfiniteBookmarksData | undefined,
-  bookmarkId: Bookmark['id'],
-  updater: (b: Bookmark) => Bookmark
-): InfiniteBookmarksData | undefined => {
-  if (!data) return data;
-  return {
-    ...data,
-    pages: data.pages.map((page) => ({
-      ...page,
-      bookmarks: page.bookmarks.map((b) =>
-        b.id === bookmarkId ? updater(b) : b
-      ),
-    })),
-  };
-};
 
 export function useOptimisticRemoveHandler<T extends object>({
   queryKey,
@@ -50,12 +34,10 @@ export function useOptimisticRemoveHandler<T extends object>({
       if (!previousBookmarks) return;
 
       queryClient.setQueryData<InfiniteBookmarksData>(queryKey, (oldData) =>
-        oldData
-          ? filterInfiniteBookmarks(
-              oldData,
-              (bookmark) => bookmark.id !== getId(variables)
-            )
-          : oldData
+        removeItemFromInfiniteQueryData(
+          oldData,
+          (bookmark) => bookmark.id !== getId(variables)
+        )
       );
 
       return { previousBookmarks, toastId };
@@ -74,18 +56,3 @@ export function useOptimisticRemoveHandler<T extends object>({
     },
   };
 }
-
-export const filterInfiniteBookmarks = (
-  oldData: InfiniteBookmarksData,
-  predicate: (bookmark: Bookmark) => boolean
-): InfiniteBookmarksData => {
-  if (!oldData) return oldData;
-
-  return {
-    ...oldData,
-    pages: oldData.pages.map((page) => ({
-      ...page,
-      bookmarks: page.bookmarks.filter(predicate),
-    })),
-  };
-};

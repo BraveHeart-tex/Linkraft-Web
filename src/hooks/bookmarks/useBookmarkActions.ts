@@ -10,12 +10,10 @@ import type {
   Bookmark,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
-import {
-  filterInfiniteBookmarks,
-  useOptimisticRemoveHandler,
-} from '@/features/bookmarks/bookmark.utils';
+import { useOptimisticRemoveHandler } from '@/features/bookmarks/bookmark.utils';
 import { useOnSettledHandler } from '@/hooks/queryUtils/useOnSettledHandler';
 import type { ErrorApiResponse } from '@/lib/api/api.types';
+import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
@@ -82,12 +80,10 @@ export function useBookmarkActions() {
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.trashed(),
           (oldData) =>
-            oldData
-              ? filterInfiniteBookmarks(
-                  oldData,
-                  (oldBookmark) => oldBookmark.id !== variables.bookmarkId
-                )
-              : undefined
+            removeItemFromInfiniteQueryData(
+              oldData,
+              (oldBookmark) => oldBookmark.id !== variables.bookmarkId
+            )
         );
 
         return { previousTrashedBookmarks, toastId };

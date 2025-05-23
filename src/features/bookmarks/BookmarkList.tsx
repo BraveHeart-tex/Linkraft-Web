@@ -14,13 +14,13 @@ import {
   Bookmark,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
-import {
-  filterInfiniteBookmarks,
-  updatePaginatedBookmark,
-} from '@/features/bookmarks/bookmark.utils';
 import BookmarkCard from '@/features/bookmarks/BookmarkCard';
 import BookmarkCardSkeleton from '@/features/bookmarks/BookmarkCardSkeleton';
 import { useBookmarkMetadataUpdates } from '@/hooks/bookmarks/useBookmarkMetadataUpdates';
+import {
+  removeItemFromInfiniteQueryData,
+  updateItemInInfiniteQueryData,
+} from '@/lib/query/infinite/cacheUtils';
 import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
@@ -51,12 +51,10 @@ const BookmarkList = () => {
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.trashed(),
           (old) =>
-            old
-              ? filterInfiniteBookmarks(
-                  old,
-                  (bookmark) => !variables.bookmarkIds.includes(bookmark.id)
-                )
-              : old
+            removeItemFromInfiniteQueryData<Bookmark>(
+              old,
+              (bookmark) => !variables.bookmarkIds.includes(bookmark.id)
+            )
         );
 
         dispatch({ type: 'TOGGLE_SELECT_MODE' });
@@ -92,14 +90,15 @@ const BookmarkList = () => {
     queryClient.setQueryData<InfiniteBookmarksData>(
       QUERY_KEYS.bookmarks.list(),
       (old) =>
-        old
-          ? updatePaginatedBookmark(old, data.bookmarkId, (b) => ({
-              ...b,
-              title: data.title || b.title,
-              faviconUrl: data?.faviconUrl || b.faviconUrl,
-              isMetadataPending: false,
-            }))
-          : old
+        updateItemInInfiniteQueryData(old, {
+          match: (item) => item.id === data.bookmarkId,
+          update: (item) => ({
+            ...item,
+            title: data.title || item.title,
+            faviconUrl: data?.faviconUrl || item.faviconUrl,
+            isMetadataPending: false,
+          }),
+        })
     );
   });
 

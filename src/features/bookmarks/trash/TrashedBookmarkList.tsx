@@ -8,7 +8,7 @@ import {
   Bookmark,
   InfiniteBookmarksData,
 } from '@/features/bookmarks/bookmark.types';
-import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
+import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
@@ -41,12 +41,10 @@ const TrashedBookmarkList = () => {
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.trashed(),
           (old) =>
-            old
-              ? filterInfiniteBookmarks(
-                  old,
-                  (bookmark) => !variables.bookmarkIds.includes(bookmark.id)
-                )
-              : old
+            removeItemFromInfiniteQueryData(
+              old,
+              (bookmark) => !variables.bookmarkIds.includes(bookmark.id)
+            )
         );
 
         dispatch({ type: 'TOGGLE_SELECT_MODE' });

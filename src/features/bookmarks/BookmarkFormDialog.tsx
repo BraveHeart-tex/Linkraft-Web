@@ -23,9 +23,9 @@ import {
   useCreateBookmark,
   useUpdateBookmark,
 } from '@/features/bookmarks/bookmark.api';
-import { updatePaginatedBookmark } from '@/features/bookmarks/bookmark.utils';
 import BookmarkCollectionSelector from '@/features/bookmarks/BookmarkCollectionSelector';
 import { ErrorApiResponse } from '@/lib/api/api.types';
+import { updateItemInInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { parseTags } from '@/lib/utils';
@@ -116,15 +116,18 @@ const BookmarkFormDialog = ({
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.list(),
           (old) =>
-            updatePaginatedBookmark(old, variables.id, (b) => ({
-              ...b,
-              url: variables.url ?? b.url,
-              title: isPendingMetadata
-                ? 'Fetching Title'
-                : (variables.title ?? b.title),
-              description: variables.description ?? b.description,
-              isMetadataPending: isPendingMetadata,
-            }))
+            updateItemInInfiniteQueryData(old, {
+              match: (item) => item.id === variables.id,
+              update: (item) => ({
+                ...item,
+                url: variables.url ?? item.url,
+                title: isPendingMetadata
+                  ? 'Fetching Title'
+                  : (variables.title ?? item.title),
+                description: variables.description ?? item.description,
+                isMetadataPending: isPendingMetadata,
+              }),
+            })
         );
 
         return { previousBookmarks };
@@ -135,14 +138,15 @@ const BookmarkFormDialog = ({
         queryClient.setQueryData<InfiniteBookmarksData>(
           QUERY_KEYS.bookmarks.list(),
           (old) =>
-            old
-              ? updatePaginatedBookmark(old, variables.id, (b) => ({
-                  ...data.updatedBookmark,
-                  title: b.title,
-                  faviconUrl: b.faviconUrl,
-                  isMetadataPending: b.isMetadataPending,
-                }))
-              : old
+            updateItemInInfiniteQueryData(old, {
+              match: (item) => item.id === variables.id,
+              update: (item) => ({
+                ...data.updatedBookmark,
+                title: item.title,
+                faviconUrl: item.faviconUrl,
+                isMetadataPending: item.isMetadataPending,
+              }),
+            })
         );
 
         queryClient.setQueryData<Tag[]>(QUERY_KEYS.tags.list(), (oldTags) => [
@@ -238,9 +242,9 @@ const BookmarkFormDialog = ({
                   pages: [
                     {
                       ...previousBookmarksData.pages[0],
-                      bookmarks: [
+                      items: [
                         response.data,
-                        ...(previousBookmarksData.pages[0]?.bookmarks || []),
+                        ...(previousBookmarksData.pages[0]?.items || []),
                       ],
                     },
                     ...previousBookmarksData.pages.slice(1),

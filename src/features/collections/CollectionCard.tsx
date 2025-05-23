@@ -1,11 +1,11 @@
 'use client';
 import { Card, CardContent } from '@/components/ui/Card';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
-import { filterInfiniteBookmarks } from '@/features/bookmarks/bookmark.utils';
 import CollectionActions from '@/features/collections/CollectionActions';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
 import { formatIsoDate } from '@/lib/dateUtils';
+import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
@@ -66,13 +66,11 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       queryClient.setQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list(),
         (old) =>
-          old
-            ? filterInfiniteBookmarks(old, (bookmark) =>
-                bookmark.collection
-                  ? bookmark.collection.id !== collection.id
-                  : true
-              )
-            : old
+          removeItemFromInfiniteQueryData(old, (bookmark) =>
+            bookmark.collection
+              ? bookmark.collection.id !== collection.id
+              : true
+          )
       );
 
       return { previousCollections, previousBookmarks };

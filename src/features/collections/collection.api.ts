@@ -149,6 +149,7 @@ export const useCollectionBookmarks = (
         nextCursor: response.data?.nextCursor || undefined,
       };
     },
+    enabled: false,
     initialData: {
       pages: [
         {

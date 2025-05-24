@@ -28,7 +28,7 @@ const BookmarkActions = ({ bookmark }: BookmarkActionsProps) => {
     handleRestoreBookmark,
     handleTrashBookmark,
     isRestoringBookmark,
-  } = useBookmarkActions();
+  } = useBookmarkActions(bookmark.collectionId);
 
   return (
     <DropdownMenu>

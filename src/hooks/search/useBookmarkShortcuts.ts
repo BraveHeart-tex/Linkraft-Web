@@ -21,6 +21,7 @@ export const useBookmarkShortcuts = ({
 }: UseBookmarkShortcutsOptions) => {
   const isLoadingRef = useRef(false);
   const openModal = useModalStore((s) => s.openModal);
+  // FIXME: This may not pass the collectionId in our case
   const { handleTrashBookmark } = useBookmarkActions();
 
   const handleDeleteBookmark = useCallback(() => {

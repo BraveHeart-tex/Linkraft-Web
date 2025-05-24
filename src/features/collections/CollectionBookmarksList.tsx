@@ -46,7 +46,7 @@ const CollectionBookmarksList = ({
       renderItem={(item) => (
         <BookmarkCard key={`bookmark-${item.id}`} bookmark={item} />
       )}
-      renderSkeleton={() => <BookmarkCardSkeleton />}
+      renderSkeleton={BookmarkCardSkeleton}
       emptyMessage="No bookmarks found for this collection — add one to get started."
       emptyAction={{
         element: (

@@ -113,7 +113,7 @@ const VirtualizedResourceList = <T,>({
     return (
       <div className={containerClasses}>
         {renderSkeleton ? (
-          Array.from({ length: 3 }, (_, index) => (
+          Array.from({ length: 4 }, (_, index) => (
             <React.Fragment key={`skeleton-${index}`}>
               {renderSkeleton()}
             </React.Fragment>

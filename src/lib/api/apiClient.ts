@@ -25,7 +25,9 @@ axiosRetry(retryingApi, {
 
 if (process.env.NODE_ENV === 'development') {
   retryingApi.interceptors.request.use((config) => {
-    console.log(`[RETRYING API] ${config.method?.toUpperCase()} ${config.url}`);
+    console.info(
+      `[RETRYING API] ${config.method?.toUpperCase()} ${config.url}`
+    );
     return config;
   });
 }

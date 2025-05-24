@@ -16,9 +16,9 @@ export interface Bookmark {
   deletedAt: Nullable<string>;
   isMetadataPending: boolean;
   faviconUrl: Nullable<string>;
-  collection: Nullable<Pick<Collection, 'id' | 'name'>>;
-
-  tags: Nullable<
+  collectionId: Collection['id'];
+  collection?: Nullable<Pick<Collection, 'id' | 'name'>>;
+  tags?: Nullable<
     {
       id: number;
       name: string;

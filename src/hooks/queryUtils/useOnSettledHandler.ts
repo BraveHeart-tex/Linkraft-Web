@@ -1,20 +1,33 @@
-import {
-  InvalidateQueryFilters,
-  QueryKey,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { arrayShallowEqual, arrayStartsWith } from '@/lib/objectUtils';
+import { useQueryClient } from '@tanstack/react-query';
 
-export const useOnSettledHandler = (
-  queryKeys: QueryKey[],
-  filters?: Omit<InvalidateQueryFilters, 'queryKey'>
-): (() => Promise<void>) => {
+type UseOnSettledHandlerOptions = {
+  exact?: boolean;
+  forceExactKeys?: (readonly unknown[])[];
+};
+
+export function useOnSettledHandler(
+  keys: (readonly unknown[])[],
+  options: UseOnSettledHandlerOptions = {}
+) {
   const queryClient = useQueryClient();
 
-  return async () => {
-    await Promise.all(
-      queryKeys.map((key) =>
-        queryClient.invalidateQueries({ queryKey: key, ...filters })
-      )
-    );
+  return () => {
+    queryClient.invalidateQueries({
+      predicate: (query) => {
+        return keys.some((targetKey) => {
+          const keyToMatch = query.queryKey;
+          const isForceExact = options.forceExactKeys?.some((forceKey) =>
+            arrayShallowEqual(forceKey, targetKey)
+          );
+
+          if (isForceExact || options.exact) {
+            return arrayShallowEqual(keyToMatch, targetKey);
+          }
+
+          return arrayStartsWith(keyToMatch, targetKey);
+        });
+      },
+    });
   };
-};
+}

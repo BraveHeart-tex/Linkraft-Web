@@ -37,6 +37,7 @@ const CollectionDetailsPage = async ({
             collection={excludeKey(collection, 'bookmarks')}
           />
         </div>
+
         <CollectionBookmarksList collection={collection} />
       </div>
     </main>

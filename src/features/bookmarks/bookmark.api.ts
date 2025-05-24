@@ -77,18 +77,24 @@ export interface TrashBookmarkVariables {
   bookmarkId: Bookmark['id'];
 }
 
+export interface TrashBookmarkContext {
+  previousBookmarks: InfiniteBookmarksData | undefined;
+  previousCollectionBookmarks: InfiniteBookmarksData | undefined;
+  toastId: number | string;
+}
+
 export const useTrashBookmark = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     ErrorApiResponse,
     TrashBookmarkVariables,
-    { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
+    TrashBookmarkContext
   >
 ): UseMutationResult<
   ApiResponse<null>,
   ErrorApiResponse,
   TrashBookmarkVariables,
-  { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
+  TrashBookmarkContext
 > => {
   return useMutation({
     mutationFn: async (data) => {
@@ -109,13 +115,19 @@ export const usePermanentlyDeleteBookmark = (
     ApiResponse<null>,
     ErrorApiResponse,
     PermanentlyDeleteBookmarkVariables,
-    { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
+    {
+      previousBookmarks: InfiniteBookmarksData | undefined;
+      toastId: number | string;
+    }
   >
 ): UseMutationResult<
   ApiResponse<null>,
   ErrorApiResponse,
   PermanentlyDeleteBookmarkVariables,
-  { previousBookmarks: InfiniteBookmarksData; toastId: number | string }
+  {
+    previousBookmarks: InfiniteBookmarksData | undefined;
+    toastId: number | string;
+  }
 > =>
   useMutation({
     mutationFn: async (data) =>

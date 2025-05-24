@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import {
   addItemToInfiniteQueryData,
@@ -130,7 +131,27 @@ const CollectionFormDialog = ({
 
         return { previousCollections, toastId };
       },
-      onSuccess() {
+      onSuccess(_, variables) {
+        // User might be on the collection details page / listing bookmarks
+        queryClient.setQueryData<InfiniteBookmarksData>(
+          QUERY_KEYS.collections.listBookmarks(variables.id),
+          (oldData) =>
+            updateItemInInfiniteQueryData(oldData, {
+              match: (item) => item.collectionId === variables.id,
+              update: (item) => ({
+                ...item,
+                collection: item.collection
+                  ? {
+                      ...item.collection,
+                      name:
+                        variables?.name !== undefined
+                          ? variables?.name
+                          : item.collection?.name,
+                    }
+                  : item.collection,
+              }),
+            })
+        );
         onOpenChange?.(false);
         onUpdate?.();
       },

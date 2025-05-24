@@ -16,7 +16,7 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-import { useQueryClient } from '@tanstack/react-query';
+import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 
 export function useBookmarkActions(collectionId?: Collection['id']) {
@@ -55,15 +55,14 @@ export function useBookmarkActions(collectionId?: Collection['id']) {
           )
         : undefined;
 
-      queryClient.setQueriesData<InfiniteBookmarksData>(
-        {
-          queryKey: [
-            QUERY_KEYS.bookmarks.list(),
-            collectionId
-              ? QUERY_KEYS.collections.listBookmarks(collectionId)
-              : undefined,
-          ].filter(Boolean),
-        },
+      setQueryDataBatch<InfiniteBookmarksData>(
+        queryClient,
+        [
+          QUERY_KEYS.bookmarks.list(),
+          collectionId
+            ? QUERY_KEYS.collections.listBookmarks(collectionId)
+            : undefined,
+        ],
         (old) =>
           removeItemFromInfiniteQueryData(
             old,
@@ -284,3 +283,15 @@ export function useBookmarkActions(collectionId?: Collection['id']) {
     isRestoringBookmark,
   };
 }
+
+const setQueryDataBatch = <T>(
+  client: QueryClient,
+  keys: (readonly unknown[] | undefined)[],
+  updater: (old: T | undefined) => T | undefined
+) => {
+  keys.forEach((key) => {
+    if (key) {
+      client.setQueryData<T>(key, updater);
+    }
+  });
+};

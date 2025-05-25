@@ -1,8 +1,9 @@
 'use client';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Progress } from '@/components/ui/Progress';
 import { useImportBookmarkStore } from '@/lib/stores/import-bookmarks/useBookmarkImportStore';
 import { cn } from '@/lib/utils';
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 const BookmarkImportProgress = () => {
   const progress = useImportBookmarkStore((s) => s.progress);
@@ -27,7 +28,7 @@ const BookmarkImportProgress = () => {
       >
         {status === 'processing' && (
           <>
-            <Loader2 className="animate-spin h-4 w-4" />
+            <LoadingSpinner />
             Importing bookmarks...
           </>
         )}

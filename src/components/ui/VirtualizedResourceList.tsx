@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
@@ -230,6 +231,15 @@ const VirtualizedResourceList = <T,>({
           );
         })}
       </div>
+
+      {isFetchingNextPage ? (
+        <div className="py-4 w-full flex items-center justify-center text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <LoadingSpinner />
+            Loading More...
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

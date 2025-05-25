@@ -28,7 +28,6 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { Loader2Icon } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCreateCollection, useUpdateCollection } from './collection.api';
@@ -255,12 +254,9 @@ const CollectionFormDialog = ({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} loading={isLoading}>
                 {isLoading ? (
-                  <>
-                    <Loader2Icon className="animate-spin" />
-                    {isUpdateMode ? 'Updating' : 'Creating'}
-                  </>
+                  <>{isUpdateMode ? 'Updating' : 'Creating'}</>
                 ) : isUpdateMode ? (
                   'Update'
                 ) : (

@@ -17,7 +17,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
+import { GalleryVerticalEnd } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -101,8 +101,12 @@ const SignInForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending && <Loader2Icon className="animate-spin" />}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isPending}
+                loading={isPending}
+              >
                 {isPending ? 'Signing In' : 'Sign In'}
               </Button>
             </form>

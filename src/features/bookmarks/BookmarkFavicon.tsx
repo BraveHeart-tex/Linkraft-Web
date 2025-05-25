@@ -1,6 +1,7 @@
 'use client';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { env } from '@/env';
-import { BookmarkIcon, LoaderIcon } from 'lucide-react';
+import { BookmarkIcon } from 'lucide-react';
 import Image from 'next/image';
 import { PropsWithChildren, useMemo, useState } from 'react';
 
@@ -32,7 +33,7 @@ const BookmarkFavicon = ({
   if (isMetadataPending) {
     return (
       <BookmarkFaviconWrapper>
-        <LoaderIcon className="text-muted-foreground animate-spin" />
+        <LoadingSpinner className="text-muted-foreground" />
       </BookmarkFaviconWrapper>
     );
   }

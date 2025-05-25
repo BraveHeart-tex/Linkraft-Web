@@ -1,4 +1,5 @@
 'use client';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useSearch } from '@/features/search/search.api';
 import { SearchResult } from '@/features/search/search.types';
 import SearchDialogItem from '@/features/search/SearchDialogItem';
@@ -55,9 +56,9 @@ const SearchResultsList = memo(
         className="flex-1 overflow-y-auto w-full max-h-[300px] h-[300px]"
       >
         {isPending ? (
-          <div className="py-6 text-center text-sm h-[300px] flex items-center justify-center">
+          <div className="py-6 text-center text-sm h-[300px] flex items-center justify-center text-muted-foreground">
             <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <LoadingSpinner />
               <p>Searching...</p>
             </div>
           </div>
@@ -68,38 +69,42 @@ const SearchResultsList = memo(
                 No results found
               </div>
             ) : (
-              <div
-                style={{
-                  height: virtualizer.getTotalSize(),
-                  position: 'relative',
-                }}
-              >
-                {virtualizer.getVirtualItems().map((virtualRow) => {
-                  const result = results[virtualRow.index];
-                  return (
-                    <article
-                      key={result.id}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: `${virtualRow.size}px`,
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      className="border-b last:border-b-0"
-                    >
-                      <SearchDialogItem result={result} onPeek={onItemPeek} />
-                    </article>
-                  );
-                })}
-                {isFetchingNextPage && (
-                  <div className="py-4 text-center text-sm text-muted-foreground absolute bottom-0 left-0 right-0">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
-                    <p>Loading more…</p>
+              <>
+                <div
+                  style={{
+                    height: virtualizer.getTotalSize(),
+                    position: 'relative',
+                  }}
+                >
+                  {virtualizer.getVirtualItems().map((virtualRow) => {
+                    const result = results[virtualRow.index];
+                    return (
+                      <article
+                        key={result.id}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                        className="border-b last:border-b-0"
+                      >
+                        <SearchDialogItem result={result} onPeek={onItemPeek} />
+                      </article>
+                    );
+                  })}
+                </div>
+                {isFetchingNextPage ? (
+                  <div className="py-4 w-full flex items-center justify-center text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <LoadingSpinner />
+                      Loading More...
+                    </div>
                   </div>
-                )}
-              </div>
+                ) : null}
+              </>
             )}
           </>
         )}

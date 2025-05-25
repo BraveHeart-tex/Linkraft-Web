@@ -15,7 +15,7 @@ import { ErrorApiResponse } from '@/lib/api/api.types';
 import { showErrorToast } from '@/lib/toast';
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GalleryVerticalEnd, Loader2Icon } from 'lucide-react';
+import { GalleryVerticalEnd } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -113,8 +113,12 @@ const SignUpForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending && <Loader2Icon className="animate-spin" />}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isPending}
+                loading={isPending}
+              >
                 {isPending ? 'Signing Up' : 'Sign Up'}
               </Button>
             </form>

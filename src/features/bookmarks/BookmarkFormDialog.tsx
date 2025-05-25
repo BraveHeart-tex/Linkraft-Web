@@ -354,7 +354,11 @@ const BookmarkFormDialog = ({
                         selectedCollectionId={field.value}
                         triggerRef={field.ref}
                         onSelect={field.onChange}
-                        preSelectedCollection={preSelectedCollection}
+                        preSelectedCollection={
+                          preSelectedCollection ||
+                          initialData?.collection ||
+                          undefined
+                        }
                       />
                     </FormControl>
                     <FormMessage />

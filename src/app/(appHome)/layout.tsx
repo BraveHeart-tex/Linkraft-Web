@@ -4,7 +4,7 @@ import GlobalShortcuts from '@/components/GlobalShortcuts';
 import ModalHost from '@/components/Modalhost';
 import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar';
 import BookmarkImportProgress from '@/features/import-bookmarks/BookmarkImportProgress';
-import { ImportSocketClient } from '@/features/import-bookmarks/BookmarkImportSocketClient';
+import ImportSocketClient from '@/features/import-bookmarks/BookmarkImportSocketClient';
 import { cookies } from 'next/headers';
 
 const AppLevelLayout = async ({

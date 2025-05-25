@@ -12,6 +12,7 @@ import {
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { ApiError } from 'next/dist/server/api-utils';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 interface CollectionPageActionsProps {
   collection: Collection;
@@ -42,7 +43,7 @@ const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
       },
     });
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (isDeletingCollection) return;
     showConfirmDialog({
       title: 'Delete Collection',
@@ -55,9 +56,14 @@ const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
       alertText:
         'Deleting this collection will permanently remove all its contents',
     });
-  };
+  }, [
+    collection.id,
+    deleteCollection,
+    isDeletingCollection,
+    showConfirmDialog,
+  ]);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     if (isDeletingCollection) return;
     openModal({
       type: MODAL_TYPES.EDIT_COLLECTION,
@@ -66,9 +72,29 @@ const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
         onUpdate: () => router.refresh(),
       },
     });
-  };
+  }, [collection, isDeletingCollection, openModal, router]);
 
-  return <CollectionActions onDelete={handleDelete} onEdit={handleEdit} />;
+  // TODO:
+  const handleAddBookmarkToCollection = useCallback(() => {
+    openModal({
+      type: MODAL_TYPES.CREATE_BOOKMARK,
+      payload: {
+        forCollectionId: collection.id,
+      },
+    });
+  }, [collection.id, openModal]);
+
+  // TODO:
+  const handleMoveBookmarksToCollection = useCallback(() => {}, []);
+
+  return (
+    <CollectionActions
+      onDelete={handleDelete}
+      onEdit={handleEdit}
+      onAddBookmark={handleAddBookmarkToCollection}
+      onMoveBookmarks={handleMoveBookmarksToCollection}
+    />
+  );
 };
 
 export default CollectionPageActions;

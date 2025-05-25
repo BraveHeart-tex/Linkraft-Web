@@ -24,7 +24,10 @@ import {
   useUpdateBookmark,
 } from '@/features/bookmarks/bookmark.api';
 import BookmarkCollectionSelector from '@/features/bookmarks/BookmarkCollectionSelector';
-import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
+import {
+  Collection,
+  CollectionWithBookmarkCount,
+} from '@/features/collections/collection.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import {
   addItemToInfiniteQueryData,
@@ -52,12 +55,14 @@ interface BookmarkFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: Bookmark;
+  forCollectionId?: Collection['id'];
 }
 
 const BookmarkFormDialog = ({
   isOpen,
   onOpenChange,
   initialData,
+  forCollectionId,
 }: BookmarkFormDialogProps) => {
   const { data: tags } = useTags();
   const form = useForm<CreateBookmarkDto>({
@@ -70,6 +75,12 @@ const BookmarkFormDialog = ({
       tags: [],
     },
   });
+
+  useEffect(() => {
+    if (forCollectionId) {
+      form.setValue('collectionId', forCollectionId);
+    }
+  }, [forCollectionId, form]);
 
   useEffect(() => {
     if (initialData) {

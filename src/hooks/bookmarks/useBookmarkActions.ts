@@ -19,7 +19,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 
-export function useBookmarkActions(collectionId?: Collection['id']) {
+export const useBookmarkActions = (collectionId?: Collection['id']) => {
   const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
 
@@ -282,7 +282,7 @@ export function useBookmarkActions(collectionId?: Collection['id']) {
     handleEditBookmark,
     isRestoringBookmark,
   };
-}
+};
 
 const setQueryDataBatch = <T>(
   client: QueryClient,

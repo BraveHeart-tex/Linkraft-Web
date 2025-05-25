@@ -1,9 +1,9 @@
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import axios from 'axios';
 
-export async function safeApiCall<T>(
+export const safeApiCall = async <T>(
   apiFn: () => Promise<{ data: T }>
-): Promise<T> {
+): Promise<T> => {
   try {
     const response = await apiFn();
     return response.data;
@@ -15,4 +15,4 @@ export async function safeApiCall<T>(
 
     throw error;
   }
-}
+};

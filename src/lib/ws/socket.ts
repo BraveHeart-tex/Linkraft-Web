@@ -70,9 +70,9 @@ export class SocketClient {
 
 let socketClient: SocketClient | null = null;
 
-export function getSocketClient(): SocketClient {
+export const getSocketClient = (): SocketClient => {
   if (!socketClient) {
     socketClient = new SocketClient();
   }
   return socketClient;
-}
+};

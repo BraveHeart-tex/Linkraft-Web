@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "It looks the page you're looking for doesn't exist.",
 };
 
-export default function NotFoundPage() {
+export const NotFoundPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <Card className="mx-auto max-w-md text-center border-none shadow-none bg-background">
@@ -63,4 +63,6 @@ export default function NotFoundPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default NotFoundPage;

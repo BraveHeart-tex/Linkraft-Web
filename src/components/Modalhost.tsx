@@ -34,7 +34,13 @@ const ModalHost = () => {
     }
 
     case MODAL_TYPES.CREATE_BOOKMARK: {
-      return <BookmarkFormDialog isOpen onOpenChange={closeModal} />;
+      return (
+        <BookmarkFormDialog
+          isOpen
+          onOpenChange={closeModal}
+          forCollectionId={modal.payload?.forCollectionId}
+        />
+      );
     }
 
     case MODAL_TYPES.IMPORT_BOOKMARKS: {

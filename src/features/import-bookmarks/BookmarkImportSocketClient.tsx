@@ -2,7 +2,9 @@
 
 import { useBookmarkImportSocketProgress } from '@/hooks/bookmark-import/useBookmarkImportSocketProgress';
 
-export function ImportSocketClient() {
+const ImportSocketClient = () => {
   useBookmarkImportSocketProgress();
   return null;
-}
+};
+
+export default ImportSocketClient;

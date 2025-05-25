@@ -31,7 +31,7 @@ interface ShortcutCombo {
 /**
  * Normalize key combo matching
  */
-function matchShortcut(e: KeyboardEvent, combo: ShortcutCombo) {
+const matchShortcut = (e: KeyboardEvent, combo: ShortcutCombo) => {
   return (
     e.key.toLowerCase() === combo.key.toLowerCase() &&
     !!combo.ctrl === e.ctrlKey &&
@@ -39,13 +39,13 @@ function matchShortcut(e: KeyboardEvent, combo: ShortcutCombo) {
     !!combo.alt === e.altKey &&
     !!combo.meta === e.metaKey
   );
-}
+};
 
-export function useKeyboardShortcut(
+export const useKeyboardShortcut = (
   combo: ShortcutCombo,
   callback: (e: KeyboardEvent) => void,
   options?: ShortcutOptions
-) {
+) => {
   const {
     enabled = true,
     ignoreFormFields = true,
@@ -92,4 +92,4 @@ export function useKeyboardShortcut(
     combo,
     preventDefault,
   ]);
-}
+};

@@ -6,32 +6,57 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { EllipsisIcon } from 'lucide-react';
+import { DropdownMenuSeparator } from '@radix-ui/react-dropdown-menu';
+import {
+  ArrowRightLeftIcon,
+  EditIcon,
+  EllipsisIcon,
+  PlusIcon,
+  TrashIcon,
+} from 'lucide-react';
 
 interface CollectionActionsProps {
   onEdit: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onDelete: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onAddBookmark: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onMoveBookmarks: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
 }
 
-const CollectionActions = ({ onEdit, onDelete }: CollectionActionsProps) => {
+const CollectionActions = ({
+  onEdit,
+  onDelete,
+  onAddBookmark,
+  onMoveBookmarks,
+}: CollectionActionsProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost">
+        <Button size="icon" variant="ghost" aria-label="Collection actions">
           <EllipsisIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="grid w-max space-y-2 py-2" align="end">
-        <DropdownMenuItem className="justify-start" onClick={onEdit} asChild>
-          <Button variant="ghost">Edit Collection Info</Button>
+
+      <DropdownMenuContent align="end" className="">
+        <DropdownMenuItem onClick={onEdit}>
+          <EditIcon className="mr-2 h-4 w-4" />
+          Edit Info
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={onDelete}
-          variant="destructive"
-          className="justify-start"
-          asChild
-        >
-          <Button variant="ghost">Delete Collection</Button>
+        <DropdownMenuItem onClick={onAddBookmark}>
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Add Bookmark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onMoveBookmarks}>
+          <ArrowRightLeftIcon className="mr-2 h-4 w-4" />
+          Move Bookmarks
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem onClick={onDelete} className="text-destructive">
+          <TrashIcon className="mr-2 h-4 w-4" />
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

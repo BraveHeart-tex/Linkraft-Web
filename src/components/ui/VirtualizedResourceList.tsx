@@ -23,12 +23,12 @@ type EmptyAction =
       disabled?: boolean;
     };
 
-function isCustomAction(
+const isCustomAction = (
   action?: EmptyAction
-): action is { element: React.ReactNode } {
+): action is { element: React.ReactNode } => {
   if (!action) return false;
   return 'element' in action;
-}
+};
 
 const VIRTUAL_ROW_GAP_PX = 16 as const;
 

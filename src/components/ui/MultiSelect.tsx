@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import * as React from 'react';
-import AsyncSelect, { AsyncProps } from 'react-select/async';
-import CreatableSelect, { CreatableProps } from 'react-select/creatable';
-import AsyncCreatableSelect from 'react-select/async-creatable';
-import Select from 'react-select';
 import { cn } from '@/lib/utils';
+import * as React from 'react';
 import type { ClassNamesConfig, GroupBase } from 'react-select';
+import Select from 'react-select';
+import AsyncSelect, { AsyncProps } from 'react-select/async';
+import AsyncCreatableSelect from 'react-select/async-creatable';
+import CreatableSelect, { CreatableProps } from 'react-select/creatable';
 
 export interface SelectOption {
   label: string;
@@ -68,7 +68,7 @@ export type MultiSelectProps =
   | CreatableMultiSelectProps
   | StandardMultiSelectProps;
 
-export function MultiSelect({
+export const MultiSelect = ({
   options = [],
   defaultValue,
   value,
@@ -85,7 +85,7 @@ export function MultiSelect({
   noOptionsMessage = 'No options available',
   ref,
   ...restProps
-}: MultiSelectProps) {
+}: MultiSelectProps) => {
   const selectClassNames: ClassNamesConfig = {
     control: ({ isFocused }) =>
       cn(
@@ -156,4 +156,4 @@ export function MultiSelect({
   }
 
   return <Select options={options} {...(commonProps as any)} />;
-}
+};

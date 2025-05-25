@@ -10,11 +10,12 @@ import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { withStopPropagation } from '@/lib/utils';
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { CSSProperties, memo, useMemo } from 'react';
+import { CSSProperties, memo, useCallback, useMemo } from 'react';
 import { UserWithoutPasswordHash } from '../auth/auth.types';
 import UserAvatar from '../users/UserAvatar';
 import { useDeleteCollection } from './collection.api';
@@ -106,10 +107,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
     };
   }, [collection.color]);
 
-  const handleDeleteCollection = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    event.stopPropagation();
+  const handleDeleteCollection = withStopPropagation(() => {
     showConfirmDialog({
       title: 'Delete Collection',
       message: 'Are you sure you want to delete this collection?',
@@ -121,23 +119,34 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       alertText:
         'Deleting this collection will permanently remove all its contents',
     });
-  };
+  });
 
-  const handleEditCollection = (event: React.MouseEvent) => {
-    event.stopPropagation();
-
+  const handleEditCollection = withStopPropagation(() => {
     openModal({
       type: MODAL_TYPES.EDIT_COLLECTION,
       payload: {
         collection,
       },
     });
-  };
+  });
 
-  const handleClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleClick = withStopPropagation(() => {
     router.push(APP_ROUTES.collection(collection.id));
-  };
+  });
+
+  const handleAddBookmarkToCollection = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.stopPropagation();
+    },
+    []
+  );
+
+  const handleMoveBookmarksToCollection = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.stopPropagation();
+    },
+    []
+  );
 
   return (
     <Card
@@ -153,6 +162,8 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
           <CollectionActions
             onEdit={handleEditCollection}
             onDelete={handleDeleteCollection}
+            onAddBookmark={handleAddBookmarkToCollection}
+            onMoveBookmarks={handleMoveBookmarksToCollection}
           />
         </div>
         <div className="flex items-center w-full justify-between gap-8">

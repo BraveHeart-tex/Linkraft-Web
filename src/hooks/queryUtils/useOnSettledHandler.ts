@@ -6,10 +6,10 @@ type UseOnSettledHandlerOptions = {
   forceExactKeys?: (readonly unknown[])[];
 };
 
-export function useOnSettledHandler(
+export const useOnSettledHandler = (
   keys: (readonly unknown[])[],
   options: UseOnSettledHandlerOptions = {}
-) {
+) => {
   const queryClient = useQueryClient();
 
   return () => {
@@ -30,4 +30,4 @@ export function useOnSettledHandler(
       },
     });
   };
-}
+};

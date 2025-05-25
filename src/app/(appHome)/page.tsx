@@ -3,7 +3,7 @@ import DashboardPage from '@/features/dashboard/DashboardPage';
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { redirect } from 'next/navigation';
 
-export default async function Home() {
+const Home = async () => {
   const result = await getCurrentUser();
 
   if (!result.user) {
@@ -11,4 +11,6 @@ export default async function Home() {
   }
 
   return <DashboardPage />;
-}
+};
+
+export default Home;

@@ -48,3 +48,12 @@ export const parseTags = (
 export const bytesToMib = (bytes: number): number => {
   return bytes / (1024 * 1024);
 };
+
+export const withStopPropagation = <T extends React.SyntheticEvent>(
+  handler: (event: T) => void
+): ((event: T) => void) => {
+  return (event: T) => {
+    event.stopPropagation();
+    handler(event);
+  };
+};

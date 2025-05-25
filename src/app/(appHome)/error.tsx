@@ -17,7 +17,7 @@ interface ErrorPageProps {
   reset: () => void;
 }
 
-export default function Error({ error, reset }: ErrorPageProps) {
+const Error = ({ error, reset }: ErrorPageProps) => {
   const router = useRouter();
 
   return (
@@ -71,4 +71,6 @@ export default function Error({ error, reset }: ErrorPageProps) {
       </Card>
     </div>
   );
-}
+};
+
+export default Error;

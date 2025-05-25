@@ -1,4 +1,5 @@
 'use client';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import {
   Command,
@@ -159,7 +160,7 @@ const CollectionSelectorList = memo(
         {isPending ? (
           <div className="py-6 text-center text-sm">
             <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <LoadingSpinner />
               <p>Searching...</p>
             </div>
           </div>
@@ -168,34 +169,44 @@ const CollectionSelectorList = memo(
             No collections found {query && ` for "${query}"`}
           </div>
         ) : (
-          <div
-            style={{
-              height: virtualizer.getTotalSize(),
-              position: 'relative',
-            }}
-          >
-            {virtualizer.getVirtualItems().map((virtualRow) => {
-              const collection = allCollections[virtualRow.index];
-              return (
-                <CommandItem
-                  value={collection.id.toString()}
-                  key={collection.id}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                  onSelect={onCollectionSelect}
-                  className="border-b last:border-b-0 rounded-none"
-                >
-                  {collection.name}
-                </CommandItem>
-              );
-            })}
-          </div>
+          <>
+            <div
+              style={{
+                height: virtualizer.getTotalSize(),
+                position: 'relative',
+              }}
+            >
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const collection = allCollections[virtualRow.index];
+                return (
+                  <CommandItem
+                    value={collection.id.toString()}
+                    key={collection.id}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    onSelect={onCollectionSelect}
+                    className="border-b last:border-b-0 rounded-none"
+                  >
+                    {collection.name}
+                  </CommandItem>
+                );
+              })}
+            </div>
+            {isFetchingNextPage ? (
+              <div className="py-4 w-full flex items-center justify-center text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <LoadingSpinner />
+                  Loading More...
+                </div>
+              </div>
+            ) : null}
+          </>
         )}
       </CommandList>
     );

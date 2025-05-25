@@ -4,9 +4,8 @@ import { CommandDialog, CommandInput } from '@/components/ui/Command';
 import ActionShortcut from '@/features/search/ActionShortcut';
 import { useSearch } from '@/features/search/search.api';
 import { SEARCH_QUERY_DEBOUNCE_WAIT_MS } from '@/features/search/search.constants';
-import { SearchResult } from '@/features/search/search.types';
+import { SearchResult, SearchResultType } from '@/features/search/search.types';
 import SearchResultsList from '@/features/search/SearchResultsList';
-import { useBookmarkShortcuts } from '@/hooks/search/useBookmarkShortcuts';
 import { useDebounce } from '@/hooks/useDebounce';
 import { flattenInfiniteData } from '@/lib/query/infinite/queryUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
@@ -18,12 +17,19 @@ interface SearchCommandDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface PeekState {
+  shouldShow: boolean;
+  type: SearchResultType | null;
+}
+
 const SearchCommandDialog = ({
   isOpen,
   onOpenChange,
 }: SearchCommandDialogProps) => {
-  const [peekingItem, setPeekingItem] = useState<SearchResult | null>(null);
-
+  const [peekState, setPeekState] = useState<PeekState>({
+    shouldShow: false,
+    type: null,
+  });
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, SEARCH_QUERY_DEBOUNCE_WAIT_MS);
   const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } =
@@ -31,7 +37,6 @@ const SearchCommandDialog = ({
       query: debouncedQuery,
       enabled: isOpen,
     });
-  useBookmarkShortcuts({ enabled: isOpen, peekingItem });
 
   const queryClient = useQueryClient();
 
@@ -48,13 +53,18 @@ const SearchCommandDialog = ({
     return flattenInfiniteData(data);
   }, [data]);
 
-  const handleItemPeek = useCallback(
-    (item: SearchResult) => {
-      if (peekingItem?.id === item.id) return;
-      setPeekingItem(item);
-    },
-    [peekingItem?.id]
-  );
+  const handleItemPeek = useCallback((item: SearchResult) => {
+    setPeekState((prev) => {
+      if (prev.shouldShow && prev.type === item.type) {
+        return prev;
+      }
+
+      return {
+        shouldShow: true,
+        type: item.type,
+      };
+    });
+  }, []);
 
   return (
     <CommandDialog
@@ -77,15 +87,15 @@ const SearchCommandDialog = ({
         results={allResults}
         isFetchingNextPage={isFetchingNextPage}
         isPending={isPending}
-        onItemPeek={handleItemPeek}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
+        onItemPeek={handleItemPeek}
       />
 
-      {peekingItem && (
+      {peekState.shouldShow ? (
         <footer className="border-t bg-popover px-4 py-3 hidden lg:block">
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            {peekingItem.type === 'bookmark' && (
+            {peekState.type === 'bookmark' && (
               <>
                 <ActionShortcut label="Open in new tab" keys={['⌘', '↵']} />
                 <ActionShortcut label="Copy link" keys={['⌘', 'L']} />
@@ -95,7 +105,7 @@ const SearchCommandDialog = ({
             )}
           </div>
         </footer>
-      )}
+      ) : null}
     </CommandDialog>
   );
 };

@@ -38,7 +38,7 @@ const ModalHost = () => {
         <BookmarkFormDialog
           isOpen
           onOpenChange={closeModal}
-          forCollectionId={modal.payload?.forCollectionId}
+          preSelectedCollection={modal.payload?.preSelectedCollection}
         />
       );
     }

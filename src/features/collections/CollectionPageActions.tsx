@@ -79,10 +79,10 @@ const CollectionPageActions = ({ collection }: CollectionPageActionsProps) => {
     openModal({
       type: MODAL_TYPES.CREATE_BOOKMARK,
       payload: {
-        forCollectionId: collection.id,
+        preSelectedCollection: { id: collection.id, name: collection.name },
       },
     });
-  }, [collection.id, openModal]);
+  }, [collection.id, collection.name, openModal]);
 
   // TODO:
   const handleMoveBookmarksToCollection = useCallback(() => {}, []);

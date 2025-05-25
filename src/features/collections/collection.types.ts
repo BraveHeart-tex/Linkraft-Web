@@ -16,6 +16,8 @@ export type CollectionWithBookmarkCount = Collection & {
   bookmarkCount: number;
 };
 
+export type SlimCollection = Pick<Collection, 'id' | 'name'>;
+
 export type CollectionWithBookmarks = Collection & {
   bookmarks: Bookmark[];
   nextBookmarkCursor: Bookmark['id'] | null;

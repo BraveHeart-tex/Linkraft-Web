@@ -25,8 +25,8 @@ import {
 } from '@/features/bookmarks/bookmark.api';
 import BookmarkCollectionSelector from '@/features/bookmarks/BookmarkCollectionSelector';
 import {
-  Collection,
   CollectionWithBookmarkCount,
+  SlimCollection,
 } from '@/features/collections/collection.types';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import {
@@ -55,14 +55,14 @@ interface BookmarkFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: Bookmark;
-  forCollectionId?: Collection['id'];
+  preSelectedCollection?: SlimCollection;
 }
 
 const BookmarkFormDialog = ({
   isOpen,
   onOpenChange,
   initialData,
-  forCollectionId,
+  preSelectedCollection,
 }: BookmarkFormDialogProps) => {
   const { data: tags } = useTags();
   const form = useForm<CreateBookmarkDto>({
@@ -77,10 +77,10 @@ const BookmarkFormDialog = ({
   });
 
   useEffect(() => {
-    if (forCollectionId) {
-      form.setValue('collectionId', forCollectionId);
+    if (preSelectedCollection) {
+      form.setValue('collectionId', preSelectedCollection.id);
     }
-  }, [forCollectionId, form]);
+  }, [preSelectedCollection, form]);
 
   useEffect(() => {
     if (initialData) {
@@ -354,6 +354,7 @@ const BookmarkFormDialog = ({
                         selectedCollectionId={field.value}
                         triggerRef={field.ref}
                         onSelect={field.onChange}
+                        preSelectedCollection={preSelectedCollection}
                       />
                     </FormControl>
                     <FormMessage />

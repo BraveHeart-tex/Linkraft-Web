@@ -16,6 +16,7 @@ import { usePaginatedCollections } from '@/features/collections/collection.api';
 import {
   Collection,
   CollectionWithBookmarkCount,
+  SlimCollection,
 } from '@/features/collections/collection.types';
 import { SEARCH_QUERY_DEBOUNCE_WAIT_MS } from '@/features/search/search.constants';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -31,10 +32,12 @@ interface BookmarkCollectionSelectorProps {
   triggerRef: React.RefObject<HTMLButtonElement> | RefCallBack;
   selectedCollectionId: Nullable<CollectionWithBookmarkCount['id']>;
   onSelect: (collectionId: Collection['id']) => void;
+  preSelectedCollection?: SlimCollection;
 }
 
 const BookmarkCollectionSelector = ({
   triggerRef,
+  preSelectedCollection,
   selectedCollectionId,
   onSelect,
 }: BookmarkCollectionSelectorProps) => {
@@ -74,11 +77,26 @@ const BookmarkCollectionSelector = ({
     }
   }, [isOpen, queryClient]);
 
+  const renderTriggerLabel = (): string => {
+    if (isOpen && isPending) {
+      return 'Loading...';
+    }
+
+    if (
+      preSelectedCollection &&
+      preSelectedCollection?.id === selectedCollectionId
+    ) {
+      return preSelectedCollection.name;
+    }
+
+    return selectedCollection?.name || 'Select a collection';
+  };
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen} modal>
       <PopoverTrigger asChild ref={triggerRef} className="w-full">
         <Button variant="outline" className="justify-start">
-          {selectedCollection?.name || 'Select a collection'}
+          {renderTriggerLabel()}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">

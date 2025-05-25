@@ -2,7 +2,7 @@ import { PaginatedResponse } from '@/lib/api/api.types';
 import { Nullable } from '@/lib/common.types';
 import { InfiniteQueryData } from '@/lib/query/infinite/types';
 import { z } from 'zod';
-import { Collection } from '../collections/collection.types';
+import { Collection, SlimCollection } from '../collections/collection.types';
 import { Tag } from '../tags/tag.types';
 import { createBookmarkSchema } from './bookmark.schema';
 
@@ -17,7 +17,7 @@ export interface Bookmark {
   isMetadataPending: boolean;
   faviconUrl: Nullable<string>;
   collectionId: Collection['id'];
-  collection?: Nullable<Pick<Collection, 'id' | 'name'>>;
+  collection?: Nullable<SlimCollection>;
   tags?: Nullable<
     {
       id: number;

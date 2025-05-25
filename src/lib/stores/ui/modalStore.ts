@@ -1,5 +1,8 @@
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
-import { Collection } from '@/features/collections/collection.types';
+import {
+  Collection,
+  SlimCollection,
+} from '@/features/collections/collection.types';
 import { ApiResponse } from '@/lib/api/api.types';
 import { create } from 'zustand';
 import { Nullable } from '../../common.types';
@@ -28,7 +31,7 @@ export type ModalType =
     }
   | {
       type: typeof MODAL_TYPES.CREATE_BOOKMARK;
-      payload?: { forCollectionId?: Collection['id'] };
+      payload?: { preSelectedCollection?: SlimCollection };
     }
   | {
       type: typeof MODAL_TYPES.EDIT_COLLECTION;

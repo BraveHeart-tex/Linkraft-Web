@@ -28,5 +28,5 @@ export type AxiosApiError = AxiosError<ApiResponse<SignInResponse>>;
 
 export interface PaginatedResponse<T> {
   items: T[];
-  nextCursor: number | null;
+  nextCursor: string | null;
 }

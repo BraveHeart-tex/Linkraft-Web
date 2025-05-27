@@ -61,7 +61,7 @@ const BookmarkCollectionSelector = ({
 
   const handleCollectionSelect = useCallback(
     (collectionId: string) => {
-      onSelect(+collectionId);
+      onSelect(collectionId);
       setIsOpen(false);
     },
     [onSelect]

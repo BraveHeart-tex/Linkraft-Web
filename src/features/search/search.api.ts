@@ -16,9 +16,7 @@ export const useSearch = ({ query, enabled }: UseSearchParams) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.search.list(query),
     initialPageParam: '',
-    queryFn: async ({
-      pageParam,
-    }): Promise<InfiniteDataPage<SearchResult, string>> => {
+    queryFn: async ({ pageParam }): Promise<InfiniteDataPage<SearchResult>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<SearchResponse>>(
           API_ROUTES.search.getSearchResults,

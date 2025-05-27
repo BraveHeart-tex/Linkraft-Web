@@ -26,7 +26,7 @@ export const useBookmarkShortcuts = ({
 
   const handleDeleteBookmark = useCallback(() => {
     if (!peekingItem) return;
-    handleTrashBookmark(+peekingItem.id);
+    handleTrashBookmark(peekingItem.id);
   }, [handleTrashBookmark, peekingItem]);
 
   const handleOpenBookmarkUrl = useCallback(() => {
@@ -52,7 +52,7 @@ export const useBookmarkShortcuts = ({
 
     isLoadingRef.current = true;
     try {
-      const bookmark = await fetchBookmarkById(+peekingItem.id);
+      const bookmark = await fetchBookmarkById(peekingItem.id);
       if (!bookmark) {
         showErrorToast('Could not find bookmark', {
           description: 'Bookmark may have been deleted or is inaccessible.',

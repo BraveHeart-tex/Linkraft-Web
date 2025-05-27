@@ -1,3 +1,4 @@
+import { User } from '@/features/auth/auth.types';
 import { PaginatedResponse } from '@/lib/api/api.types';
 import { Nullable } from '@/lib/common.types';
 import { InfiniteQueryData } from '@/lib/query/infinite/types';
@@ -7,12 +8,12 @@ import { Tag } from '../tags/tag.types';
 import { createBookmarkSchema } from './bookmark.schema';
 
 export interface Bookmark {
-  id: number;
-  createdAt: string;
-  userId: number;
+  id: string;
+  userId: User['id'];
   url: string;
   title: string;
   description: Nullable<string>;
+  createdAt: string;
   deletedAt: Nullable<string>;
   isMetadataPending: boolean;
   faviconUrl: Nullable<string>;
@@ -20,7 +21,7 @@ export interface Bookmark {
   collection?: Nullable<SlimCollection>;
   tags?: Nullable<
     {
-      id: number;
+      id: string;
       name: string;
     }[]
   >;

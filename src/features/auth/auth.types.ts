@@ -1,20 +1,19 @@
-export interface UserWithoutPasswordHash {
+export interface User {
   email: string;
-  id: number;
-  createdAt: Date;
-  isActive: boolean;
+  id: string;
+  createdAt: string;
   profilePicture: string;
   visibleName: string;
 }
 
 export type SessionValidationResult =
   | {
-      user: UserWithoutPasswordHash;
+      user: User;
     }
   | {
       user: null;
     };
 
 export interface SignInResponse {
-  user: UserWithoutPasswordHash;
+  user: User;
 }

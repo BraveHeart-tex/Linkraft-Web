@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import ColorPicker from '@/components/ui/ColorPicker';
 import {
   Dialog,
   DialogClose,
@@ -54,7 +53,6 @@ const CollectionFormDialog = ({
   const form = useForm<CreateCollectionDto>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: {
-      color: '#ffc107',
       description: '',
       name: '',
     },
@@ -63,7 +61,6 @@ const CollectionFormDialog = ({
   useEffect(() => {
     if (initialData) {
       form.reset({
-        color: initialData.color,
         description: initialData.description || '',
         id: initialData.id,
         name: initialData.name,
@@ -226,22 +223,6 @@ const CollectionFormDialog = ({
                       {...field}
                       value={field.value || ''}
                       placeholder="The purpose of this collection"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <FormControl>
-                    <ColorPicker
-                      color={field.value || ''}
-                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />

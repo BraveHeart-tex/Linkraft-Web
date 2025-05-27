@@ -48,10 +48,13 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
     queryKey: QUERY_KEYS.collections.list(query),
     queryFn: async ({
       pageParam,
-    }): Promise<InfiniteDataPage<CollectionWithBookmarkCount, number>> => {
+    }): Promise<InfiniteDataPage<CollectionWithBookmarkCount>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(
-          API_ROUTES.collection.getUserCollections(pageParam, query)
+          API_ROUTES.collection.getUserCollections({
+            nextCursor: pageParam,
+            query,
+          })
         )
       );
 
@@ -61,7 +64,7 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
       };
     },
     enabled: enabled !== undefined ? enabled : true,
-    initialPageParam: 0,
+    initialPageParam: '',
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 
@@ -75,13 +78,13 @@ export const useDeleteCollection = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
-    { collectionId: number },
+    { collectionId: Collection['id'] },
     UseDeleteCollectionContext
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
-  { collectionId: number },
+  { collectionId: Collection['id'] },
   UseDeleteCollectionContext
 > =>
   useMutation({
@@ -128,13 +131,11 @@ export const useUpdateCollection = (
 export const useCollectionBookmarks = (
   collectionId: Collection['id'],
   initialBookmarks: Bookmark[],
-  initialNextCursor?: number | null
+  initialNextCursor?: string | null
 ) => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.listBookmarks(collectionId),
-    queryFn: async ({
-      pageParam,
-    }): Promise<InfiniteDataPage<Bookmark, number>> => {
+    queryFn: async ({ pageParam }): Promise<InfiniteDataPage<Bookmark>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getBookmarks({
@@ -157,9 +158,9 @@ export const useCollectionBookmarks = (
           nextCursor: initialNextCursor,
         },
       ],
-      pageParams: [initialNextCursor ?? 0],
+      pageParams: [initialNextCursor ?? ''],
     },
-    initialPageParam: initialNextCursor ?? 0,
+    initialPageParam: initialNextCursor ?? '',
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 };

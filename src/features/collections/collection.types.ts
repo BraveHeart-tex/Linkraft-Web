@@ -1,15 +1,15 @@
+import { User } from '@/features/auth/auth.types';
 import { Bookmark } from '@/features/bookmarks/bookmark.types';
 import { PaginatedResponse } from '@/lib/api/api.types';
 import { InfiniteQueryData } from '@/lib/query/infinite/types';
 
 export interface Collection {
-  id: number;
+  id: string;
   name: string;
-  userId: number;
+  userId: User['id'];
   description: string | null;
   createdAt: string;
-  isDeleted: boolean;
-  color: string;
+  parentId: Collection['id'];
 }
 
 export type CollectionWithBookmarkCount = Collection & {

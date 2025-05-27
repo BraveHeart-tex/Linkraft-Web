@@ -1,3 +1,5 @@
+import { Collection } from '@/features/collections/collection.types';
+
 export const QUERY_KEYS = {
   auth: {
     currentUser: () => ['auth', 'currentUser'] as const,
@@ -12,7 +14,7 @@ export const QUERY_KEYS = {
       query
         ? (['collections', 'list', query] as const)
         : (['collections', 'list'] as const),
-    listBookmarks: (collectionId: number) =>
+    listBookmarks: (collectionId: Collection['id']) =>
       ['collections', 'listBookmarks', collectionId] as const,
   },
   dashboard: {

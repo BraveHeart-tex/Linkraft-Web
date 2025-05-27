@@ -24,8 +24,8 @@ export type WithId<T, ID = number> = T & { id: ID };
 
 // Timestamped<T>: add createdAt/updatedAt timestamps
 export type Timestamped<T> = T & {
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type NestedValueOf<T> = T extends object

@@ -142,9 +142,7 @@ export const usePermanentlyDeleteBookmark = (
 export const useBookmarks = () => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.bookmarks.list(),
-    queryFn: async ({
-      pageParam,
-    }): Promise<InfiniteDataPage<Bookmark, number>> => {
+    queryFn: async ({ pageParam }): Promise<InfiniteDataPage<Bookmark>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getBookmarks({ nextCursor: pageParam })}`
@@ -156,17 +154,16 @@ export const useBookmarks = () => {
         nextCursor: response?.data?.nextCursor || undefined,
       };
     },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
+    initialPageParam: '',
+    getNextPageParam: (lastPage): string | undefined =>
+      lastPage?.nextCursor ?? undefined,
   });
 };
 
 export const useTrashedBookmarks = () => {
   return useInfiniteQuery({
     queryKey: QUERY_KEYS.bookmarks.trashed(),
-    queryFn: async ({
-      pageParam,
-    }): Promise<InfiniteDataPage<Bookmark, number>> => {
+    queryFn: async ({ pageParam }): Promise<InfiniteDataPage<Bookmark>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
           `${API_ROUTES.bookmark.getTrashedBookmarks(pageParam)}`
@@ -178,7 +175,7 @@ export const useTrashedBookmarks = () => {
         nextCursor: response?.data?.nextCursor || undefined,
       };
     },
-    initialPageParam: 0,
+    initialPageParam: '',
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 };
@@ -187,7 +184,7 @@ export const useRestoreBookmark = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
-    { bookmarkId: number },
+    { bookmarkId: Bookmark['id'] },
     {
       previousTrashedBookmarks: InfiniteBookmarksData;
       toastId: number | string;
@@ -196,7 +193,7 @@ export const useRestoreBookmark = (
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
-  { bookmarkId: number },
+  { bookmarkId: Bookmark['id'] },
   {
     previousTrashedBookmarks: InfiniteBookmarksData;
     toastId: number | string;

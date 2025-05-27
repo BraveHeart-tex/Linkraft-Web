@@ -1,4 +1,5 @@
 import { getAccessibleCollectionById } from '@/features/collections/collection.server';
+import { Collection } from '@/features/collections/collection.types';
 import CollectionBookmarksList from '@/features/collections/CollectionBookmarksList';
 import CollectionPageActions from '@/features/collections/CollectionPageActions';
 import { excludeKey } from '@/lib/objectUtils';
@@ -8,11 +9,11 @@ import { notFound } from 'next/navigation';
 const CollectionDetailsPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: Collection['id'] }>;
 }) => {
   const { id: collectionId } = await params;
 
-  const collection = await getAccessibleCollectionById(+collectionId);
+  const collection = await getAccessibleCollectionById(collectionId);
 
   if (!collection) {
     notFound();

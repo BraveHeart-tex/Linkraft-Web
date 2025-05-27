@@ -1,9 +1,7 @@
 import { InfiniteData } from '@tanstack/react-query';
 
-export interface InfiniteDataPage<T, K = string | number | null> {
+export interface InfiniteDataPage<T> {
   items: T[];
-  nextCursor: K | undefined;
+  nextCursor: string | null | undefined;
 }
-export type InfiniteQueryData<T, K = string | number | null> = InfiniteData<
-  InfiniteDataPage<T, K>
->;
+export type InfiniteQueryData<T> = InfiniteData<InfiniteDataPage<T>>;

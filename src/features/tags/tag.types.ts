@@ -1,7 +1,7 @@
-import { UserWithoutPasswordHash } from '../auth/auth.types';
+import { User } from '../auth/auth.types';
 
 export interface Tag {
-  id: number;
+  id: string;
   name: string;
-  userId: UserWithoutPasswordHash['id'];
+  userId: User['id'];
 }

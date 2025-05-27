@@ -52,7 +52,10 @@ const CollectionBookmarksList = ({
         element: (
           <AddBookmarkButton
             modalPayload={{
-              forCollectionId: collection.id,
+              preSelectedCollection: {
+                id: collection.id,
+                name: collection.name,
+              },
             }}
           />
         ),

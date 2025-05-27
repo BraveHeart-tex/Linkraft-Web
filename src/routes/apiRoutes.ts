@@ -13,14 +13,26 @@ export const API_ROUTES = {
       nextCursor,
       collectionId,
     }: {
-      nextCursor: number;
+      nextCursor?: string;
       collectionId?: Collection['id'];
-    }) =>
-      `/bookmarks?cursor=${nextCursor}${collectionId ? `&collectionId=${collectionId}` : ''}`,
+    }): string => {
+      const params = new URLSearchParams();
+
+      if (nextCursor) {
+        params.set('cursor', nextCursor);
+      }
+
+      if (collectionId) {
+        params.set('collectionId', collectionId);
+      }
+
+      const queryString = params.toString();
+      return `/bookmarks${queryString ? `?${queryString}` : ''}`;
+    },
     createBookmark: '/bookmarks',
     updateBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
     trashBookmark: (bookmarkId: Bookmark['id']) => `/bookmarks/${bookmarkId}`,
-    getTrashedBookmarks: (cursor: number) =>
+    getTrashedBookmarks: (cursor: string) =>
       `/bookmarks/trash?cursor=${cursor}`,
     permanentlyDeleteBookmark: (bookmarkId: Bookmark['id']) =>
       `/bookmarks/${bookmarkId}/permanent`,
@@ -33,8 +45,26 @@ export const API_ROUTES = {
   },
   collection: {
     createCollection: '/collections',
-    getUserCollections: (nextCursor: number, query?: string) =>
-      `/collections?cursor=${nextCursor}${query ? `&search=${encodeURIComponent(query)}` : ''}`,
+    getUserCollections: ({
+      nextCursor,
+      query,
+    }: {
+      nextCursor?: string;
+      query?: string;
+    }) => {
+      const params = new URLSearchParams();
+
+      if (nextCursor) {
+        params.set('cursor', nextCursor);
+      }
+
+      if (query) {
+        params.set('search', query);
+      }
+
+      const queryString = params.toString();
+      return `/collections${queryString ? `?${queryString}` : ''}`;
+    },
     deleteCollection: (collectionId: Collection['id']) =>
       `/collections/${collectionId}`,
     updateCollection: (collectionId: Collection['id']) =>

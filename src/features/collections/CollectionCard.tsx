@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import CollectionActions from '@/features/collections/CollectionActions';
 import { ErrorApiResponse } from '@/lib/api/api.types';
-import { generateSubtleGradientFromHex } from '@/lib/colorUtils';
 import { formatIsoDate } from '@/lib/dateUtils';
 import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
@@ -15,8 +14,8 @@ import { APP_ROUTES } from '@/routes/appRoutes';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { CSSProperties, memo, useCallback, useMemo } from 'react';
-import { UserWithoutPasswordHash } from '../auth/auth.types';
+import { memo, useCallback, useMemo } from 'react';
+import { User } from '../auth/auth.types';
 import UserAvatar from '../users/UserAvatar';
 import { useDeleteCollection } from './collection.api';
 import { Collection, InfiniteCollectionsData } from './collection.types';
@@ -34,9 +33,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   const router = useRouter();
 
   const user = useMemo(() => {
-    return queryClient.getQueryData<UserWithoutPasswordHash>(
-      QUERY_KEYS.auth.currentUser()
-    );
+    return queryClient.getQueryData<User>(QUERY_KEYS.auth.currentUser());
   }, [queryClient]);
 
   const { mutate: deleteCollection } = useDeleteCollection({
@@ -100,13 +97,6 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
     },
   });
 
-  const generatedCardStyles: CSSProperties = useMemo(() => {
-    return {
-      backgroundImage: generateSubtleGradientFromHex(collection.color),
-      backgroundRepeat: 'no-repeat',
-    };
-  }, [collection.color]);
-
   const handleDeleteCollection = withStopPropagation(() => {
     showConfirmDialog({
       title: 'Delete Collection',
@@ -151,7 +141,6 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   return (
     <Card
       className="overflow-hidden py-4 cursor-pointer shadow-lg hover:shadow-sm transition-shadow"
-      style={generatedCardStyles}
       onClick={handleClick}
     >
       <CardContent className="p-4 py-1 space-y-14">

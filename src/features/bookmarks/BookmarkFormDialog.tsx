@@ -39,7 +39,6 @@ import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { parseTags } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { StatusCodes } from 'http-status-codes';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTags } from '../tags/tag.api';
@@ -202,31 +201,9 @@ const BookmarkFormDialog = ({
         );
 
         const apiError = error as ErrorApiResponse;
-        switch (apiError.status) {
-          case StatusCodes.CONFLICT: {
-            const existing = (
-              apiError.error.details as { bookmarkWithSameUrl: Bookmark }
-            )?.bookmarkWithSameUrl;
-            if (existing && typeof existing === 'object') {
-              form.setError(
-                'url',
-                {
-                  message: `There is already a bookmark with this URL ${existing.deletedAt ? 'in Trash' : ''}`,
-                },
-                {
-                  shouldFocus: true,
-                }
-              );
-            }
-            break;
-          }
-
-          default:
-            showErrorToast('Something went wrong while updating the bookmark', {
-              description: apiError.message,
-            });
-            break;
-        }
+        showErrorToast('Something went wrong while updating the bookmark', {
+          description: apiError.message,
+        });
       },
       async onSettled() {
         await Promise.all([
@@ -256,31 +233,9 @@ const BookmarkFormDialog = ({
       onError(error) {
         const apiError = error as ErrorApiResponse;
 
-        switch (apiError.status) {
-          case StatusCodes.CONFLICT: {
-            const existing = (
-              apiError.error.details as { bookmarkWithSameUrl: Bookmark }
-            )?.bookmarkWithSameUrl;
-            if (existing && typeof existing === 'object') {
-              form.setError(
-                'url',
-                {
-                  message: `There is already a bookmark with this URL ${existing.deletedAt ? 'in Trash' : ''}`,
-                },
-                {
-                  shouldFocus: true,
-                }
-              );
-            }
-            break;
-          }
-
-          default:
-            showErrorToast('Something went wrong while creating a bookmark', {
-              description: apiError.message,
-            });
-            break;
-        }
+        showErrorToast('Something went wrong while creating a bookmark', {
+          description: apiError.message,
+        });
       },
       async onSettled() {
         await queryClient.invalidateQueries({

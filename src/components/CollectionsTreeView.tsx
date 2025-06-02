@@ -84,7 +84,6 @@ const CollectionsTreeView = () => {
             {...dimensions}
             initialData={initialCollections}
             indent={10}
-            padding={15}
             rowHeight={30}
           >
             {CollectionTreeNode}

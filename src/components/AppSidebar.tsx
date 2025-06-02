@@ -17,10 +17,10 @@ import { PlusIcon } from 'lucide-react';
 const AppSidebar = () => {
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="gap-0">
         <SidebarGroup className="py-2">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-0">
               <div className="flex items-center w-full justify-between gap-2 my-2">
                 <SidebarMenuItem className="flex-1">
                   <UserMenu />

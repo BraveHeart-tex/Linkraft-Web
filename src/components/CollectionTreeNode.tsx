@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { cn, withStopPropagation } from '@/lib/utils';
 import {
   ChevronRightIcon,
@@ -25,10 +26,27 @@ const CollectionTreeNode = ({
   node,
   style,
   dragHandle,
+  tree,
 }: NodeRendererProps<CollectionNode>) => {
+  const showConfirmDialog = useConfirmDialogStore(
+    (state) => state.showConfirmDialog
+  );
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleDelete = withStopPropagation(() => {});
+  const handleDelete = withStopPropagation(() => {
+    showConfirmDialog({
+      title: 'Are your sure you want to delete this collection?',
+      message: 'This action cannot be undone',
+      primaryActionLabel: 'Delete',
+      alertText:
+        node.data.bookmarkCount > 0
+          ? 'All the bookmarks inside the collection will be moved to trash'
+          : '',
+      onConfirm: () => {
+        tree.delete(node);
+      },
+    });
+  });
 
   const handleRename = withStopPropagation(() => {});
 
@@ -71,13 +89,13 @@ const CollectionTreeNode = ({
         ) : (
           <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} className="shrink-0" />
         )}
-        <span className="truncate">{node.data.name}</span>
+        <span className="truncate text-sm">{node.data.name}</span>
       </div>
 
       <div className="flex justify-center items-center gap-2 relative min-w-10">
         <span
           className={cn(
-            'text-[0.8rem] opacity-100 mr-1 text-sidebar-foreground/50 font-medium transition-opacity duration-200 ease-in-out absolute right-0',
+            'text-sm opacity-100 mr-1 text-sidebar-foreground/50 font-medium transition-opacity duration-200 ease-in-out absolute right-0',
             node.isSelected && 'text-primary-foreground',
             isHovered && 'opacity-0 pointer-none:'
           )}

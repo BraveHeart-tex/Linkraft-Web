@@ -42,14 +42,18 @@ const CollectionTreeNode = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="w-full flex items-center gap-2 flex-1 min-w-0">
-        <ChevronRightIcon
-          size={TREE_VIEW_SECONDARY_ICON_SIZE}
-          className={cn(
-            'shrink-0 ml-1 rounded-full transition-all',
-            node.isInternal && node.isOpen && 'rotate-90'
-          )}
-        />
-        {node.isOpen ? (
+        <div className="ml-1 size-4">
+          {node.data?.children?.length > 0 ? (
+            <ChevronRightIcon
+              size={TREE_VIEW_SECONDARY_ICON_SIZE}
+              className={cn(
+                'shrink-0 rounded-full transition-all',
+                node.isInternal && node.isOpen && 'rotate-90'
+              )}
+            />
+          ) : null}
+        </div>
+        {node.data?.children?.length && node.isOpen ? (
           <FolderOpenIcon
             size={TREE_VIEW_DEFAULT_ICON_SIZE}
             className="shrink-0"

@@ -1,14 +1,7 @@
 'use client';
 import AppMenuButton from '@/components/AppMenuButton';
 import { SidebarMenuItem } from '@/components/ui/Sidebar';
-import {
-  FolderIcon,
-  HomeIcon,
-  LinkIcon,
-  LucideIcon,
-  PinIcon,
-  TrashIcon,
-} from 'lucide-react';
+import { LinkIcon, LucideIcon, TrashIcon } from 'lucide-react';
 
 export interface AppMenuItem {
   href: string;
@@ -18,24 +11,9 @@ export interface AppMenuItem {
 
 const sidebarLinks: AppMenuItem[] = [
   {
-    label: 'Dashboard',
-    href: '/',
-    icon: HomeIcon,
-  },
-  {
-    label: 'Pinned Bookmarks',
-    href: '/bookmarks/pinned',
-    icon: PinIcon,
-  },
-  {
-    label: 'Bookmarks',
+    label: 'All Bookmarks',
     href: '/bookmarks',
     icon: LinkIcon,
-  },
-  {
-    label: 'Collections',
-    href: '/collections',
-    icon: FolderIcon,
   },
   {
     label: 'Trash',

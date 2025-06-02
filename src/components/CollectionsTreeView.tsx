@@ -1,18 +1,16 @@
 'use client';
+import CollectionTreeNode from '@/components/CollectionTreeNode';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
-import { ChevronRightIcon, FolderIcon } from 'lucide-react';
-import { NodeRendererProps, Tree } from 'react-arborist';
+import { Tree } from 'react-arborist';
 
-interface Node {
+export interface CollectionNode {
   id: string;
   name: string;
   bookmarkCount: number;
-  children: Node[];
+  children: CollectionNode[];
 }
 
-const initialCollections: Node[] = [
+const initialCollections: CollectionNode[] = [
   {
     id: '1',
     name: 'Unread',
@@ -88,7 +86,7 @@ const CollectionsTreeView = () => {
             padding={15}
             rowHeight={30}
           >
-            {TreeNode}
+            {CollectionTreeNode}
           </Tree>
         )}
       </ResponsiveContainer>
@@ -96,35 +94,4 @@ const CollectionsTreeView = () => {
   );
 };
 
-const TreeNode = ({ node, style, dragHandle }: NodeRendererProps<Node>) => {
-  return (
-    <div
-      ref={dragHandle}
-      style={style}
-      className={cn(
-        'transition-colors relative w-full flex items-center gap-2 cursor-pointer h-full! overflow-hidden truncate text-ellipsis text-sidebar-foreground/90 font-medium',
-        node.state,
-        node.isSelected &&
-          'bg-primary text-primary-foreground hover:bg-primary',
-        !node.isSelected && 'hover:bg-sidebar-foreground/10'
-      )}
-    >
-      <Button
-        className="size-3 ml-1 rounded-full items-center justify-center"
-        variant="ghost"
-        onClick={() => node.isInternal && node.toggle()}
-      >
-        <ChevronRightIcon
-          size={12}
-          className={cn(
-            'transition-all',
-            node.isInternal && node.isOpen && 'rotate-90'
-          )}
-        />
-      </Button>
-      <FolderIcon size={14} />
-      <span className="">{node.data.name}</span>
-    </div>
-  );
-};
 export default CollectionsTreeView;

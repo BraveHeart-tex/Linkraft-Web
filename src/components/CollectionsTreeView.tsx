@@ -78,14 +78,7 @@ const initialCollections: Node[] = [
 
 const CollectionsTreeView = () => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        height: '100vh',
-        flex: '1',
-        minWidth: '100%',
-      }}
-    >
+    <div className="flex h-screen flex-1 min-w-full">
       <ResponsiveContainer>
         {(dimensions) => (
           <Tree

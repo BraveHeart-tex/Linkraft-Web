@@ -8,12 +8,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
-import { ChevronRightIcon, EllipsisIcon, FolderIcon } from 'lucide-react';
+import {
+  ChevronRightIcon,
+  EllipsisIcon,
+  FolderIcon,
+  FolderOpenIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { NodeRendererProps } from 'react-arborist';
 
-const TREE_VIEW_DEFAULT_ICON_SIZE = 14;
-const TREE_VIEW_SECONDARY_ICON_SIZE = 12;
+const TREE_VIEW_DEFAULT_ICON_SIZE = 18;
+const TREE_VIEW_SECONDARY_ICON_SIZE = 16;
 
 const CollectionTreeNode = ({
   node,
@@ -44,14 +49,21 @@ const CollectionTreeNode = ({
             node.isInternal && node.isOpen && 'rotate-90'
           )}
         />
-        <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} className="shrink-0" />
+        {node.isOpen ? (
+          <FolderOpenIcon
+            size={TREE_VIEW_DEFAULT_ICON_SIZE}
+            className="shrink-0"
+          />
+        ) : (
+          <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} className="shrink-0" />
+        )}
         <span className="truncate">{node.data.name}</span>
       </div>
 
       <div className="flex justify-center items-center gap-2 relative min-w-10">
         <span
           className={cn(
-            'text-sm opacity-100 mr-1 text-sidebar-foreground/90 font-medium transition-opacity duration-200 ease-in-out absolute right-0',
+            'text-[0.8rem] opacity-100 mr-1 text-sidebar-foreground/50 font-medium transition-opacity duration-200 ease-in-out absolute right-0',
             node.isSelected && 'text-primary-foreground',
             isHovered && 'opacity-0 pointer-none:'
           )}
@@ -69,7 +81,8 @@ const CollectionTreeNode = ({
               size="icon"
               className={cn(
                 'h-6 w-6 p-0 transition-opacity opacity-0 duration-200 ease-in-out right-0 absolute pointer-events-none',
-                isHovered && 'opacity-100 pointer-events-auto'
+                isHovered && 'opacity-100 pointer-events-auto',
+                !node.isSelected && 'hover:bg-sidebar'
               )}
             >
               <EllipsisIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />

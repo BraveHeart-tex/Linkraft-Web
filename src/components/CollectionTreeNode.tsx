@@ -40,11 +40,11 @@ const CollectionTreeNode = ({
         <ChevronRightIcon
           size={TREE_VIEW_SECONDARY_ICON_SIZE}
           className={cn(
-            'ml-1 rounded-full transition-all',
+            'shrink-0 ml-1 rounded-full transition-all',
             node.isInternal && node.isOpen && 'rotate-90'
           )}
         />
-        <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
+        <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} className="shrink-0" />
         <span className="truncate">{node.data.name}</span>
       </div>
 

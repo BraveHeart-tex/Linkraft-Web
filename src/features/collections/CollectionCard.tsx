@@ -149,16 +149,14 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
             onMoveBookmarks={handleMoveBookmarksToCollection}
           />
         </div>
-        <div className="flex items-center w-full justify-between gap-8">
-          <div className="text-sm text-muted-foreground space-y-1">
-            <div className="flex items-center gap-1 justify-end">
-              <LinkIcon className="h-4 w-4" />
-              <span className="font-bold">{collection.bookmarkCount}</span>
-            </div>
-            <div className="flex items-center gap-1 font-bold">
-              <CalendarIcon className="h-4 w-4" />
-              {formatIsoDate(collection.createdAt, 'MMM dd, yyyy')}
-            </div>
+        <div className="flex items-center w-full justify-between gap-8 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <LinkIcon className="h-4 w-4" />
+            <span className="font-bold">{collection.bookmarkCount}</span>
+          </div>
+          <div className="flex items-center gap-1 font-medium text-xs">
+            <CalendarIcon className="h-4 w-4" />
+            {formatIsoDate(collection.createdAt, 'MMM dd, yyyy')}
           </div>
         </div>
       </CardContent>

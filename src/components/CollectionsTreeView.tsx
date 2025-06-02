@@ -1,5 +1,5 @@
 'use client';
-import { ResponsiveContainer } from '@/components/FillFlexParent';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { cn } from '@/lib/utils';
 import { ChevronRightIcon, FolderIcon } from 'lucide-react';
 import { NodeRendererProps, Tree } from 'react-arborist';

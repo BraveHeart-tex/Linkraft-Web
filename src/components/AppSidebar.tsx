@@ -1,4 +1,5 @@
 import AppMenu from '@/components/AppMenu';
+import CollectionsTreeView from '@/components/CollectionsTreeView';
 import SidebarSearchButton from '@/components/SidebarSearchButton';
 import { Button } from '@/components/ui/Button';
 import {
@@ -6,6 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/Sidebar';
@@ -32,6 +34,14 @@ const AppSidebar = () => {
               </SidebarMenuItem>
               <AppMenu />
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup className="p-0">
+          <SidebarGroupLabel className="px-4 py-1">
+            Collections
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <CollectionsTreeView />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -20,3 +20,17 @@ export const arrayStartsWith = (
 ): boolean => {
   return prefix.every((val, i) => longer[i] === val);
 };
+
+type AnyRef = React.RefObject<unknown> | React.RefCallback<unknown> | null;
+
+export const mergeRefs = (...refs: AnyRef[]) => {
+  return (instance: unknown) => {
+    refs.forEach((ref) => {
+      if (typeof ref === 'function') {
+        ref(instance);
+      } else if (ref != null) {
+        ref.current = instance;
+      }
+    });
+  };
+};

@@ -1,6 +1,5 @@
 import { Separator } from '@/components/ui/Separator';
 import { SidebarTrigger } from '@/components/ui/Sidebar';
-import UserMenu from '@/features/users/UserMenu';
 import ColorModeToggle from './ColorModeToggle';
 import NewActionsDropdown from './NewActionsDropdown';
 
@@ -12,7 +11,6 @@ const AppSidebarHeader = () => {
       <div className="w-full flex items-center gap-4 justify-end">
         <ColorModeToggle />
         <NewActionsDropdown />
-        <UserMenu />
       </div>
     </header>
   );

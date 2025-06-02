@@ -7,15 +7,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { SidebarMenuButton } from '@/components/ui/Sidebar';
 import { ErrorApiResponse } from '@/lib/api/api.types';
 import { showErrorToast } from '@/lib/toast';
 import { cn } from '@/lib/utils';
 import { APP_ROUTES } from '@/routes/appRoutes';
-import { CogIcon, LogOutIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  CircleUserIcon,
+  CogIcon,
+  LogOutIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSignOut } from '../auth/auth.api';
-import UserAvatar from './UserAvatar';
 import { useCurrentUser } from './users.api';
 
 const UserMenu = () => {
@@ -37,11 +42,14 @@ const UserMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <UserAvatar
-          profilePicture={user?.profilePicture}
-          visibleName={user?.visibleName}
-        />
+      <DropdownMenuTrigger asChild>
+        <SidebarMenuButton>
+          <div className="flex items-center gap-2">
+            <CircleUserIcon strokeWidth={1} />
+            <span className="font-medium">{user?.visibleName}</span>
+            <ChevronDownIcon size={14} />
+          </div>
+        </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="flex flex-col gap-1">

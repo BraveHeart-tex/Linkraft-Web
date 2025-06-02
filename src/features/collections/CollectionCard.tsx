@@ -14,9 +14,7 @@ import { APP_ROUTES } from '@/routes/appRoutes';
 import { useQueryClient } from '@tanstack/react-query';
 import { CalendarIcon, LinkIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { memo, useCallback, useMemo } from 'react';
-import { User } from '../auth/auth.types';
-import UserAvatar from '../users/UserAvatar';
+import { memo, useCallback } from 'react';
 import { useDeleteCollection } from './collection.api';
 import { Collection, InfiniteCollectionsData } from './collection.types';
 
@@ -31,10 +29,6 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   );
   const openModal = useModalStore((s) => s.openModal);
   const router = useRouter();
-
-  const user = useMemo(() => {
-    return queryClient.getQueryData<User>(QUERY_KEYS.auth.currentUser());
-  }, [queryClient]);
 
   const { mutate: deleteCollection } = useDeleteCollection({
     async onMutate() {
@@ -156,11 +150,6 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
           />
         </div>
         <div className="flex items-center w-full justify-between gap-8">
-          <UserAvatar
-            profilePicture=""
-            visibleName={user?.visibleName || ''}
-            avatarClassNames="shadow-sm"
-          />
           <div className="text-sm text-muted-foreground space-y-1">
             <div className="flex items-center gap-1 justify-end">
               <LinkIcon className="h-4 w-4" />

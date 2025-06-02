@@ -1,5 +1,6 @@
 'use client';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { ChevronRightIcon, FolderIcon } from 'lucide-react';
 import { NodeRendererProps, Tree } from 'react-arborist';
@@ -101,19 +102,26 @@ const TreeNode = ({ node, style, dragHandle }: NodeRendererProps<Node>) => {
       ref={dragHandle}
       style={style}
       className={cn(
-        'transition-colors relative w-full flex items-center gap-2 cursor-pointer hover:bg-sidebar-foreground/10 h-full! overflow-hidden truncate text-ellipsis text-sidebar-foreground/90',
+        'transition-colors relative w-full flex items-center gap-2 cursor-pointer h-full! overflow-hidden truncate text-ellipsis text-sidebar-foreground/90 font-medium',
         node.state,
-        node.isSelected && 'bg-primary text-primary-foreground hover:bg-primary'
+        node.isSelected &&
+          'bg-primary text-primary-foreground hover:bg-primary',
+        !node.isSelected && 'hover:bg-sidebar-foreground/10'
       )}
-      onClick={() => node.isInternal && node.toggle()}
     >
-      <ChevronRightIcon
-        size={12}
-        className={cn(
-          'transition-all ml-1',
-          node.isInternal && node.isOpen && 'rotate-90'
-        )}
-      />
+      <Button
+        className="size-3 ml-1 rounded-full items-center justify-center"
+        variant="ghost"
+        onClick={() => node.isInternal && node.toggle()}
+      >
+        <ChevronRightIcon
+          size={12}
+          className={cn(
+            'transition-all',
+            node.isInternal && node.isOpen && 'rotate-90'
+          )}
+        />
+      </Button>
       <FolderIcon size={14} />
       <span className="">{node.data.name}</span>
     </div>

@@ -3,8 +3,11 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import CollectionActions from '@/features/collections/CollectionActions';
 import { ErrorApiResponse } from '@/lib/api/api.types';
-import { formatIsoDate } from '@/lib/dateUtils';
-import { removeItemFromInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
+import { formatIsoDate, getCurrentTimestamp } from '@/lib/dateUtils';
+import {
+  removeItemFromInfiniteQueryData,
+  updateItemInInfiniteQueryData,
+} from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
@@ -31,7 +34,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
   const router = useRouter();
 
   const { mutate: deleteCollection } = useDeleteCollection({
-    async onMutate() {
+    async onMutate(variables) {
       showSuccessToast('Collection deleted successfully.');
 
       await queryClient.cancelQueries({
@@ -54,18 +57,20 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
         (old) =>
           removeItemFromInfiniteQueryData(
             old,
-            (item) => item.id !== collection.id
+            (item) => item.id !== variables.collectionId
           )
       );
 
       queryClient.setQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list(),
         (old) =>
-          removeItemFromInfiniteQueryData(old, (bookmark) =>
-            bookmark.collection
-              ? bookmark.collection.id !== collection.id
-              : true
-          )
+          updateItemInInfiniteQueryData(old, {
+            match: (item) => item.collectionId === variables.collectionId,
+            update: (item) => ({
+              ...item,
+              deletedAt: getCurrentTimestamp(),
+            }),
+          })
       );
 
       return { previousCollections, previousBookmarks };
@@ -85,9 +90,17 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       });
     },
     async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.collections.list(),
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.collections.list(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.trashed(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.list(),
+        }),
+      ]);
     },
   });
 
@@ -100,8 +113,7 @@ const CollectionCard = memo(({ collection }: CollectionCardProps) => {
       },
       primaryActionLabel: 'Delete',
       primaryButtonVariant: 'destructive',
-      alertText:
-        'Deleting this collection will permanently remove all its contents',
+      alertText: 'Bookmarks inside this collection will be moved to Trash',
     });
   });
 

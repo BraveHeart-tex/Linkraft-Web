@@ -19,8 +19,8 @@ const AppSidebar = () => {
         <SidebarGroup className="py-2">
           <SidebarGroupContent>
             <SidebarMenu>
-              <div className="flex items-center w-full justify-between gap-4 my-2">
-                <SidebarMenuItem>
+              <div className="flex items-center w-full justify-between gap-2 my-2">
+                <SidebarMenuItem className="flex-1">
                   <UserMenu />
                 </SidebarMenuItem>
                 <Button size="icon" variant="ghost">

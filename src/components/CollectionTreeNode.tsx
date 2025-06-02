@@ -5,9 +5,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { cn } from '@/lib/utils';
+import { cn, withStopPropagation } from '@/lib/utils';
 import {
   ChevronRightIcon,
   EllipsisIcon,
@@ -27,6 +28,10 @@ const CollectionTreeNode = ({
 }: NodeRendererProps<CollectionNode>) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleDelete = withStopPropagation(() => {});
+
+  const handleRename = withStopPropagation(() => {});
+
   return (
     <div
       ref={dragHandle}
@@ -41,8 +46,13 @@ const CollectionTreeNode = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="w-full flex items-center gap-2 flex-1 min-w-0">
-        <div className="ml-1 size-4">
+      <div className="w-full flex items-center gap-1 flex-1 min-w-0">
+        <div
+          style={{
+            width: `${TREE_VIEW_SECONDARY_ICON_SIZE}px`,
+            height: `${TREE_VIEW_SECONDARY_ICON_SIZE}px`,
+          }}
+        >
           {node.data?.children?.length > 0 ? (
             <ChevronRightIcon
               size={TREE_VIEW_SECONDARY_ICON_SIZE}
@@ -92,13 +102,13 @@ const CollectionTreeNode = ({
               <EllipsisIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" side="right">
-            <DropdownMenuItem onSelect={() => console.log('Edit', node.data)}>
-              Edit
+          <DropdownMenuContent align="start" side="bottom">
+            <DropdownMenuItem onClick={handleRename}>
+              Create nested collection
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => console.log('Delete', node.data)}>
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleRename}>Rename</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

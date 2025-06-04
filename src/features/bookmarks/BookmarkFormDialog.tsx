@@ -43,10 +43,10 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTags } from '../tags/tag.api';
 import { Tag } from '../tags/tag.types';
-import { createBookmarkSchema } from './bookmark.schema';
+import { CreateBookmarkSchema } from './bookmark.schema';
 import {
   Bookmark,
-  CreateBookmarkDto,
+  CreateBookmarkInput,
   InfiniteBookmarksData,
 } from './bookmark.types';
 
@@ -64,8 +64,8 @@ const BookmarkFormDialog = ({
   preSelectedCollection,
 }: BookmarkFormDialogProps) => {
   const { data: tags } = useTags();
-  const form = useForm<CreateBookmarkDto>({
-    resolver: zodResolver(createBookmarkSchema),
+  const form = useForm<CreateBookmarkInput>({
+    resolver: zodResolver(CreateBookmarkSchema),
     defaultValues: {
       description: '',
       title: '',
@@ -244,7 +244,7 @@ const BookmarkFormDialog = ({
       },
     });
 
-  const onSubmit = (values: CreateBookmarkDto) => {
+  const onSubmit = (values: CreateBookmarkInput) => {
     const { existingTagIds, newTags } = parseTags(values.tags);
     if (!values.id) {
       createBookmark({

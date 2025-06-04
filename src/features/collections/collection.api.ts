@@ -16,7 +16,10 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { CreateCollectionDto, UpdateCollectionDto } from './collection.schema';
+import {
+  CreateCollectionInput,
+  UpdateCollectionInput,
+} from './collection.schema';
 import {
   Collection,
   CollectionWithBookmarkCount,
@@ -28,11 +31,11 @@ export const useCreateCollection = (
   options?: UseMutationOptions<
     ApiResponse<Collection>,
     unknown,
-    CreateCollectionDto
+    CreateCollectionInput
   >
-): UseMutationResult<ApiResponse<Collection>, unknown, CreateCollectionDto> =>
+): UseMutationResult<ApiResponse<Collection>, unknown, CreateCollectionInput> =>
   useMutation({
-    mutationFn: async (data: CreateCollectionDto) => {
+    mutationFn: async (data: CreateCollectionInput) => {
       return safeApiCall(() =>
         api.post<ApiResponse<Collection>>(
           API_ROUTES.collection.createCollection,
@@ -107,13 +110,13 @@ export const useUpdateCollection = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
-    UpdateCollectionDto,
+    UpdateCollectionInput,
     UpdateCollectionContext
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
-  UpdateCollectionDto,
+  UpdateCollectionInput,
   UpdateCollectionContext
 > =>
   useMutation({

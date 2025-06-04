@@ -31,7 +31,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCreateCollection, useUpdateCollection } from './collection.api';
 import {
-  CreateCollectionDto,
+  CreateCollectionInput,
   CreateCollectionSchema,
 } from './collection.schema';
 import { Collection, InfiniteCollectionsData } from './collection.types';
@@ -50,7 +50,7 @@ const CollectionFormDialog = ({
   onUpdate,
 }: CollectionFormDialogProps) => {
   const queryClient = useQueryClient();
-  const form = useForm<CreateCollectionDto>({
+  const form = useForm<CreateCollectionInput>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: {
       description: '',
@@ -178,7 +178,7 @@ const CollectionFormDialog = ({
     if (!open) form.reset();
   };
 
-  const onSubmit = (values: CreateCollectionDto) => {
+  const onSubmit = (values: CreateCollectionInput) => {
     if (isUpdateMode) {
       updateCollection({
         ...values,

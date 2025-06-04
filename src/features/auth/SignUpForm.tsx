@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useSignUp } from './auth.api';
-import { SignUpDto, SignUpSchema } from './auth.schema';
+import { SignUpInput, SignUpSchema } from './auth.schema';
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -35,7 +35,7 @@ const SignUpForm = () => {
     },
   });
 
-  const form = useForm<SignUpDto>({
+  const form = useForm<SignUpInput>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
       visibleName: '',
@@ -44,7 +44,7 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (values: SignUpDto) => {
+  const onSubmit = (values: SignUpInput) => {
     signUp(values);
   };
 

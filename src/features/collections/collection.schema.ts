@@ -9,6 +9,8 @@ export const CreateCollectionSchema = z.object({
   description: z.string().optional().nullable(),
 });
 
-export type CreateCollectionDto = z.infer<typeof CreateCollectionSchema>;
+export type CreateCollectionInput = z.infer<typeof CreateCollectionSchema>;
 
-export type UpdateCollectionDto = Partial<CreateCollectionDto> & { id: string };
+export type UpdateCollectionInput = Partial<CreateCollectionInput> & {
+  id: string;
+};

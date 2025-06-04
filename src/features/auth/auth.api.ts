@@ -7,14 +7,18 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { SignInDto, SignUpDto } from './auth.schema';
+import { SignInInput, SignUpInput } from './auth.schema';
 import { SignInResponse } from './auth.types';
 
 export const useSignIn = (
-  options?: UseMutationOptions<ApiResponse<SignInResponse>, unknown, SignInDto>
-): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignInDto> =>
+  options?: UseMutationOptions<
+    ApiResponse<SignInResponse>,
+    unknown,
+    SignInInput
+  >
+): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignInInput> =>
   useMutation({
-    mutationFn: async (data: SignInDto) => {
+    mutationFn: async (data: SignInInput) => {
       return safeApiCall(() =>
         api.post<ApiResponse<SignInResponse>>(API_ROUTES.auth.signIn, data)
       );
@@ -23,10 +27,14 @@ export const useSignIn = (
   });
 
 export const useSignUp = (
-  options?: UseMutationOptions<ApiResponse<SignInResponse>, unknown, SignUpDto>
-): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignUpDto> =>
+  options?: UseMutationOptions<
+    ApiResponse<SignInResponse>,
+    unknown,
+    SignUpInput
+  >
+): UseMutationResult<ApiResponse<SignInResponse>, unknown, SignUpInput> =>
   useMutation({
-    mutationFn: async (data: SignUpDto) => {
+    mutationFn: async (data: SignUpInput) => {
       return safeApiCall(() =>
         api.post<ApiResponse<SignInResponse>>(API_ROUTES.auth.signUp, data)
       );

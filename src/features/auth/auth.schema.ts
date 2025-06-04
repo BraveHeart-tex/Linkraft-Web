@@ -13,7 +13,7 @@ export const SignInSchema = z.object({
     .min(8, 'Password must be at least 8 characters long'),
 });
 
-export type SignInDto = z.infer<typeof SignInSchema>;
+export type SignInInput = z.infer<typeof SignInSchema>;
 
 export const SignUpSchema = z.object({
   visibleName: z
@@ -34,4 +34,4 @@ export const SignUpSchema = z.object({
     .min(8, 'Password must be at least 8 characters long'),
 });
 
-export type SignUpDto = z.infer<typeof SignUpSchema>;
+export type SignUpInput = z.infer<typeof SignUpSchema>;

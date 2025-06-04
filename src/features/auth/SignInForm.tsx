@@ -22,7 +22,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useSignIn } from './auth.api';
-import { SignInDto, SignInSchema } from './auth.schema';
+import { SignInInput, SignInSchema } from './auth.schema';
 
 const SignInForm = () => {
   const queryClient = useQueryClient();
@@ -37,7 +37,7 @@ const SignInForm = () => {
       showErrorToast((error as ErrorApiResponse)?.message);
     },
   });
-  const form = useForm<SignInDto>({
+  const form = useForm<SignInInput>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: '',
@@ -45,7 +45,7 @@ const SignInForm = () => {
     },
   });
 
-  const onSubmit = (values: SignInDto) => {
+  const onSubmit = (values: SignInInput) => {
     signIn(values);
   };
 

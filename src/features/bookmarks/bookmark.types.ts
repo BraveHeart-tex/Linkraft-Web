@@ -5,7 +5,7 @@ import { InfiniteQueryData } from '@/lib/query/infinite/types';
 import { z } from 'zod';
 import { Collection, SlimCollection } from '../collections/collection.types';
 import { Tag } from '../tags/tag.types';
-import { createBookmarkSchema } from './bookmark.schema';
+import { CreateBookmarkSchema } from './bookmark.schema';
 
 export interface Bookmark {
   id: string;
@@ -27,9 +27,9 @@ export interface Bookmark {
   >;
 }
 
-export type CreateBookmarkDto = z.infer<typeof createBookmarkSchema>;
+export type CreateBookmarkInput = z.infer<typeof CreateBookmarkSchema>;
 
-export type UpdateBookmarkDto = Partial<CreateBookmarkDto> & {
+export type UpdateBookmarkInput = Partial<CreateBookmarkInput> & {
   id: Bookmark['id'];
 };
 

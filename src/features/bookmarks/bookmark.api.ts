@@ -15,10 +15,10 @@ import {
 } from '@tanstack/react-query';
 import {
   Bookmark,
-  CreateBookmarkDto,
+  CreateBookmarkInput,
   GetBookmarksResponse,
   InfiniteBookmarksData,
-  UpdateBookmarkDto,
+  UpdateBookmarkInput,
   UpdateBookmarkResponse,
 } from './bookmark.types';
 
@@ -26,13 +26,13 @@ export const useUpdateBookmark = (
   options?: UseMutationOptions<
     Nullable<UpdateBookmarkResponse>,
     unknown,
-    UpdateBookmarkDto,
+    UpdateBookmarkInput,
     { previousBookmarks: InfiniteBookmarksData }
   >
 ): UseMutationResult<
   Nullable<UpdateBookmarkResponse>,
   unknown,
-  UpdateBookmarkDto,
+  UpdateBookmarkInput,
   { previousBookmarks: InfiniteBookmarksData }
 > =>
   useMutation({
@@ -53,12 +53,12 @@ export const useCreateBookmark = (
   options?: UseMutationOptions<
     ApiResponse<Bookmark>,
     unknown,
-    Omit<CreateBookmarkDto, 'tags'>
+    Omit<CreateBookmarkInput, 'tags'>
   >
 ): UseMutationResult<
   ApiResponse<Bookmark>,
   unknown,
-  Omit<CreateBookmarkDto, 'tags'>
+  Omit<CreateBookmarkInput, 'tags'>
 > => {
   return useMutation({
     mutationFn: async (data) => {

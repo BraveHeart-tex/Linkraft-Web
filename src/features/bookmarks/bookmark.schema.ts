@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const createBookmarkSchema = z.object({
+export const CreateBookmarkSchema = z.object({
   id: z.string().optional(),
   url: z
     .string({ required_error: 'URL is required' })

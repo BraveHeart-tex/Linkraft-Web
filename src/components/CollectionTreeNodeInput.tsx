@@ -21,8 +21,8 @@ const CollectionTreeNodeInput = ({ node }: CollectionTreeNodeInputProps) => {
 
   return (
     <input
+      className="w-full flex-1"
       ref={inputRef}
-      autoFocus
       type="text"
       defaultValue={node.data.name}
       onFocus={(e) => {

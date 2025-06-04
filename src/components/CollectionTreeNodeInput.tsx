@@ -1,6 +1,7 @@
 'use client';
 
 import { CollectionNode } from '@/components/CollectionsTreeView';
+import { useEffect, useRef } from 'react';
 import { NodeApi } from 'react-arborist';
 
 interface CollectionTreeNodeInputProps {
@@ -8,13 +9,27 @@ interface CollectionTreeNodeInputProps {
 }
 
 const CollectionTreeNodeInput = ({ node }: CollectionTreeNodeInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (node.isEditing) {
+      inputRef.current?.focus();
+    } else {
+      inputRef.current?.blur();
+    }
+  }, [node.isEditing]);
+
   return (
     <input
+      ref={inputRef}
       autoFocus
       type="text"
       defaultValue={node.data.name}
-      onFocus={(e) => e.currentTarget.select()}
+      onFocus={(e) => {
+        e.currentTarget.select();
+      }}
       onBlur={() => {
+        console.log('blurring input');
         node.reset();
       }}
       onKeyDown={(e) => {

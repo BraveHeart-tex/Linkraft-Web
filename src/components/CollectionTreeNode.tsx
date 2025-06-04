@@ -27,6 +27,7 @@ const CollectionTreeNode = ({
           'bg-primary text-primary-foreground hover:bg-primary',
         !node.isSelected && 'hover:bg-sidebar-foreground/10'
       )}
+      tabIndex={-1}
       onClick={() => node.isInternal && node.toggle()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

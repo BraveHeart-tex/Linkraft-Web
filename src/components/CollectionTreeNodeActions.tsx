@@ -113,6 +113,8 @@ const CollectionTreeNodeActions = ({
       ]);
     },
   });
+
+  // TODO: Handle optimistic updates on all bookmarks and collection bookmarks etc
   const { mutate: renameCollection } = useUpdateCollection({
     async onMutate(variables) {
       await queryClient.cancelQueries({
@@ -140,7 +142,7 @@ const CollectionTreeNodeActions = ({
 
       return { previousCollections };
     },
-    onError(error, variables, context) {
+    onError(error, _variables, context) {
       queryClient.setQueryData(
         QUERY_KEYS.collections.list(),
         context?.previousCollections

@@ -10,7 +10,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
-import { useDeleteCollection } from '@/features/collections/collection.api';
+import {
+  useDeleteCollection,
+  useUpdateCollection,
+} from '@/features/collections/collection.api';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import { isErrorApiResponse } from '@/lib/api/api.utils';
 import { getCurrentTimestamp } from '@/lib/dateUtils';
@@ -110,6 +113,55 @@ const CollectionTreeNodeActions = ({
       ]);
     },
   });
+  const { mutate: renameCollection } = useUpdateCollection({
+    async onMutate(variables) {
+      await queryClient.cancelQueries({
+        queryKey: QUERY_KEYS.collections.list(),
+      });
+
+      const previousCollections =
+        queryClient.getQueryData<CollectionWithBookmarkCount[]>(
+          QUERY_KEYS.collections.list()
+        ) || [];
+
+      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        QUERY_KEYS.collections.list(),
+        (old) =>
+          old
+            ? old.map((oldCollection) => ({
+                ...oldCollection,
+                name:
+                  oldCollection.id === variables.id
+                    ? variables.name
+                    : oldCollection.name,
+              }))
+            : old
+      );
+
+      return { previousCollections };
+    },
+    onError(error, variables, context) {
+      queryClient.setQueryData(
+        QUERY_KEYS.collections.list(),
+        context?.previousCollections
+      );
+      showErrorToast('An error occurred while renaming the collection', {
+        description: isErrorApiResponse(error)
+          ? error.message
+          : 'An unknown error occurred',
+      });
+    },
+    async onSettled() {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.collections.list(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.list(),
+        }),
+      ]);
+    },
+  });
 
   const handleDelete = withStopPropagation(() => {
     showConfirmDialog({
@@ -126,7 +178,15 @@ const CollectionTreeNodeActions = ({
     });
   });
 
-  const handleRename = withStopPropagation(() => {});
+  const handleRename = withStopPropagation(async () => {
+    const editResult = await node.edit();
+    if (!editResult.cancelled) {
+      renameCollection({
+        id: node.data.id,
+        name: editResult.value,
+      });
+    }
+  });
 
   return (
     <DropdownMenu modal>
@@ -147,7 +207,12 @@ const CollectionTreeNodeActions = ({
           <EllipsisIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side="bottom">
+      <DropdownMenuContent
+        align="start"
+        side="bottom"
+        // Keeps the focus on the node input on rename click
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <DropdownMenuItem onClick={handleRename}>
           Create nested collection
         </DropdownMenuItem>

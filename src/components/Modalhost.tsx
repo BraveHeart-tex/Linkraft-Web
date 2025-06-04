@@ -1,6 +1,5 @@
 'use client';
 import BookmarkFormDialog from '@/features/bookmarks/BookmarkFormDialog';
-import CollectionFormDialog from '@/features/collections/CollectionFormDialog';
 import FileImportDialog from '@/features/import-bookmarks/FileImportDialog';
 import SearchCommandDialog from '@/features/search/SearchDialog';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
@@ -22,17 +21,6 @@ const ModalHost = () => {
       );
     }
 
-    case MODAL_TYPES.EDIT_COLLECTION: {
-      return (
-        <CollectionFormDialog
-          isOpen
-          onOpenChange={closeModal}
-          initialData={modal.payload.collection}
-          onUpdate={modal.payload.onUpdate}
-        />
-      );
-    }
-
     case MODAL_TYPES.CREATE_BOOKMARK: {
       return (
         <BookmarkFormDialog
@@ -45,10 +33,6 @@ const ModalHost = () => {
 
     case MODAL_TYPES.IMPORT_BOOKMARKS: {
       return <FileImportDialog isOpen onOpenChange={closeModal} />;
-    }
-
-    case MODAL_TYPES.CREATE_COLLECTION: {
-      return <CollectionFormDialog isOpen onOpenChange={closeModal} />;
     }
 
     case MODAL_TYPES.SEARCH: {

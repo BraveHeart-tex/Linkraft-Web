@@ -25,7 +25,6 @@ import {
   Collection,
   CollectionWithBookmarkCount,
   GetCollectionsResponse,
-  InfiniteCollectionsData,
 } from './collection.types';
 
 export const useCreateCollection = (
@@ -118,8 +117,7 @@ export const useDeleteCollection = (
   });
 
 interface UpdateCollectionContext {
-  previousCollections: InfiniteCollectionsData;
-  toastId: string | number;
+  previousCollections: CollectionWithBookmarkCount[];
 }
 
 export const useUpdateCollection = (

@@ -6,11 +6,8 @@ export const CreateCollectionSchema = z.object({
     .string()
     .min(1, 'Name cannot be empty')
     .max(255, 'Name cannot exceed 255 characters'),
-  description: z.string().optional().nullable(),
 });
 
 export type CreateCollectionInput = z.infer<typeof CreateCollectionSchema>;
 
-export type UpdateCollectionInput = Partial<CreateCollectionInput> & {
-  id: string;
-};
+export type UpdateCollectionInput = Required<CreateCollectionInput>;

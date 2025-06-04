@@ -1,6 +1,7 @@
 'use client';
 import { CollectionNode } from '@/components/CollectionsTreeView';
 import CollectionTreeNodeActions from '@/components/CollectionTreeNodeActions';
+import CollectionTreeNodeInput from '@/components/CollectionTreeNodeInput';
 import { cn } from '@/lib/utils';
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -55,7 +56,11 @@ const CollectionTreeNode = ({
         ) : (
           <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} className="shrink-0" />
         )}
-        <span className="truncate text-sm">{node.data.name}</span>
+        {node.isEditing ? (
+          <CollectionTreeNodeInput node={node} />
+        ) : (
+          <span className="truncate text-sm">{node.data.name}</span>
+        )}
       </div>
 
       <div className="flex justify-center items-center gap-2 relative min-w-10">

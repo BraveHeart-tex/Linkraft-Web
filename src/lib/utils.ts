@@ -1,4 +1,6 @@
+import { CollectionNode } from '@/components/CollectionsTreeView';
 import { SelectOption } from '@/components/ui/MultiSelect';
+import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -35,3 +37,31 @@ export const withStopPropagation = <T extends React.SyntheticEvent>(
     handler(event);
   };
 };
+
+export function mapCollectionsToTree(
+  collections: CollectionWithBookmarkCount[]
+): CollectionNode[] {
+  const nodeMap = new Map<string, CollectionNode>();
+  const roots: CollectionNode[] = [];
+
+  for (const collection of collections) {
+    nodeMap.set(collection.id, {
+      id: collection.id,
+      name: collection.name,
+      bookmarkCount: collection.bookmarkCount,
+      children: [],
+    });
+  }
+
+  for (const collection of collections) {
+    const node = nodeMap.get(collection.id)!;
+    if (collection.parentId && nodeMap.has(collection.parentId)) {
+      const parent = nodeMap.get(collection.parentId)!;
+      parent.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+
+  return roots;
+}

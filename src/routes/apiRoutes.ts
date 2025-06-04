@@ -45,23 +45,11 @@ export const API_ROUTES = {
   },
   collection: {
     createCollection: '/collections',
-    getUserCollections: ({
-      nextCursor,
-      query,
-    }: {
-      nextCursor?: string;
-      query?: string;
-    }) => {
+    getUserCollections: (query?: string) => {
       const params = new URLSearchParams();
-
-      if (nextCursor) {
-        params.set('cursor', nextCursor);
-      }
-
       if (query) {
         params.set('search', query);
       }
-
       const queryString = params.toString();
       return `/collections${queryString ? `?${queryString}` : ''}`;
     },

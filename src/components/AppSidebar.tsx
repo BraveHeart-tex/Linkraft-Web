@@ -11,10 +11,12 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/Sidebar';
+import { getCollections } from '@/features/collections/collection.server';
 import UserMenu from '@/features/users/UserMenu';
 import { PlusIcon } from 'lucide-react';
 
-const AppSidebar = () => {
+const AppSidebar = async () => {
+  const collections = await getCollections();
   return (
     <Sidebar>
       <SidebarContent className="gap-0">
@@ -41,7 +43,7 @@ const AppSidebar = () => {
             Collections
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <CollectionsTreeView />
+            <CollectionsTreeView initialCollections={collections} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

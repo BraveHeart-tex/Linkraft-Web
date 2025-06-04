@@ -8,8 +8,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
+import { useDeleteCollection } from '@/features/collections/collection.api';
+import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
+import { isErrorApiResponse } from '@/lib/api/api.utils';
+import { getCurrentTimestamp } from '@/lib/dateUtils';
+import { updateItemInInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
+import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
+import { showErrorToast } from '@/lib/toast';
 import { cn, withStopPropagation } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ChevronRightIcon,
   EllipsisIcon,
@@ -26,12 +35,81 @@ const CollectionTreeNode = ({
   node,
   style,
   dragHandle,
-  tree,
 }: NodeRendererProps<CollectionNode>) => {
+  const queryClient = useQueryClient();
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
   );
   const [isHovered, setIsHovered] = useState(false);
+
+  // TODO: Handle the update of all bookmarks page data as well
+  const { mutate: deleteCollection } = useDeleteCollection({
+    async onMutate(variables) {
+      await queryClient.cancelQueries({
+        queryKey: QUERY_KEYS.collections.list(),
+      });
+
+      const previousCollections = queryClient.getQueryData<
+        CollectionWithBookmarkCount[]
+      >(QUERY_KEYS.collections.list());
+
+      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list()
+      );
+
+      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        QUERY_KEYS.collections.list(),
+        (prev) =>
+          prev
+            ? prev.filter(
+                (collection) => collection.id !== variables.collectionId
+              )
+            : prev
+      );
+
+      queryClient.setQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list(),
+        (old) =>
+          updateItemInInfiniteQueryData(old, {
+            match: (item) => item.collectionId === variables.collectionId,
+            update: (item) => ({
+              ...item,
+              deletedAt: getCurrentTimestamp(),
+            }),
+          })
+      );
+
+      return { previousCollections, previousBookmarks };
+    },
+    async onError(error, _variables, context) {
+      queryClient.setQueryData(
+        QUERY_KEYS.collections.list(),
+        context?.previousCollections
+      );
+      queryClient.setQueryData(
+        QUERY_KEYS.bookmarks.list(),
+        context?.previousBookmarks
+      );
+      showErrorToast('An error occurred while deleting the collection', {
+        description: isErrorApiResponse(error)
+          ? error.message
+          : 'An unknown error occurred',
+      });
+    },
+    async onSettled() {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.collections.list(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.trashed(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.list(),
+        }),
+      ]);
+    },
+  });
 
   const handleDelete = withStopPropagation(() => {
     showConfirmDialog({
@@ -43,7 +121,7 @@ const CollectionTreeNode = ({
           ? 'All the bookmarks inside the collection will be moved to trash'
           : '',
       onConfirm: () => {
-        tree.delete(node);
+        deleteCollection({ collectionId: node.data.id });
       },
     });
   });

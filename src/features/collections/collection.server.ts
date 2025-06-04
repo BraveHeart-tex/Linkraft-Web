@@ -1,5 +1,4 @@
 'use server';
-
 import {
   Collection,
   CollectionWithBookmarks,
@@ -14,6 +13,7 @@ import { APP_ROUTES } from '@/routes/appRoutes';
 import { StatusCodes } from 'http-status-codes';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { CollectionWithBookmarkCount } from './collection.types';
 
 export const getAccessibleCollectionById = async (
   collectionId: Collection['id']
@@ -51,6 +51,46 @@ export const getAccessibleCollectionById = async (
     }
 
     console.error('Unexpected error while fetching collection');
-    return null;
+    throw error;
+  }
+};
+
+export const getCollections = async (): Promise<
+  CollectionWithBookmarkCount[]
+> => {
+  const cookieStore = await cookies();
+  try {
+    const response = await safeApiCall(() =>
+      retryingApi.get<ApiResponse<{ items: CollectionWithBookmarkCount[] }>>(
+        API_ROUTES.collection.getUserCollections(),
+        {
+          headers: {
+            Cookie: cookieStore.toString(),
+          },
+        }
+      )
+    );
+
+    return response.data?.items || [];
+  } catch (error) {
+    console.error('getCollections error', error);
+
+    if (isErrorApiResponse(error)) {
+      const status = error.status;
+
+      if (status === StatusCodes.UNAUTHORIZED) {
+        redirect(APP_ROUTES.signIn);
+      }
+
+      if (status >= 500 && status < 600) {
+        console.error('Internal server error while fetching collection');
+        throw new Error(
+          'Unexpected error occurred while fetching the collection'
+        );
+      }
+    }
+
+    console.error('Unexpected error while fetching collection');
+    return [];
   }
 };

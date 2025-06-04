@@ -15,6 +15,7 @@ import {
   useMutation,
   UseMutationOptions,
   UseMutationResult,
+  useQuery,
 } from '@tanstack/react-query';
 import {
   CreateCollectionInput,
@@ -49,15 +50,12 @@ export const useCreateCollection = (
 export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
   useInfiniteQuery({
     queryKey: QUERY_KEYS.collections.list(query),
-    queryFn: async ({
-      pageParam,
-    }): Promise<InfiniteDataPage<CollectionWithBookmarkCount>> => {
+    queryFn: async (): Promise<
+      InfiniteDataPage<CollectionWithBookmarkCount>
+    > => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(
-          API_ROUTES.collection.getUserCollections({
-            nextCursor: pageParam,
-            query,
-          })
+          API_ROUTES.collection.getUserCollections(query)
         )
       );
 
@@ -71,9 +69,27 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 
+export const useCollections = (params?: {
+  query?: string;
+  initialData?: CollectionWithBookmarkCount[];
+}) =>
+  useQuery({
+    queryKey: QUERY_KEYS.collections.list(params?.query),
+    queryFn: async (): Promise<CollectionWithBookmarkCount[]> => {
+      const response = await safeApiCall(() =>
+        api.get<ApiResponse<GetCollectionsResponse>>(
+          API_ROUTES.collection.getUserCollections(params?.query)
+        )
+      );
+
+      return response.data?.items || [];
+    },
+    initialData: params?.initialData,
+  });
+
 interface UseDeleteCollectionContext {
   toastId?: ToastId;
-  previousCollections?: InfiniteCollectionsData;
+  previousCollections?: CollectionWithBookmarkCount[];
   previousBookmarks?: InfiniteBookmarksData;
 }
 

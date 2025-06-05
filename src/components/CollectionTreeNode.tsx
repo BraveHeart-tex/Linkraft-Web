@@ -43,7 +43,7 @@ const CollectionTreeNode = ({
             <ChevronRightIcon
               size={TREE_VIEW_SECONDARY_ICON_SIZE}
               className={cn(
-                'shrink-0 rounded-full transition-all',
+                'shrink-0 rounded-full',
                 node.isInternal && node.isOpen && 'rotate-90'
               )}
             />
@@ -67,7 +67,7 @@ const CollectionTreeNode = ({
       <div className="flex justify-center items-center gap-2 relative min-w-10">
         <span
           className={cn(
-            'text-sm opacity-100 mr-1 text-sidebar-foreground/50 font-medium transition-opacity duration-200 ease-in-out absolute right-0',
+            'text-sm opacity-100 mr-1 text-sidebar-foreground/50 font-medium absolute right-0',
             node.isSelected && 'text-primary-foreground',
             isHovered && 'opacity-0 pointer-none:'
           )}

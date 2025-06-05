@@ -10,6 +10,7 @@ export interface Collection {
   description: string | null;
   createdAt: string;
   parentId: Collection['id'];
+  displayOrder: number;
 }
 
 export type CollectionWithBookmarkCount = Collection & {

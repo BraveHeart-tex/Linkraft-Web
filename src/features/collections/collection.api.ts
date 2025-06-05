@@ -81,7 +81,9 @@ export const useCollections = (params?: {
         )
       );
 
-      return response.data?.items || [];
+      return (response.data?.items || []).toSorted(
+        (a, b) => a.displayOrder - b.displayOrder
+      );
     },
     initialData: params?.initialData,
   });

@@ -25,7 +25,9 @@ const CollectionTreeNode = ({
         'relative w-full flex items-center justify-between gap-2 cursor-pointer h-full! overflow-hidden truncate text-ellipsis text-sidebar-foreground/90 font-medium',
         node.isSelected &&
           'bg-primary text-primary-foreground hover:bg-primary',
-        !node.isSelected && 'hover:bg-sidebar-foreground/10'
+        !node.isSelected && 'hover:bg-sidebar-foreground/10',
+        node.willReceiveDrop &&
+          'hover:bg-sidebar-foreground/10 outline outline-primary'
       )}
       tabIndex={-1}
       onClick={() => node.isInternal && node.toggle()}

@@ -71,7 +71,9 @@ export const getCollections = async (): Promise<
       )
     );
 
-    return response.data?.items || [];
+    return (response.data?.items || []).toSorted(
+      (a, b) => a.displayOrder - b.displayOrder
+    );
   } catch (error) {
     console.error('getCollections error', error);
 

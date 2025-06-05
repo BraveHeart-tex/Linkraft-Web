@@ -8,6 +8,7 @@ import { isErrorApiResponse } from '@/lib/api/api.utils';
 import { retryingApi } from '@/lib/api/apiClient';
 import { safeApiCall } from '@/lib/api/safeApiCall';
 import { Nullable } from '@/lib/common.types';
+import { sortCollectionByDisplayOrder } from '@/lib/utils';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import { APP_ROUTES } from '@/routes/appRoutes';
 import { StatusCodes } from 'http-status-codes';
@@ -71,9 +72,7 @@ export const getCollections = async (): Promise<
       )
     );
 
-    return (response.data?.items || []).toSorted(
-      (a, b) => a.displayOrder - b.displayOrder
-    );
+    return (response.data?.items || []).sort(sortCollectionByDisplayOrder);
   } catch (error) {
     console.error('getCollections error', error);
 

@@ -4,7 +4,12 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { useCollections } from '@/features/collections/collection.api';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
-import { mapCollectionsToTree } from '@/lib/utils';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import {
+  mapCollectionsToTree,
+  sortCollectionByDisplayOrder,
+} from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { CursorProps, MoveHandler, Tree } from 'react-arborist';
 
@@ -22,6 +27,7 @@ interface CollectionsTreeViewProps {
 const CollectionsTreeView = ({
   initialCollections,
 }: CollectionsTreeViewProps) => {
+  const queryClient = useQueryClient();
   const {
     data: collections,
     isPending,
@@ -35,22 +41,74 @@ const CollectionsTreeView = ({
 
   const onMove: MoveHandler<CollectionNode> = ({
     dragNodes,
-    parentId,
-    index,
+    parentId: targetParentId,
+    index: targetIndex,
   }) => {
     const draggedNode = dragNodes[0];
-    const originalParentNode = draggedNode.parent;
-    const originalParentId = originalParentNode ? originalParentNode.id : null;
+    const originalParentId = draggedNode.parent?.id ?? null;
 
-    console.log('index', index);
+    queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+      QUERY_KEYS.collections.list(),
+      (prev) => {
+        if (!prev) return prev;
 
-    if (originalParentId === parentId) {
-      console.log('Reordering within the same parent');
-    } else {
-      console.log('Moving to a new parent');
-      console.log('originalParentId', originalParentId);
-      console.log('new parentId', parentId);
-    }
+        const isSameParent = originalParentId === targetParentId;
+
+        const getSortedSiblings = (
+          items: CollectionWithBookmarkCount[],
+          pid: string | null
+        ) =>
+          items
+            .filter((item) => item.parentId === pid)
+            .sort(sortCollectionByDisplayOrder);
+
+        if (isSameParent) {
+          const siblings = getSortedSiblings(prev, targetParentId);
+
+          // Remove dragged node
+          const withoutDragged = siblings.filter(
+            (s) => s.id !== draggedNode.id
+          );
+
+          // Insert it at the new index
+          const newSiblings = [
+            ...withoutDragged.slice(0, targetIndex),
+            { ...draggedNode, parentId: targetParentId },
+            ...withoutDragged.slice(targetIndex),
+          ];
+
+          // Map new displayOrders into original collection list
+          const updated = prev.map((item) => {
+            const updatedSiblingIndex = newSiblings.findIndex(
+              (s) => s.id === item.id
+            );
+            if (updatedSiblingIndex !== -1) {
+              return {
+                ...item,
+                displayOrder: updatedSiblingIndex,
+              };
+            }
+            return item;
+          });
+
+          return updated.sort(sortCollectionByDisplayOrder);
+        } else {
+          // TODO: Update the new displayOrder's on the parent's children nodes as well
+          return prev
+            .map((item) => {
+              if (item.id === draggedNode.id) {
+                return {
+                  ...item,
+                  parentId: targetParentId,
+                  displayOrder: targetIndex,
+                };
+              }
+              return item;
+            })
+            .sort(sortCollectionByDisplayOrder);
+        }
+      }
+    );
   };
 
   if (error) {

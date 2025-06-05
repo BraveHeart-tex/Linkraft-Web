@@ -7,9 +7,8 @@ export interface Collection {
   id: string;
   name: string;
   userId: User['id'];
-  description: string | null;
   createdAt: string;
-  parentId: Collection['id'];
+  parentId: Collection['id'] | null;
   displayOrder: number;
 }
 

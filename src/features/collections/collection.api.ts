@@ -9,6 +9,7 @@ import { safeApiCall } from '@/lib/api/safeApiCall';
 import { InfiniteDataPage } from '@/lib/query/infinite/types';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { ToastId } from '@/lib/toast';
+import { sortCollectionByDisplayOrder } from '@/lib/utils';
 import { API_ROUTES } from '@/routes/apiRoutes';
 import {
   useInfiniteQuery,
@@ -81,9 +82,7 @@ export const useCollections = (params?: {
         )
       );
 
-      return (response.data?.items || []).toSorted(
-        (a, b) => a.displayOrder - b.displayOrder
-      );
+      return (response.data?.items || []).sort(sortCollectionByDisplayOrder);
     },
     initialData: params?.initialData,
   });

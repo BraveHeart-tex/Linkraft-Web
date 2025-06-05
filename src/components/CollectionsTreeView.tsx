@@ -93,16 +93,30 @@ const CollectionsTreeView = ({
 
           return updated.sort(sortCollectionByDisplayOrder);
         } else {
-          // TODO: Update the new displayOrder's on the parent's children nodes as well
+          const targetSiblings = getSortedSiblings(prev, targetParentId);
+
+          const newTargetSiblings = [
+            ...targetSiblings.slice(0, targetIndex),
+            { ...draggedNode, parentId: targetParentId },
+            ...targetSiblings.slice(targetIndex),
+          ];
+
           return prev
             .map((item) => {
-              if (item.id === draggedNode.id) {
+              const newIndex = newTargetSiblings.findIndex(
+                (s) => s.id === item.id
+              );
+
+              // Update affected siblings (including dragged node)
+              if (newIndex !== -1) {
                 return {
                   ...item,
                   parentId: targetParentId,
-                  displayOrder: targetIndex,
+                  displayOrder: newIndex,
                 };
               }
+
+              // Leave all other nodes unchanged
               return item;
             })
             .sort(sortCollectionByDisplayOrder);

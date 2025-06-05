@@ -169,18 +169,24 @@ const CollectionTreeNodeActions = ({
   });
 
   const handleDelete = withStopPropagation(() => {
-    showConfirmDialog({
-      title: 'Are your sure you want to delete this collection?',
-      message: 'This action cannot be undone',
-      primaryActionLabel: 'Delete',
-      alertText:
-        node.data.bookmarkCount > 0
-          ? 'All the bookmarks inside the collection will be moved to trash'
-          : '',
-      onConfirm: () => {
-        deleteCollection({ collectionId: node.data.id });
-      },
-    });
+    const { id, bookmarkCount } = node.data;
+
+    const confirmAndDelete = () => deleteCollection({ collectionId: id });
+
+    if (bookmarkCount) {
+      showConfirmDialog({
+        title: 'Are you sure you want to delete this collection?',
+        message: 'This action cannot be undone',
+        primaryActionLabel: 'Delete',
+        alertText:
+          bookmarkCount > 0
+            ? 'All the bookmarks inside the collection will be moved to trash'
+            : '',
+        onConfirm: confirmAndDelete,
+      });
+    } else {
+      confirmAndDelete();
+    }
   });
 
   const handleRename = withStopPropagation(async () => {
@@ -239,7 +245,7 @@ const CollectionTreeNodeActions = ({
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start px-2 py-1.5 rounded-sm font-medium"
+          className="w-full justify-start text-destructive px-2 py-1.5 rounded-sm font-medium hover:bg-destructive hover:text-destructive-foreground"
           onClick={handleDelete}
         >
           Delete

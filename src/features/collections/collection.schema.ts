@@ -1,3 +1,4 @@
+import { Collection } from '@/features/collections/collection.types';
 import { z } from 'zod';
 
 export const CreateCollectionSchema = z.object({
@@ -8,6 +9,12 @@ export const CreateCollectionSchema = z.object({
     .max(255, 'Name cannot exceed 255 characters'),
 });
 
+export const RenameCollectionSchema = CreateCollectionSchema.pick({
+  name: true,
+});
+
 export type CreateCollectionInput = z.infer<typeof CreateCollectionSchema>;
 
-export type UpdateCollectionInput = Required<CreateCollectionInput>;
+export type RenameCollectionInput = z.infer<typeof RenameCollectionSchema> & {
+  id: Collection['id'];
+};

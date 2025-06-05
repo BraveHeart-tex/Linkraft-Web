@@ -19,7 +19,7 @@ import {
 } from '@tanstack/react-query';
 import {
   CreateCollectionInput,
-  UpdateCollectionInput,
+  RenameCollectionInput,
 } from './collection.schema';
 import {
   Collection,
@@ -122,24 +122,24 @@ interface UpdateCollectionContext {
   previousCollections: CollectionWithBookmarkCount[];
 }
 
-export const useUpdateCollection = (
+export const useRenameCollection = (
   options?: UseMutationOptions<
     ApiResponse<null>,
     unknown,
-    UpdateCollectionInput,
+    RenameCollectionInput,
     UpdateCollectionContext
   >
 ): UseMutationResult<
   ApiResponse<null>,
   unknown,
-  UpdateCollectionInput,
+  RenameCollectionInput,
   UpdateCollectionContext
 > =>
   useMutation({
     mutationFn: async (data) => {
       return await safeApiCall(() =>
         api.put<ApiResponse<null>>(
-          API_ROUTES.collection.updateCollection(data.id),
+          API_ROUTES.collection.renameCollection(data.id),
           data
         )
       );

@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/Separator';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import {
   useDeleteCollection,
-  useUpdateCollection,
+  useRenameCollection,
 } from '@/features/collections/collection.api';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import { isErrorApiResponse } from '@/lib/api/api.utils';
@@ -118,7 +118,7 @@ const CollectionTreeNodeActions = ({
   });
 
   // TODO: Handle optimistic updates on all bookmarks and collection bookmarks etc
-  const { mutate: renameCollection } = useUpdateCollection({
+  const { mutate: renameCollection } = useRenameCollection({
     async onMutate(variables) {
       await queryClient.cancelQueries({
         queryKey: QUERY_KEYS.collections.list(),

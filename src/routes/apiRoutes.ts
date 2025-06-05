@@ -53,10 +53,11 @@ export const API_ROUTES = {
       const queryString = params.toString();
       return `/collections${queryString ? `?${queryString}` : ''}`;
     },
+
     deleteCollection: (collectionId: Collection['id']) =>
       `/collections/${collectionId}`,
-    updateCollection: (collectionId: Collection['id']) =>
-      `/collections/${collectionId}`,
+    renameCollection: (collectionId: Collection['id']) =>
+      `/collections/${collectionId}/rename`,
     getAccessibleCollectionById: (collectionId: Collection['id']) =>
       `/collections/${collectionId}`,
   },

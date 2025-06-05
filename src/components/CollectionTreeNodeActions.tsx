@@ -3,12 +3,11 @@ import { CollectionNode } from '@/components/CollectionsTreeView';
 import { TREE_VIEW_DEFAULT_ICON_SIZE } from '@/components/CollectionTreeNode';
 import { Button } from '@/components/ui/Button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/Popover';
+import { Separator } from '@/components/ui/Separator';
 import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
 import {
   useDeleteCollection,
@@ -21,7 +20,11 @@ import { updateItemInInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
 import { showErrorToast } from '@/lib/toast';
-import { cn, withStopPropagation } from '@/lib/utils';
+import {
+  cn,
+  ensureCollectionTitleLength,
+  withStopPropagation,
+} from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { EllipsisIcon } from 'lucide-react';
 import { NodeApi } from 'react-arborist';
@@ -182,17 +185,21 @@ const CollectionTreeNodeActions = ({
 
   const handleRename = withStopPropagation(async () => {
     const editResult = await node.edit();
-    if (!editResult.cancelled) {
-      renameCollection({
-        id: node.data.id,
-        name: editResult.value,
-      });
+    if (editResult.cancelled) return;
+    if (editResult.value.replaceAll(' ', '').length === 0) {
+      node.reset();
+      return;
     }
+
+    renameCollection({
+      id: node.data.id,
+      name: ensureCollectionTitleLength(editResult.value),
+    });
   });
 
   return (
-    <DropdownMenu modal>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           onClick={(e) => {
             node.select();
@@ -208,21 +215,37 @@ const CollectionTreeNodeActions = ({
         >
           <EllipsisIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
+      </PopoverTrigger>
+      <PopoverContent
         align="start"
         side="bottom"
-        // Keeps the focus on the node input on rename click
+        className="w-max"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <DropdownMenuItem onClick={handleRename}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start px-2 py-1.5 rounded-sm font-medium"
+          onClick={handleRename}
+        >
           Create nested collection
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleRename}>Rename</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </Button>
+        <Separator />
+        <Button
+          variant="ghost"
+          className="w-full justify-start px-2 py-1.5 rounded-sm font-medium"
+          onClick={handleRename}
+        >
+          Rename
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start px-2 py-1.5 rounded-sm font-medium"
+          onClick={handleDelete}
+        >
+          Delete
+        </Button>
+      </PopoverContent>
+    </Popover>
   );
 };
 

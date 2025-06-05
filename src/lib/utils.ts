@@ -1,5 +1,6 @@
 import { CollectionNode } from '@/components/CollectionsTreeView';
 import { SelectOption } from '@/components/ui/MultiSelect';
+import { MAX_COLLECTION_TITLE_LENGTH } from '@/features/collections/collection.constants';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -65,3 +66,8 @@ export function mapCollectionsToTree(
 
   return roots;
 }
+
+export const ensureCollectionTitleLength = (title: string): string =>
+  title.length > MAX_COLLECTION_TITLE_LENGTH
+    ? title.slice(0, MAX_COLLECTION_TITLE_LENGTH)
+    : title;

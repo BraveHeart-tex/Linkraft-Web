@@ -1,0 +1,1 @@
+export const MAX_COLLECTION_TITLE_LENGTH = 200;

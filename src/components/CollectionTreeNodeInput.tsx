@@ -1,6 +1,7 @@
 'use client';
 
 import { CollectionNode } from '@/components/CollectionsTreeView';
+import { MAX_COLLECTION_TITLE_LENGTH } from '@/features/collections/collection.constants';
 import { useEffect, useRef } from 'react';
 import { NodeApi } from 'react-arborist';
 
@@ -29,12 +30,19 @@ const CollectionTreeNodeInput = ({ node }: CollectionTreeNodeInputProps) => {
         e.currentTarget.select();
       }}
       onBlur={() => {
-        console.log('blurring input');
         node.reset();
       }}
+      maxLength={MAX_COLLECTION_TITLE_LENGTH}
       onKeyDown={(e) => {
         if (e.key === 'Escape') node.reset();
-        if (e.key === 'Enter') node.submit(e.currentTarget.value);
+        if (e.key === 'Enter') {
+          const value = e.currentTarget.value;
+          if (value && value.replaceAll(' ', '').length) {
+            node.submit(e.currentTarget.value);
+          } else {
+            node.reset();
+          }
+        }
       }}
     />
   );

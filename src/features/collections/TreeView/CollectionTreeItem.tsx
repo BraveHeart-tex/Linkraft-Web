@@ -11,6 +11,14 @@ const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
   const [isHovering, setIsHovering] = useState(false);
   const hasChildren = item.getChildren().length > 0;
 
+  if (item.isRenaming()) {
+    return (
+      <div style={{ paddingLeft: `${item.getItemMeta().level + 1 * 40}px` }}>
+        <CollectionRenameInput item={item} />
+      </div>
+    );
+  }
+
   return (
     <button
       {...item.getProps()}
@@ -40,24 +48,18 @@ const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
         ) : null}
 
         <div className="flex items-center flex-1 justify-between">
-          {item.isRenaming() ? (
-            <CollectionRenameInput item={item} />
-          ) : (
-            <>
-              <div className="flex items-center gap-1">
-                {item.isExpanded() ? (
-                  <FolderOpenIcon
-                    size={TREE_VIEW_DEFAULT_ICON_SIZE}
-                    className="fill-yellow-500 stroke-yellow-700 dark:fill-yellow-600 dark:stroke-yellow-400"
-                  />
-                ) : (
-                  <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
-                )}
-                <span>{item.getItemName()}</span>
-              </div>
-              <CollectionTreeItemActions item={item} isHovering={isHovering} />
-            </>
-          )}
+          <div className="flex items-center gap-1">
+            {item.isExpanded() ? (
+              <FolderOpenIcon
+                size={TREE_VIEW_DEFAULT_ICON_SIZE}
+                className="fill-yellow-500 stroke-yellow-700 dark:fill-yellow-600 dark:stroke-yellow-400"
+              />
+            ) : (
+              <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
+            )}
+            <span>{item.getItemName()}</span>
+          </div>
+          <CollectionTreeItemActions item={item} isHovering={isHovering} />
         </div>
       </div>
     </button>

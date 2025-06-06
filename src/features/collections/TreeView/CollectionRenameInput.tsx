@@ -10,8 +10,7 @@ const CollectionRenameInput = ({ item }: CollectionRenameInputProps) => {
   return (
     <input
       {...item.getRenameInputProps()}
-      className="w-full h-full flex-1 border-b border-transparent focus:border-b-primary focus:outline-none"
-      type="text"
+      className="w-full h-7 flex-1 border-b border-transparent focus:border-b-primary focus:outline-none"
       onFocus={(e) => e.currentTarget.select()}
       maxLength={MAX_COLLECTION_TITLE_LENGTH}
     />

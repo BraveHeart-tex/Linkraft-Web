@@ -37,6 +37,9 @@ const CollectionTreeView = ({ collections }: CollectionTreeViewProps) => {
         )} on ${target.item.getId()}, ${JSON.stringify(target)}`
       );
     },
+    onRename: (item, value) => {
+      alert(`Renamed ${item.getItemName()} to ${value}`);
+    },
     indent: 20,
     dataLoader: {
       getItem: (itemId) => mappedCollections[itemId],

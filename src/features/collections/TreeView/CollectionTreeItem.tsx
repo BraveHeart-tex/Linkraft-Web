@@ -1,8 +1,10 @@
 'use client';
+import CollectionRenameInput from '@/features/collections/TreeView/CollectionRenameInput';
 import CollectionTreeItemActions from '@/features/collections/TreeView/CollectionTreeItemActions';
+import { TREE_VIEW_DEFAULT_ICON_SIZE } from '@/features/collections/TreeView/constants';
 import { CollectionNodeInstance } from '@/features/collections/TreeView/types';
 import { cn } from '@/lib/utils';
-import { ChevronRightIcon } from 'lucide-react';
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
@@ -13,17 +15,18 @@ const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
     <button
       {...item.getProps()}
       style={{ paddingLeft: `${item.getItemMeta().level * 20}px` }}
-      className="flex bg-transparent border-0 border-none w-full pl-1 rounded-md rounded-r-none"
+      className={cn(
+        'flex bg-transparent border-0 border-none w-full pl-1 rounded-md rounded-r-none hover:bg-accent',
+        item.isFocused() && 'bg-accent outline-primary',
+        item.isSelected() && 'bg-accent',
+        item.isDragTarget() && 'bg-accent border-muted text-accent-foreground'
+      )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {}
       <div
         className={cn(
-          'relative w-full text-left bg-transparent py-1 px-2 transition-colors cursor-pointer hover:bg-muted rounded-md rounded-r-none font-medium flex items-center',
-          item.isSelected() && 'bg-muted',
-          item.isDragTarget() &&
-            'bg-accent border-muted text-accent-foreground',
+          'relative w-full text-left bg-transparent py-1 px-2 transition-colors cursor-pointer rounded-md rounded-r-none font-medium flex items-center',
           !hasChildren && 'pl-6'
         )}
       >
@@ -37,13 +40,25 @@ const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
         ) : null}
 
         <div className="flex items-center flex-1 justify-between">
-          <span>{item.getItemName()}</span>
-          <CollectionTreeItemActions item={item} isHovering={isHovering} />
+          {item.isRenaming() ? (
+            <CollectionRenameInput item={item} />
+          ) : (
+            <>
+              <div className="flex items-center gap-1">
+                {item.isExpanded() ? (
+                  <FolderOpenIcon
+                    size={TREE_VIEW_DEFAULT_ICON_SIZE}
+                    className="fill-yellow-500 stroke-yellow-700 dark:fill-yellow-600 dark:stroke-yellow-400"
+                  />
+                ) : (
+                  <FolderIcon size={TREE_VIEW_DEFAULT_ICON_SIZE} />
+                )}
+                <span>{item.getItemName()}</span>
+              </div>
+              <CollectionTreeItemActions item={item} isHovering={isHovering} />
+            </>
+          )}
         </div>
-
-        {item.isSelected() ? (
-          <span className="absolute left-[-2px] top-1/2 -translate-y-1/2 h-4 w-1 bg-primary rounded-full" />
-        ) : null}
       </div>
     </button>
   );

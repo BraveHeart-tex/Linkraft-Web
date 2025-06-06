@@ -12,7 +12,7 @@ import {
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
 import { ChevronRightIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 
 export function mapCollectionsToNodes(
   collections: CollectionWithBookmarkCount[]
@@ -95,12 +95,12 @@ const SimpleTreeView = ({
   });
 
   return (
-    <div className="h-full w-full flex-1 overflow-auto max-h-max">
+    <div className="h-full w-full flex-1 max-h-max">
       <div {...tree.getContainerProps()} className="max-w-[18.75rem]">
         {tree.getItems().map((item) => (
           <SimpleTreeItem item={item} key={item.getId()} />
         ))}
-        <div style={tree.getDragLineStyle()} className="dragline" />
+        <Dragline draglineStyle={tree.getDragLineStyle()} />
       </div>
     </div>
   );
@@ -120,7 +120,7 @@ const SimpleTreeItem = ({ item }: { item: ItemInstance<CollectionNode> }) => {
           'relative w-full text-left bg-transparent py-1 px-2 transition-colors cursor-pointer hover:bg-muted rounded-md rounded-r-none font-medium',
           item.isSelected() && 'bg-muted',
           item.isDragTarget() &&
-            'bg-primary/50 border-muted text-primary-foreground',
+            'bg-accent border-muted text-accent-foreground',
           !hasChildren && 'pl-6'
         )}
       >
@@ -135,10 +135,21 @@ const SimpleTreeItem = ({ item }: { item: ItemInstance<CollectionNode> }) => {
         {item.getItemName()}
 
         {item.isSelected() ? (
-          <span className="absolute top-[5px] left-[-2px] h-4 w-1 bg-primary rounded-full" />
+          <span className="absolute left-[-2px] top-1/2 -translate-y-1/2 h-4 w-1 bg-primary rounded-full" />
         ) : null}
       </div>
     </button>
+  );
+};
+
+const Dragline = ({ draglineStyle }: { draglineStyle: CSSProperties }) => {
+  return (
+    <div
+      style={draglineStyle}
+      className="absolute h-[2px] mt-[-1px] w-full bg-primary"
+    >
+      <div className="absolute -left-[1px] -top-[1px] h-[4px] w-[4px] rounded-full border-[2px] border-primary bg-white" />
+    </div>
   );
 };
 

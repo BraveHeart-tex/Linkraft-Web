@@ -1,6 +1,5 @@
 import AppMenu from '@/components/AppMenu';
 import SidebarSearchButton from '@/components/SidebarSearchButton';
-import SimpleTreeview from '@/components/SimpleTreeview';
 import { Button } from '@/components/ui/Button';
 import {
   Sidebar,
@@ -12,6 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/Sidebar';
 import { getCollections } from '@/features/collections/collection.server';
+import SimpleTreeview from '@/features/collections/TreeView/CollectionTreeView';
 import UserMenu from '@/features/users/UserMenu';
 import { PlusIcon } from 'lucide-react';
 

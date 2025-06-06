@@ -1,5 +1,5 @@
-import { CollectionNode } from '@/components/CollectionsTreeView';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
+import { CollectionNode } from '@/features/collections/TreeView/types';
 
 export const mapCollectionsToNodes = (
   collections: CollectionWithBookmarkCount[]

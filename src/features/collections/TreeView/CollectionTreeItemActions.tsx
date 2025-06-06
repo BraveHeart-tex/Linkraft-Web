@@ -1,6 +1,5 @@
 'use client';
-import { CollectionNode } from '@/components/CollectionsTreeView';
-import { TREE_VIEW_DEFAULT_ICON_SIZE } from '@/components/CollectionTreeNode';
+
 import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   Popover,
@@ -8,13 +7,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/Popover';
 import { Separator } from '@/components/ui/Separator';
+import { TREE_VIEW_DEFAULT_ICON_SIZE } from '@/features/collections/TreeView/constants';
+import { CollectionNodeInstance } from '@/features/collections/TreeView/types';
 import { cn, withStopPropagation } from '@/lib/utils';
-import { ItemInstance } from '@headless-tree/core';
 import { EllipsisIcon } from 'lucide-react';
 import { JSX } from 'react';
 
 interface CollectionTreeItemActionsProps {
-  item: ItemInstance<CollectionNode>;
+  item: CollectionNodeInstance;
   isHovering: boolean;
 }
 

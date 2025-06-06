@@ -1,5 +1,4 @@
 'use client';
-import { CollectionNode } from '@/components/CollectionsTreeView';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
 import {
   dragAndDropFeature,
@@ -14,6 +13,7 @@ import { useMemo } from 'react';
 
 import CollectionDragLine from '@/features/collections/TreeView/CollectionDragLine';
 import CollectionTreeItem from '@/features/collections/TreeView/CollectionTreeItem';
+import { CollectionNode } from '@/features/collections/TreeView/types';
 import { mapCollectionsToNodes } from '@/features/collections/TreeView/utils';
 
 interface CollectionTreeViewProps {

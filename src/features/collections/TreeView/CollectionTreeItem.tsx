@@ -1,16 +1,11 @@
 'use client';
-import { CollectionNode } from '@/components/CollectionsTreeView';
 import CollectionTreeItemActions from '@/features/collections/TreeView/CollectionTreeItemActions';
+import { CollectionNodeInstance } from '@/features/collections/TreeView/types';
 import { cn } from '@/lib/utils';
-import { ItemInstance } from '@headless-tree/core';
 import { ChevronRightIcon } from 'lucide-react';
 import { useState } from 'react';
 
-const CollectionTreeItem = ({
-  item,
-}: {
-  item: ItemInstance<CollectionNode>;
-}) => {
+const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
   const [isHovering, setIsHovering] = useState(false);
   const hasChildren = item.getChildren().length > 0;
 
@@ -22,6 +17,7 @@ const CollectionTreeItem = ({
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      {}
       <div
         className={cn(
           'relative w-full text-left bg-transparent py-1 px-2 transition-colors cursor-pointer hover:bg-muted rounded-md rounded-r-none font-medium flex items-center',

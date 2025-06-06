@@ -30,7 +30,6 @@ const CollectionTreeNode = ({
           'hover:bg-sidebar-foreground/10 outline outline-primary'
       )}
       tabIndex={-1}
-      onClick={() => node.isInternal && node.toggle()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -44,6 +43,7 @@ const CollectionTreeNode = ({
           {node.data?.children?.length > 0 ? (
             <ChevronRightIcon
               size={TREE_VIEW_SECONDARY_ICON_SIZE}
+              onClick={() => node.isInternal && node.toggle()}
               className={cn(
                 'shrink-0 rounded-full',
                 node.isInternal && node.isOpen && 'rotate-90'

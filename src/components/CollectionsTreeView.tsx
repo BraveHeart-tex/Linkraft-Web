@@ -10,8 +10,8 @@ import {
   sortCollectionByDisplayOrder,
 } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { CursorProps, MoveHandler, Tree } from 'react-arborist';
+import { useMemo, useRef } from 'react';
+import { CursorProps, MoveHandler, Tree, TreeApi } from 'react-arborist';
 
 export interface CollectionNode {
   id: string;
@@ -27,6 +27,7 @@ interface CollectionsTreeViewProps {
 const CollectionsTreeView = ({
   initialCollections,
 }: CollectionsTreeViewProps) => {
+  const tree = useRef<TreeApi<CollectionNode>>(null);
   const queryClient = useQueryClient();
   const {
     data: collections,
@@ -42,9 +43,12 @@ const CollectionsTreeView = ({
   const onMove: MoveHandler<CollectionNode> = ({
     dragNodes,
     parentId: targetParentId,
-    index: targetIndex,
   }) => {
+    const targetIndex = tree.current?.state.dnd.index;
+    if (typeof targetIndex !== 'number') return;
+
     const draggedNode = dragNodes[0];
+
     const originalParentId = draggedNode.parent?.id ?? null;
 
     queryClient.setQueryData<CollectionWithBookmarkCount[]>(
@@ -142,6 +146,7 @@ const CollectionsTreeView = ({
         <ResponsiveContainer>
           {(dimensions) => (
             <Tree
+              ref={tree}
               {...dimensions}
               onMove={onMove}
               data={collectionsTree}

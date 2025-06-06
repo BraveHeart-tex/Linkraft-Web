@@ -1,6 +1,6 @@
 import AppMenu from '@/components/AppMenu';
-import CollectionsTreeView from '@/components/CollectionsTreeView';
 import SidebarSearchButton from '@/components/SidebarSearchButton';
+import SimpleTreeview from '@/components/SimpleTreeview';
 import { Button } from '@/components/ui/Button';
 import {
   Sidebar,
@@ -43,7 +43,8 @@ const AppSidebar = async () => {
             Collections
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <CollectionsTreeView initialCollections={collections} />
+            <SimpleTreeview collections={collections} />
+            {/* <CollectionsTreeView initialCollections={collections} /> */}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

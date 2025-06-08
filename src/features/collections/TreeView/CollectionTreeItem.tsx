@@ -7,7 +7,12 @@ import { cn } from '@/lib/utils';
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 
-const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
+interface CollectionTreeItemProps {
+  item: CollectionNodeInstance;
+  onDelete: (item: CollectionNodeInstance) => void;
+}
+
+const CollectionTreeItem = ({ item, onDelete }: CollectionTreeItemProps) => {
   const [isHovering, setIsHovering] = useState(false);
   const hasChildren = item.getChildren().length > 0;
 
@@ -59,7 +64,11 @@ const CollectionTreeItem = ({ item }: { item: CollectionNodeInstance }) => {
             )}
             <span>{item.getItemName()}</span>
           </div>
-          <CollectionTreeItemActions item={item} isHovering={isHovering} />
+          <CollectionTreeItemActions
+            item={item}
+            isHovering={isHovering}
+            onDelete={onDelete}
+          />
         </div>
       </div>
     </button>

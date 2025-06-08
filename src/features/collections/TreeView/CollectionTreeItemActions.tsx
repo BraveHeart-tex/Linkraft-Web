@@ -11,23 +11,22 @@ import { TREE_VIEW_DEFAULT_ICON_SIZE } from '@/features/collections/TreeView/con
 import { CollectionNodeInstance } from '@/features/collections/TreeView/types';
 import { cn, withStopPropagation } from '@/lib/utils';
 import { EllipsisIcon } from 'lucide-react';
-import { JSX } from 'react';
+import { JSX, useCallback } from 'react';
 
 interface CollectionTreeItemActionsProps {
   item: CollectionNodeInstance;
   isHovering: boolean;
+  onDelete: (item: CollectionNodeInstance) => void;
 }
 
 const CollectionTreeItemActions = ({
   item,
   isHovering,
+  onDelete,
 }: CollectionTreeItemActionsProps) => {
   const bookmarkCount = item.getItemData().bookmarkCount;
-  const handleRename = withStopPropagation(() => {
-    item.startRenaming();
-  });
 
-  const renderTriggerLabel = (): JSX.Element => {
+  const renderTriggerLabel = useCallback((): JSX.Element => {
     const hasBookmarks = bookmarkCount > 0;
 
     if (isHovering) {
@@ -40,7 +39,15 @@ const CollectionTreeItemActions = ({
 
     // No label if not hovering and no bookmarks
     return <></>;
-  };
+  }, [bookmarkCount, isHovering]);
+
+  const handleRename = withStopPropagation(() => {
+    item.startRenaming();
+  });
+
+  const handleDelete = withStopPropagation(() => {
+    onDelete(item);
+  });
 
   return (
     <Popover>
@@ -83,6 +90,7 @@ const CollectionTreeItemActions = ({
         <Button
           variant="ghost"
           className="w-full justify-start text-destructive px-2 py-1.5 rounded-sm font-medium hover:bg-destructive hover:text-destructive-foreground"
+          onClick={handleDelete}
         >
           Delete
         </Button>

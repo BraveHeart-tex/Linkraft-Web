@@ -1,5 +1,25 @@
 'use client';
+import { InfiniteBookmarksData } from '@/features/bookmarks/bookmark.types';
+import CollectionDragLine from '@/features/collections/TreeView/CollectionDragLine';
+import CollectionTreeItem from '@/features/collections/TreeView/CollectionTreeItem';
+import { ROOT_ITEM_ID } from '@/features/collections/TreeView/constants';
+import {
+  CollectionNode,
+  CollectionNodeInstance,
+} from '@/features/collections/TreeView/types';
+import { mapCollectionsToNodes } from '@/features/collections/TreeView/utils';
+import {
+  useCollections,
+  useDeleteCollection,
+  useRenameCollection,
+} from '@/features/collections/collection.api';
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
+import { isErrorApiResponse } from '@/lib/api/api.utils';
+import { getCurrentTimestamp } from '@/lib/dateUtils';
+import { updateItemInInfiniteQueryData } from '@/lib/query/infinite/cacheUtils';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import { useConfirmDialogStore } from '@/lib/stores/ui/confirmDialogStore';
+import { showErrorToast } from '@/lib/toast';
 import {
   dragAndDropFeature,
   hotkeysCoreFeature,
@@ -9,21 +29,8 @@ import {
   syncDataLoaderFeature,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useMemo } from 'react';
-
-import CollectionDragLine from '@/features/collections/TreeView/CollectionDragLine';
-import CollectionTreeItem from '@/features/collections/TreeView/CollectionTreeItem';
-import { ROOT_ITEM_ID } from '@/features/collections/TreeView/constants';
-import { CollectionNode } from '@/features/collections/TreeView/types';
-import { mapCollectionsToNodes } from '@/features/collections/TreeView/utils';
-import {
-  useCollections,
-  useRenameCollection,
-} from '@/features/collections/collection.api';
-import { isErrorApiResponse } from '@/lib/api/api.utils';
-import { QUERY_KEYS } from '@/lib/queryKeys';
-import { showErrorToast } from '@/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 interface CollectionTreeViewProps {
   collections: CollectionWithBookmarkCount[];
@@ -33,6 +40,9 @@ const CollectionTreeView = ({
   collections: initialCollections,
 }: CollectionTreeViewProps) => {
   const queryClient = useQueryClient();
+  const showConfirmDialog = useConfirmDialogStore(
+    (state) => state.showConfirmDialog
+  );
   const { data: collections } = useCollections({
     initialData: initialCollections,
   });
@@ -64,7 +74,7 @@ const CollectionTreeView = ({
     dataLoader: {
       getItem: (itemId) => mappedCollections[itemId],
       getChildren: (itemId) =>
-        mappedCollections[itemId].children.map((child) => child.id),
+        mappedCollections[itemId]?.children?.map((child) => child.id),
     },
     features: [
       syncDataLoaderFeature,
@@ -130,11 +140,103 @@ const CollectionTreeView = ({
     },
   });
 
+  const { mutate: deleteCollection } = useDeleteCollection({
+    async onMutate(variables) {
+      await Promise.all([
+        queryClient.cancelQueries({
+          queryKey: QUERY_KEYS.collections.list(),
+        }),
+        queryClient.cancelQueries({
+          queryKey: QUERY_KEYS.bookmarks.list(),
+        }),
+      ]);
+      const previousCollections = queryClient.getQueryData<
+        CollectionWithBookmarkCount[]
+      >(QUERY_KEYS.collections.list());
+      const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list()
+      );
+      queryClient.setQueryData<CollectionWithBookmarkCount[]>(
+        QUERY_KEYS.collections.list(),
+        (prev) =>
+          prev
+            ? prev.filter(
+                (collection) => collection.id !== variables.collectionId
+              )
+            : prev
+      );
+      queryClient.setQueryData<InfiniteBookmarksData>(
+        QUERY_KEYS.bookmarks.list(),
+        (old) =>
+          updateItemInInfiniteQueryData(old, {
+            match: (item) => item.collectionId === variables.collectionId,
+            update: (item) => ({
+              ...item,
+              deletedAt: getCurrentTimestamp(),
+            }),
+          })
+      );
+      tree.rebuildTree();
+      return { previousCollections, previousBookmarks };
+    },
+    async onError(error, _variables, context) {
+      queryClient.setQueryData(
+        QUERY_KEYS.collections.list(),
+        context?.previousCollections
+      );
+      queryClient.setQueryData(
+        QUERY_KEYS.bookmarks.list(),
+        context?.previousBookmarks
+      );
+      tree.rebuildTree();
+      showErrorToast('An error occurred while deleting the collection', {
+        description: isErrorApiResponse(error)
+          ? error.message
+          : 'An unknown error occurred',
+      });
+    },
+    async onSettled() {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.collections.list(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.trashed(),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.bookmarks.list(),
+        }),
+      ]);
+    },
+  });
+
+  const handleDelete = (item: CollectionNodeInstance) => {
+    const { bookmarkCount, id } = item.getItemData();
+    const confirmAndDelete = () => deleteCollection({ collectionId: id });
+
+    if (bookmarkCount) {
+      showConfirmDialog({
+        title: 'Are you sure you want to delete this collection?',
+        message: 'This action cannot be undone',
+        primaryActionLabel: 'Delete',
+        alertText:
+          'All the bookmarks inside the collection will be moved to trash',
+        onConfirm: confirmAndDelete,
+      });
+    } else {
+      confirmAndDelete();
+    }
+  };
+
   return (
     <div className="h-full w-full flex-1 max-h-max">
       <div {...tree.getContainerProps()} className="max-w-[18.75rem]">
         {tree.getItems().map((item) => (
-          <CollectionTreeItem item={item} key={item.getId()} />
+          <CollectionTreeItem
+            item={item}
+            key={item.getId()}
+            onDelete={handleDelete}
+          />
         ))}
         <CollectionDragLine draglineStyle={tree.getDragLineStyle()} />
       </div>

@@ -7,7 +7,10 @@ import {
   CollectionNode,
   CollectionNodeInstance,
 } from '@/features/collections/TreeView/types';
-import { mapCollectionsToNodes } from '@/features/collections/TreeView/utils';
+import {
+  getDescendantIds,
+  mapCollectionsToNodes,
+} from '@/features/collections/TreeView/utils';
 import {
   useCollections,
   useDeleteCollection,
@@ -24,6 +27,7 @@ import {
   dragAndDropFeature,
   hotkeysCoreFeature,
   keyboardDragAndDropFeature,
+  removeItemsFromParents,
   renamingFeature,
   selectionFeature,
   syncDataLoaderFeature,
@@ -32,20 +36,13 @@ import { useTree } from '@headless-tree/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-interface CollectionTreeViewProps {
-  collections: CollectionWithBookmarkCount[];
-}
-
-const CollectionTreeView = ({
-  collections: initialCollections,
-}: CollectionTreeViewProps) => {
+const CollectionTreeView = () => {
   const queryClient = useQueryClient();
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
   );
-  const { data: collections } = useCollections({
-    initialData: initialCollections,
-  });
+  const { data: collections, isPending: isPendingCollections } =
+    useCollections();
 
   const mappedCollections: Record<string, CollectionNode> = useMemo(() => {
     if (!collections) return {};
@@ -73,8 +70,7 @@ const CollectionTreeView = ({
     indent: 20,
     dataLoader: {
       getItem: (itemId) => mappedCollections[itemId],
-      getChildren: (itemId) =>
-        mappedCollections[itemId]?.children?.map((child) => child.id),
+      getChildren: (itemId) => mappedCollections[itemId].children,
     },
     features: [
       syncDataLoaderFeature,
@@ -153,18 +149,20 @@ const CollectionTreeView = ({
       const previousCollections = queryClient.getQueryData<
         CollectionWithBookmarkCount[]
       >(QUERY_KEYS.collections.list());
+
       const previousBookmarks = queryClient.getQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list()
       );
+
       queryClient.setQueryData<CollectionWithBookmarkCount[]>(
         QUERY_KEYS.collections.list(),
-        (prev) =>
-          prev
-            ? prev.filter(
-                (collection) => collection.id !== variables.collectionId
-              )
-            : prev
+        (prev) => {
+          if (!prev) return prev;
+          const descendantIds = getDescendantIds(prev, variables.collectionId);
+          return prev.filter((collection) => !descendantIds.has(collection.id));
+        }
       );
+
       queryClient.setQueryData<InfiniteBookmarksData>(
         QUERY_KEYS.bookmarks.list(),
         (old) =>
@@ -176,6 +174,7 @@ const CollectionTreeView = ({
             }),
           })
       );
+
       tree.rebuildTree();
       return { previousCollections, previousBookmarks };
     },
@@ -212,7 +211,12 @@ const CollectionTreeView = ({
 
   const handleDelete = (item: CollectionNodeInstance) => {
     const { bookmarkCount, id } = item.getItemData();
-    const confirmAndDelete = () => deleteCollection({ collectionId: id });
+    const confirmAndDelete = () => {
+      removeItemsFromParents([item], (parentItem, newChildren) => {
+        parentItem.getItemData().children = newChildren;
+      });
+      deleteCollection({ collectionId: id });
+    };
 
     if (bookmarkCount) {
       showConfirmDialog({
@@ -230,16 +234,20 @@ const CollectionTreeView = ({
 
   return (
     <div className="h-full w-full flex-1 max-h-max">
-      <div {...tree.getContainerProps()} className="max-w-[18.75rem]">
-        {tree.getItems().map((item) => (
-          <CollectionTreeItem
-            item={item}
-            key={item.getId()}
-            onDelete={handleDelete}
-          />
-        ))}
-        <CollectionDragLine draglineStyle={tree.getDragLineStyle()} />
-      </div>
+      {!isPendingCollections && collections?.length === 0 ? (
+        <p className="text-xs px-4 py-2">No collections found</p>
+      ) : (
+        <div {...tree.getContainerProps()} className="max-w-[18.75rem]">
+          {tree.getItems().map((item) => (
+            <CollectionTreeItem
+              item={item}
+              key={item.getId()}
+              onDelete={handleDelete}
+            />
+          ))}
+          <CollectionDragLine draglineStyle={tree.getDragLineStyle()} />
+        </div>
+      )}
     </div>
   );
 };

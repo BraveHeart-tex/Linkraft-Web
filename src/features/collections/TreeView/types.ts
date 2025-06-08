@@ -4,7 +4,7 @@ export interface CollectionNode {
   id: string;
   name: string;
   bookmarkCount: number;
-  children: CollectionNode[];
+  children: CollectionNode['id'][];
 }
 
 export type CollectionNodeInstance = ItemInstance<CollectionNode>;

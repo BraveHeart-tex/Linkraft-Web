@@ -13,10 +13,22 @@ import {
 import { getCollections } from '@/features/collections/collection.server';
 import SimpleTreeview from '@/features/collections/TreeView/CollectionTreeView';
 import UserMenu from '@/features/users/UserMenu';
+import { QUERY_KEYS } from '@/lib/queryKeys';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 
 const AppSidebar = async () => {
-  const collections = await getCollections();
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: QUERY_KEYS.collections.list(),
+    queryFn: getCollections,
+  });
+
   return (
     <Sidebar>
       <SidebarContent className="gap-0">
@@ -43,8 +55,9 @@ const AppSidebar = async () => {
             Collections
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SimpleTreeview collections={collections} />
-            {/* <CollectionsTreeView initialCollections={collections} /> */}
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <SimpleTreeview />
+            </HydrationBoundary>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -145,7 +145,7 @@ export const useBookmarks = () => {
     queryFn: async ({ pageParam }): Promise<InfiniteDataPage<Bookmark>> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetBookmarksResponse>>(
-          `${API_ROUTES.bookmark.getBookmarks({ nextCursor: pageParam })}`
+          API_ROUTES.bookmark.getBookmarks({ nextCursor: pageParam })
         )
       );
 

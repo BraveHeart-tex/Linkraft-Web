@@ -1,4 +1,5 @@
 import { CollectionWithBookmarkCount } from '@/features/collections/collection.types';
+import { ROOT_ITEM_ID } from '@/features/collections/TreeView/constants';
 import { CollectionNode } from '@/features/collections/TreeView/types';
 
 export const mapCollectionsToNodes = (
@@ -35,8 +36,8 @@ export const mapCollectionsToNodes = (
     }
   }
 
-  nodeMap['root'] = {
-    id: 'root',
+  nodeMap[ROOT_ITEM_ID] = {
+    id: ROOT_ITEM_ID,
     name: 'Root',
     bookmarkCount: 0,
     children: rootChildren.map((childId) => nodeMap[childId]),

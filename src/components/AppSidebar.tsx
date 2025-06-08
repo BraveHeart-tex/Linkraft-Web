@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/Sidebar';
 import { getCurrentUser } from '@/features/auth/auth.server';
 import { getCollections } from '@/features/collections/collection.server';
-import SimpleTreeview from '@/features/collections/TreeView/CollectionTreeView';
+import CollectionTreeView from '@/features/collections/TreeView/CollectionTreeView';
 import UserMenu from '@/features/users/UserMenu';
 import { QUERY_KEYS } from '@/lib/queryKeys';
 import {
@@ -63,7 +63,7 @@ const AppSidebar = async () => {
               Collections
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SimpleTreeview />
+              <CollectionTreeView />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

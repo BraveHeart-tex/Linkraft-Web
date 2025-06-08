@@ -8,10 +8,14 @@ import { CollectionNode } from '@/features/collections/TreeView/types';
 export const mapCollectionsToNodes = (
   collections: CollectionWithBookmarkCount[]
 ): Record<string, CollectionNode> => {
-  const nodeMap: Record<string, CollectionNode> = {};
-  const childMap: Record<string, string[]> = {};
-
-  const rootChildren: string[] = [];
+  const nodeMap: Record<string, CollectionNode> = {
+    [ROOT_ITEM_ID]: {
+      id: ROOT_ITEM_ID,
+      name: 'Root',
+      bookmarkCount: 0,
+      children: [],
+    },
+  };
 
   for (const collection of collections) {
     nodeMap[collection.id] = {
@@ -20,23 +24,12 @@ export const mapCollectionsToNodes = (
       bookmarkCount: collection.bookmarkCount,
       children: [],
     };
-
-    if (collection.parentId) {
-      if (!childMap[collection.parentId]) {
-        childMap[collection.parentId] = [];
-      }
-      childMap[collection.parentId].push(collection.id);
-    } else {
-      rootChildren.push(collection.id);
-    }
   }
 
-  nodeMap[ROOT_ITEM_ID] = {
-    id: ROOT_ITEM_ID,
-    name: 'Root',
-    bookmarkCount: 0,
-    children: rootChildren,
-  };
+  for (const collection of collections) {
+    const parentId = collection.parentId ?? ROOT_ITEM_ID;
+    nodeMap[parentId].children.push(collection.id);
+  }
 
   return nodeMap;
 };

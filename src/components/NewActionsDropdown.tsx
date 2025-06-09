@@ -1,12 +1,6 @@
 'use client';
 import { MODAL_TYPES, useModalStore } from '@/lib/stores/ui/modalStore';
-import {
-  ChevronDown,
-  FolderIcon,
-  LinkIcon,
-  Plus,
-  UploadIcon,
-} from 'lucide-react';
+import { ChevronDown, LinkIcon, Plus, UploadIcon } from 'lucide-react';
 import { Button } from './ui/Button';
 import {
   DropdownMenu,
@@ -22,11 +16,6 @@ const actions = [
     type: MODAL_TYPES.IMPORT_BOOKMARKS,
   },
   { icon: LinkIcon, label: 'New Bookmark', type: MODAL_TYPES.CREATE_BOOKMARK },
-  {
-    icon: FolderIcon,
-    label: 'New Collection',
-    type: MODAL_TYPES.CREATE_COLLECTION,
-  },
 ] as const;
 
 const NewActionsDropdown = () => {

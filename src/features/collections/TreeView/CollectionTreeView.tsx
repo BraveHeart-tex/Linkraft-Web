@@ -7,10 +7,8 @@ import {
   CollectionNode,
   CollectionNodeInstance,
 } from '@/features/collections/TreeView/types';
-import {
-  getDescendantIds,
-  mapCollectionsToNodes,
-} from '@/features/collections/TreeView/utils';
+import { useCollectionTreeStore } from '@/features/collections/TreeView/useCollectionTreeStore';
+import { getDescendantIds } from '@/features/collections/TreeView/utils';
 import {
   useCollections,
   useDeleteCollection,
@@ -34,20 +32,31 @@ import {
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 
 const CollectionTreeView = () => {
+  const initialize = useCollectionTreeStore((state) => state.initialize);
+  const nodes = useCollectionTreeStore((state) => state.nodes);
+  const { data: collections } = useCollections();
+
+  useEffect(() => {
+    if (collections) {
+      initialize(collections);
+    }
+  }, [collections, initialize]);
+
+  if (Object.keys(nodes).length === 0) return null;
+
+  return <CollectionsTree />;
+};
+
+const CollectionsTree = () => {
   const queryClient = useQueryClient();
   const showConfirmDialog = useConfirmDialogStore(
     (state) => state.showConfirmDialog
   );
-  const { data: collections, isPending: isPendingCollections } =
-    useCollections();
 
-  const mappedCollections: Record<string, CollectionNode> = useMemo(() => {
-    if (!collections) return {};
-    return mapCollectionsToNodes(collections);
-  }, [collections]);
+  const nodes = useCollectionTreeStore((state) => state.nodes);
 
   const tree = useTree<CollectionNode>({
     rootItemId: ROOT_ITEM_ID,
@@ -69,8 +78,8 @@ const CollectionTreeView = () => {
     },
     indent: 20,
     dataLoader: {
-      getItem: (itemId) => mappedCollections[itemId],
-      getChildren: (itemId) => mappedCollections[itemId].children,
+      getItem: (itemId) => nodes[itemId],
+      getChildren: (itemId) => nodes[itemId].children,
     },
     features: [
       syncDataLoaderFeature,
@@ -107,8 +116,6 @@ const CollectionTreeView = () => {
             : old
       );
 
-      tree.rebuildTree();
-
       return { previousCollections };
     },
     onError(error, _variables, context) {
@@ -117,7 +124,6 @@ const CollectionTreeView = () => {
         context?.previousCollections
       );
 
-      tree.rebuildTree();
       showErrorToast('An error occurred while renaming the collection', {
         description: isErrorApiResponse(error)
           ? error.message
@@ -175,7 +181,6 @@ const CollectionTreeView = () => {
           })
       );
 
-      tree.rebuildTree();
       return { previousCollections, previousBookmarks };
     },
     async onError(error, _variables, context) {
@@ -187,7 +192,7 @@ const CollectionTreeView = () => {
         QUERY_KEYS.bookmarks.list(),
         context?.previousBookmarks
       );
-      tree.rebuildTree();
+
       showErrorToast('An error occurred while deleting the collection', {
         description: isErrorApiResponse(error)
           ? error.message
@@ -234,7 +239,7 @@ const CollectionTreeView = () => {
 
   return (
     <div className="h-full w-full flex-1 max-h-max">
-      {!isPendingCollections && collections?.length === 0 ? (
+      {!Object.keys(nodes).length ? (
         <p className="text-xs px-4 py-2">No collections found</p>
       ) : (
         <div {...tree.getContainerProps()} className="max-w-[18.75rem]">

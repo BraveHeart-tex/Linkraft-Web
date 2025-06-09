@@ -49,6 +49,8 @@ const CollectionTreeItemActions = ({
     onDelete(item);
   });
 
+  const handleCreateNestedCollection = withStopPropagation(() => {});
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -76,6 +78,7 @@ const CollectionTreeItemActions = ({
         <Button
           variant="ghost"
           className="w-full justify-start px-2 py-1.5 rounded-sm font-medium"
+          onClick={handleCreateNestedCollection}
         >
           Create nested collection
         </Button>

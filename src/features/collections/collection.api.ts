@@ -69,22 +69,18 @@ export const usePaginatedCollections = (query?: string, enabled?: boolean) =>
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 
-export const useCollections = (params?: {
-  query?: string;
-  initialData?: CollectionWithBookmarkCount[];
-}) =>
+export const useCollections = () =>
   useQuery({
-    queryKey: QUERY_KEYS.collections.list(params?.query),
+    queryKey: QUERY_KEYS.collections.list(),
     queryFn: async (): Promise<CollectionWithBookmarkCount[]> => {
       const response = await safeApiCall(() =>
         api.get<ApiResponse<GetCollectionsResponse>>(
-          API_ROUTES.collection.getUserCollections(params?.query)
+          API_ROUTES.collection.getUserCollections()
         )
       );
 
       return (response.data?.items || []).sort(sortCollectionByDisplayOrder);
     },
-    initialData: params?.initialData,
   });
 
 interface UseDeleteCollectionContext {
